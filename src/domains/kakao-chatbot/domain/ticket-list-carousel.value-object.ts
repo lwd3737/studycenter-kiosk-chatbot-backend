@@ -51,12 +51,12 @@ export class TicketListCarousel extends Carousel {
       messageText: `${category.label}`,
     });
 
-    const listItemProps = combine(headerResult, buttonResult, ...itemResults);
-    if (listItemProps.isErr()) {
-      return err(listItemProps.error);
+    const listCardProps = combine(headerResult, buttonResult, ...itemResults);
+    if (listCardProps.isErr()) {
+      return err(listCardProps.error);
     }
 
-    const [header, button, ...items] = listItemProps.value;
+    const [header, button, ...items] = listCardProps.value;
 
     return ListCard.create({
       header,

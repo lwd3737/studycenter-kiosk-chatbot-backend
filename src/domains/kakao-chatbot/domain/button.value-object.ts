@@ -1,4 +1,4 @@
-import { err, ok, Result, Validation, ValueObject } from 'src/core';
+import { err, ok, Result, ValueObject } from 'src/core';
 import { ButtonError, ButtonErrors } from './errors';
 
 export interface ButtonProps {
@@ -20,6 +20,34 @@ export enum ButtonActionEnum {
 
 export class Button extends ValueObject<ButtonProps> {
   private static LABEL_MAX_LENGTH = 14;
+
+  get label(): string {
+    return this.props.label;
+  }
+
+  get action(): ButtonActionEnum {
+    return this.props.action;
+  }
+
+  get webLinkUrl(): string | undefined {
+    return this.props.webLinkUrl;
+  }
+
+  get messageText(): string | undefined {
+    return this.props.messageText;
+  }
+
+  get phoneNumber(): string | undefined {
+    return this.props.phoneNumber;
+  }
+
+  get blockId(): string | undefined {
+    return this.props.blockId;
+  }
+
+  get extra(): Record<string, any> | undefined {
+    return this.props.extra;
+  }
 
   protected constructor(props: ButtonProps) {
     super(props);

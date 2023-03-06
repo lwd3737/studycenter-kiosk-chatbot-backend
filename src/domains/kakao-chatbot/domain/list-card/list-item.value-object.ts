@@ -1,4 +1,4 @@
-import { err, ok, Result, Validation, ValueObject } from 'src/core';
+import { err, ok, Result, ValueObject } from 'src/core';
 import { ListItemError, ListItemErrors } from '../errors';
 
 export interface ListItemProps {

@@ -9,7 +9,7 @@ class PropsMismatchingActionIncludedError extends DomainError {
     const extraProps = Object.keys(props).filter((key) => key !== 'action');
 
     super(
-      `Invalid props (${extraProps}) mismatching action '${action}' is included in list item`,
+      `ListItem's invalid props (${extraProps}) mismatching action '${action}' is included in list item`,
     );
   }
 }

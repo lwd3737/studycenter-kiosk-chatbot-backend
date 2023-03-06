@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { ListCard, ListHeader, ListItem } from '../../domain';
-import { IListCardDTO, IListItemDTO } from '../../dtos';
+import { Button, ListCard, ListHeader, ListItem } from '../../domain';
+import { IButtonDTO, IListCardDTO, IListItemDTO } from '../../dtos';
 
 @Injectable()
 export class ListCardMapper implements IMapper<ListCard> {
   toDTO(listCard: ListCard): IListCardDTO {
-    const { header, items } = listCard;
+    const { header, items, buttons } = listCard;
 
     return {
       header: this.toHeaderDTO(header),
-      items: items.map(this.toItemDTO),
+      items: items.map((item) => this.toItemDTO(item)),
+      buttons: buttons?.map((button) => this.toButtonDTO(button)),
     };
   }
 
@@ -45,6 +46,28 @@ export class ListCardMapper implements IMapper<ListCard> {
       action,
       blockId,
       messageText,
+      extra,
+    };
+  }
+
+  toButtonDTO(button: Button): IButtonDTO {
+    const {
+      label,
+      action,
+      webLinkUrl,
+      messageText,
+      phoneNumber,
+      blockId,
+      extra,
+    } = button;
+
+    return {
+      label,
+      action,
+      webLinkUrl,
+      messageText,
+      phoneNumber,
+      blockId,
       extra,
     };
   }
