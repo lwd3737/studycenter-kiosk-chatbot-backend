@@ -1,0 +1,94 @@
+[
+  {
+    "name": "15일(고정석)",
+    "category": "PERIOD",
+    "time": {
+      "unit": "DAYS",
+      "value": 15
+    },
+    "price": 80000
+  },
+  {
+    "name": "30일(고정석)",
+    "category": "PERIOD",
+    "time": {
+      "unit": "DAYS",
+      "value": 30
+    },
+    "price": 130000
+  },
+  {
+    "name": "50시간(자유석)",
+    "category": "HOURSE_RECHARGE",
+    "time": {
+      "unit": "HOURS",
+      "value": 50
+    },
+
+    "price": 65000
+  },
+  {
+    "name": "100시간(자유석)",
+    "category": "HOURSE_RECHARGE",
+    "time": {
+      "unit": "HOURS",
+      "value": 100
+    },
+
+    "price": 650000
+  },
+  {
+    "name": "1시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 1
+    },
+    "price": 2000
+  },
+  {
+    "name": "2시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 2
+    },
+    "price": 3000
+  },
+  {
+    "name": "4시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 4
+    },
+    "price": 5000
+  },
+  {
+    "name": "6시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 6
+    },
+    "price": 6000
+  },
+  {
+    "name": "9시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 9
+    },
+    "price": 8000
+  },
+  {
+    "name": "12시간",
+    "category": "SAME_DAY",
+    "time": {
+      "unit": "HOURS",
+      "value": 12
+    },
+    "price": 10000
+  }
+]
