@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PaymentModule } from './domains/payment';
-import { TicketModule } from './domains/ticket';
+import { KakaoChatbotModule } from './domains/kakao-chatbot';
 
 @Module({
-  imports: [TicketModule, PaymentModule],
+  imports: [KakaoChatbotModule],
   controllers: [AppController],
   providers: [AppService],
 })
