@@ -3,7 +3,7 @@ import { AppErros, err, IUseCase, ok, Result, UnexpectedError } from 'src/core';
 import { GetAllTicketCollectionsUseCase } from 'src/domains/ticket';
 import { TicketListCarousel } from '../../domain/ticket-list-carousel.value-object';
 import { IKakaoChatbotRequestDTO } from '../../dtos';
-import { GetTicketListCarouselError } from './get-ticcket-list-carousel.error';
+import { GetTicketListCarouselError } from './get-ticket-list-carousel.error';
 
 type TicketListCarouselResult = Promise<
   Result<TicketListCarousel, GetTicketListCarouselError>

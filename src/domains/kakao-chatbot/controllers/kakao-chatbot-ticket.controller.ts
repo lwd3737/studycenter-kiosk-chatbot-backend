@@ -7,8 +7,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { GetTicketCollectionByCategoryUseCase } from 'src/domains/ticket';
-import { TicketNotFoundError } from 'src/domains/ticket/application/errors';
+import { GetAllTicketCollectionsErrors } from 'src/domains/ticket/application/errors';
 import { IKakaoChatbotRequestDTO, IKakaoChatbotResponseDTO } from '../dtos';
+import { ValidTicketCategoryNotIncludedException } from '../exceptions';
 import { KaKaoChatbotResponseMapper, CarouselMapper } from '../infra/mappers';
 import { GetTicketListCarouselUseCase } from '../use-cases';
 
@@ -27,10 +28,11 @@ export class KakaoChatbotTicketController {
       await this.getTicketListCarouselUseCase.execute();
     if (ticketListCarouselResult.isErr()) {
       const error = ticketListCarouselResult.error;
+
       console.debug(error);
 
       switch (error.constructor) {
-        case TicketNotFoundError:
+        case GetAllTicketCollectionsErrors.TicketNotFoundError:
           throw new NotFoundException(error.message);
         default:
           throw new InternalServerErrorException(error.message, {
@@ -53,21 +55,32 @@ export class KakaoChatbotTicketController {
     @Body() request: IKakaoChatbotRequestDTO,
   ) {
     console.log(JSON.stringify(request, null, 2));
+    // TODO: pipe로 request input validation
+    const { action } = request;
 
-    const categoryDTO = request.action.clientExtra?.category;
-    if (!categoryDTO) {
-      throw new BadRequestException('client extra "category" not included');
+    const TICKET_CATEGORIES = [
+      'period_ticket',
+      'hours_recharge_ticket',
+      'same_day_ticket',
+    ];
+
+    const category = Object.keys(action.params).find((param) =>
+      TICKET_CATEGORIES.includes(param),
+    );
+
+    if (!category) {
+      throw new ValidTicketCategoryNotIncludedException(category);
     }
 
     const ticketsResult =
       await this.getTicketCollectionByCategoryUseCase.execute({
-        category: categoryDTO as string,
+        category,
       });
     if (ticketsResult.isErr()) {
       const error = ticketsResult.error;
 
       switch (error.constructor) {
-        case TicketNotFoundError:
+        case GetAllTicketCollectionsErrors.TicketNotFoundError:
           throw new NotFoundException(error.message);
         default:
           throw new InternalServerErrorException(error.message, {

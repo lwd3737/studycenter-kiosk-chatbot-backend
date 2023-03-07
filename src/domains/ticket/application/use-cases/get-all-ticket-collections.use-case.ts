@@ -7,7 +7,10 @@ import {
   ITicketRepo,
   TicketRepoProvider,
 } from '../../domain/ticket.repo.interface';
-import { GetAllTicketCollectionsError, TicketNotFoundError } from '../errors';
+import {
+  GetAllTicketCollectionsError,
+  GetAllTicketCollectionsErrors,
+} from '../errors';
 import { InitTicketsUseCase } from './init-tickets.use-case';
 
 type GetAllTicketCollectionsResult = Result<
@@ -23,6 +26,8 @@ export class GetAllTicketCollectionsUseCase
     @Inject(TicketRepoProvider) private ticketRepo: ITicketRepo,
     private initTicketsUseCase: InitTicketsUseCase,
   ) {}
+
+  // TODO: domain event로 구현
   private async resetThenRetry(): Promise<Ticket[]> {
     await this.initTicketsUseCase.execute();
 
@@ -37,7 +42,7 @@ export class GetAllTicketCollectionsUseCase
 
       return ok(tickets);
     } catch (error) {
-      if (error instanceof TicketNotFoundError) {
+      if (error instanceof GetAllTicketCollectionsErrors.TicketNotFoundError) {
         const tickets = await this.resetThenRetry();
 
         return ok(tickets);
@@ -67,6 +72,7 @@ export class GetAllTicketCollectionsUseCase
         return err(ticketsResult.error);
       }
 
+      // TODO: 도메인 로직으로 분리
       const ticketCollections = this.groupIntoCollectionsByCategory(
         ticketsResult.value,
       );

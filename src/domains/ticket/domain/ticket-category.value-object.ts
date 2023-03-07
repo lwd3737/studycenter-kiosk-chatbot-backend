@@ -34,7 +34,7 @@ export class TicketCategory extends ValueObject<TicketCategoryProps> {
 
   static create(value: string): Result<TicketCategory, TicketCategoryError> {
     if (this.isValidCategory(value) === false) {
-      return err(new TicketCategoryErrors.CategoryInvalidError(value));
+      return err(new TicketCategoryErrors.InvalidValueError(value));
     }
 
     return ok(new TicketCategory({ value: value as TicketCategoryEnum }));

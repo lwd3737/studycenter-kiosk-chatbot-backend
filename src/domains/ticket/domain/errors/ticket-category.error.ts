@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { DomainError } from 'src/core';
 
-export type TicketCategoryError = CategoryInvalidError;
+export type TicketCategoryError = TicketCategoryErrors.InvalidValueError;
 
-class CategoryInvalidError extends DomainError {
-  constructor(category: string) {
-    super(
-      `The category "${category}" is invalid. The category must be one of "PERIOD", "HOURS_RECHARGE", "SAME_DAY".`,
-    );
+export namespace TicketCategoryErrors {
+  export class InvalidValueError extends DomainError {
+    constructor(category: string) {
+      super(
+        `The category "${category}" is invalid. The category must be one of "PERIOD", "HOURS_RECHARGE", "SAME_DAY".`,
+      );
+    }
   }
 }
-
-export const TicketCategoryErrors = {
-  CategoryInvalidError,
-};

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TicketNotFoundError } from 'src/domains/ticket/application/errors';
+import { GetAllTicketCollectionsErrors } from 'src/domains/ticket/application/errors';
 import {
   ITicketMapper,
   TicketMapperProvider,
@@ -28,7 +28,7 @@ export class InMemoryTicketRepo implements ITicketRepo {
   async getAllTickets(): Promise<Ticket[]> {
     const count = this.storage.length;
     if (count === 0) {
-      throw new TicketNotFoundError();
+      throw new GetAllTicketCollectionsErrors.TicketNotFoundError();
     }
 
     const rawTickets = this.storage;
