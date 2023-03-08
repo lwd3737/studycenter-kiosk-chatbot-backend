@@ -1,0 +1,42 @@
+import { Injectable } from '@nestjs/common';
+import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
+import { GetAllTicketCollectionsUseCase } from 'src/modules/ticket';
+import { TicketListCarousel } from '../../domain/ticket-list-carousel.value-object';
+import { IKakaoChatbotRequestDTO } from '../../dtos';
+import { GetTicketListCarouselError } from './get-ticket-list-carousel.error';
+
+type TicketListCarouselResult = Promise<
+  Result<TicketListCarousel, GetTicketListCarouselError>
+>;
+
+@Injectable()
+export class GetTicketListCarouselUseCase
+  implements IUseCase<IKakaoChatbotRequestDTO, TicketListCarouselResult>
+{
+  constructor(
+    private getAllTicketCollectionsUseCase: GetAllTicketCollectionsUseCase,
+  ) {}
+
+  async execute(
+    request?: IKakaoChatbotRequestDTO,
+  ): Promise<TicketListCarouselResult> {
+    const allTicketCollectionsResult =
+      await this.getAllTicketCollectionsUseCase.execute();
+    if (allTicketCollectionsResult.isErr()) {
+      return err(allTicketCollectionsResult.error);
+    }
+
+    try {
+      const ticketListCarouselResult = TicketListCarousel.build({
+        ticketCollections: allTicketCollectionsResult.value,
+      });
+      if (ticketListCarouselResult.isErr()) {
+        return err(ticketListCarouselResult.error);
+      }
+
+      return ok(ticketListCarouselResult.value);
+    } catch (error) {
+      return err(new AppErrors.UnexpectedError(error));
+    }
+  }
+}

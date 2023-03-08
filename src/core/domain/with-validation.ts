@@ -1,4 +1,4 @@
-import { ValidationNotExecutedError } from 'src/domains/kakao-chatbot/domain/errors';
+import { ValidationNotExecutedError } from 'src/modules/kakao-chatbot/domain/errors';
 
 export class Validation {
   private wasExecuted = false;

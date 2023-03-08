@@ -6,6 +6,17 @@ export class DomainEvents {
   private static eventEmitter = new EventEmitter2();
   private static markedAggregates: AggregateRoot<any>[] = [];
 
+  public static registerEvent(
+    eventName: string,
+    handler: (event: IDomainEvent) => void,
+  ): void {
+    this.eventEmitter.on(eventName, handler);
+  }
+
+  public static waitForEvent(eventName: string): Promise<any[]> {
+    return this.eventEmitter.waitFor(eventName);
+  }
+
   public static markAggregateForDisaptch(aggregate: AggregateRoot<any>): void {
     const aggregateFound = this.findMarkedAggregateById(aggregate.id);
 
@@ -25,10 +36,10 @@ export class DomainEvents {
   }
 
   private static dispatchAggregateEvents(aggregate: AggregateRoot<any>): void {
-    aggregate.events.forEach(this.dispatch);
+    aggregate.events.forEach(this.dispatchEvent);
   }
 
-  public static dispatch(event: IDomainEvent): void {
+  public static dispatchEvent(event: IDomainEvent): void {
     this.eventEmitter.emit(event.name, event);
   }
 
@@ -53,9 +64,5 @@ export class DomainEvents {
 
   public static clearMarkedAggregates(): void {
     this.markedAggregates = [];
-  }
-
-  public static waitFor(event: IDomainEvent): Promise<any[]> {
-    return this.eventEmitter.waitFor(event.name);
   }
 }
