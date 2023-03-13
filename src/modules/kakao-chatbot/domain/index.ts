@@ -5,3 +5,4 @@ export * from './list-card';
 export * from './ticket-list-carousel.value-object';
 export * from './commerce-card';
 export * from './thumbnail.value-object';
+export * from './profile.value-object';

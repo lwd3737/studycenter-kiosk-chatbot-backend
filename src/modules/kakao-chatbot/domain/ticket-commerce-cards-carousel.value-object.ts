@@ -13,6 +13,7 @@ import {
   ThumbnailError,
   TicketCommerceCardsCarouselError,
 } from './errors';
+import { Profile } from './profile.value-object';
 import { Thumbnail } from './thumbnail.value-object';
 
 export interface TicketCommerceCardsCarouselProps {
@@ -49,17 +50,29 @@ export class TicketCommerceCardsCarousel extends ValueObject<CommerceCardCarouse
     });
     const thumbnailResult = this.createTicketThumbnail(ticket.category.value);
 
-    const ticketPropsResult = combine(buyButtonResult, thumbnailResult);
+    // TODO: config module에서 validation
+    const locationName = process.env.LOCATION_NAME;
+    if (!locationName) {
+      throw new DomainError('Location name config not defined');
+    }
+    const profileResult = Profile.create({ nickname: locationName });
+
+    const ticketPropsResult = combine(
+      thumbnailResult,
+      profileResult,
+      buyButtonResult,
+    );
     if (ticketPropsResult.isErr()) {
       return err(ticketPropsResult.error);
     }
 
-    const [buyButton, thumbnail] = ticketPropsResult.value;
+    const [thumbnail, profile, buyButton] = ticketPropsResult.value;
 
     const commerceCardResult = CommerceCard.create({
       description: ticket.title,
       price: ticket.price,
       thumbnails: [thumbnail],
+      profile,
       buttons: [buyButton],
     });
     if (commerceCardResult.isErr()) {
@@ -72,6 +85,7 @@ export class TicketCommerceCardsCarousel extends ValueObject<CommerceCardCarouse
   private static createTicketThumbnail(
     category: TicketCategoryEnum,
   ): Result<Thumbnail, ThumbnailError> {
+    // TODO: config module에서 validation
     const host = process.env.HOST;
     if (!host) {
       throw new DomainError('HOST config not defined');

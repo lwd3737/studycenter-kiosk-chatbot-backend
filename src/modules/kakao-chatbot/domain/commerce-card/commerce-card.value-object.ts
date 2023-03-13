@@ -1,6 +1,7 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button.value-object';
 import { CommerceCardError, CommerceCardErrors } from '../errors';
+import { Profile } from '../profile.value-object';
 import { Thumbnail } from '../thumbnail.value-object';
 import { CommerceCardDiscount } from './commerce-card-discount.value-object';
 
@@ -10,6 +11,7 @@ export interface CommerceCardProps {
   currency: 'won';
   discount?: CommerceCardDiscount;
   thumbnails: Thumbnail[];
+  profile?: Profile;
   buttons: Button[];
 }
 
@@ -38,6 +40,10 @@ export class CommerceCard extends ValueObject<CommerceCardProps> {
 
   get thumbnails(): Thumbnail[] {
     return this.props.thumbnails;
+  }
+
+  get profile(): Profile | undefined {
+    return this.props.profile;
   }
 
   get buttons(): Button[] {

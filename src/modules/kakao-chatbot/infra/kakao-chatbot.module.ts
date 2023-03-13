@@ -9,6 +9,7 @@ import {
   ButtonMapper,
   CarouselMapper,
   ListCardMapper,
+  ProfileMapper,
   ThumbnailMapper,
 } from './mappers';
 import { CommerceCardMapper } from './mappers/commerce-card.mapper';
@@ -23,7 +24,9 @@ import { KaKaoChatbotResponseMapper } from './mappers/kakao-chatbot-response.map
     CarouselMapper,
     CommerceCardMapper,
     ThumbnailMapper,
+    ProfileMapper,
     ButtonMapper,
+
     GetTicketListCarouselUseCase,
     GetTicketCommerceCardsCarouselUseCase,
   ],
