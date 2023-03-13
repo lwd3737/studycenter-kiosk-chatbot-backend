@@ -1,8 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TicketModule } from 'src/modules/ticket';
 import { KakaoChatbotTicketController } from '../controllers';
-import { GetTicketListCarouselUseCase } from '../use-cases';
-import { CarouselMapper, ListCardMapper } from './mappers';
+import {
+  GetTicketCommerceCardsCarouselUseCase,
+  GetTicketListCarouselUseCase,
+} from '../use-cases';
+import {
+  ButtonMapper,
+  CarouselMapper,
+  ListCardMapper,
+  ThumbnailMapper,
+} from './mappers';
+import { CommerceCardMapper } from './mappers/commerce-card.mapper';
 import { KaKaoChatbotResponseMapper } from './mappers/kakao-chatbot-response.mapper';
 
 @Module({
@@ -12,7 +21,11 @@ import { KaKaoChatbotResponseMapper } from './mappers/kakao-chatbot-response.map
     KaKaoChatbotResponseMapper,
     ListCardMapper,
     CarouselMapper,
+    CommerceCardMapper,
+    ThumbnailMapper,
+    ButtonMapper,
     GetTicketListCarouselUseCase,
+    GetTicketCommerceCardsCarouselUseCase,
   ],
   exports: [],
 })

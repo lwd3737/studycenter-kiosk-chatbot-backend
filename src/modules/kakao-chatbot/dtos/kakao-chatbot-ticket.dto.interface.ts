@@ -84,8 +84,9 @@ export interface ICarouselHeaderDTO {
 
 export interface IThumbnailDTO {
   imageUrl: string;
-  width: number;
-  height: number;
+  fixedRatio?: boolean;
+  width?: number;
+  height?: number;
 }
 
 export interface IItemCardHead {

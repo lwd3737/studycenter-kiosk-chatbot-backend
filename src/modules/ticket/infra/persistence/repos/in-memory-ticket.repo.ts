@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TicketNotFoundError } from 'src/modules/ticket/application';
+import { TicketCategory } from 'src/modules/ticket/domain';
 import {
   ITicketMapper,
   TicketMapperProvider,
@@ -22,7 +23,7 @@ export class InMemoryTicketRepo implements ITicketRepo {
   private storage: MockTicket[] = [];
 
   constructor(
-    @Inject(TicketMapperProvider) private ticketMapper: ITicketMapper,
+    @Inject(TicketMapperProvider) private ticketMapper: ITicketMapper, //private initTicketUseCase: InitTicketUseCase,
   ) {}
 
   async getAllTickets(): Promise<Ticket[]> {
@@ -34,6 +35,17 @@ export class InMemoryTicketRepo implements ITicketRepo {
     const rawTickets = this.storage;
 
     return rawTickets.map((ticket) => this.ticketMapper.toDomain(ticket));
+  }
+
+  async getTicketsByCategory(category: TicketCategory): Promise<Ticket[]> {
+    const ticketsFound = this.storage.filter(
+      (ticket) => ticket.category === category.value,
+    );
+    if (ticketsFound.length === 0) {
+      throw new TicketNotFoundError();
+    }
+
+    return ticketsFound.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
   async bulkCreate(tickets: Ticket[]): Promise<void> {

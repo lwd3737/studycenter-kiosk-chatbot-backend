@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   InternalServerErrorException,
@@ -7,22 +6,21 @@ import {
   Post,
 } from '@nestjs/common';
 import { err } from 'src/core';
-import {
-  GetTicketCollectionByCategoryUseCase,
-  InitTicketUseCase,
-  TicketNotFoundError,
-} from 'src/modules/ticket';
+import { InitTicketUseCase, TicketNotFoundError } from 'src/modules/ticket';
 import { IKakaoChatbotRequestDTO, IKakaoChatbotResponseDTO } from '../dtos';
-import { ValidTicketCategoryNotIncludedException } from '../exceptions';
+import { TicketCategoryParamNotIncludedException } from '../exceptions';
 import { KaKaoChatbotResponseMapper, CarouselMapper } from '../infra/mappers';
-import { GetTicketListCarouselUseCase } from '../use-cases';
+import {
+  GetTicketCommerceCardsCarouselUseCase,
+  GetTicketListCarouselUseCase,
+} from '../use-cases';
 
-@Controller('kakao-chatbot/ticket')
+@Controller('kakao-chatbot/tickets')
 export class KakaoChatbotTicketController {
   constructor(
     private initTicketUseCase: InitTicketUseCase,
     private getTicketListCarouselUseCase: GetTicketListCarouselUseCase,
-    private getTicketCollectionByCategoryUseCase: GetTicketCollectionByCategoryUseCase,
+    private getTicketCommerceCardsCarouselUseCase: GetTicketCommerceCardsCarouselUseCase,
     private responseMapper: KaKaoChatbotResponseMapper,
     private carouselMapper: CarouselMapper,
   ) {}
@@ -77,34 +75,35 @@ export class KakaoChatbotTicketController {
     });
   }
 
-  @Post('collection/by-category')
-  async getTicketCollectionByCategory(
+  @Post('by-category')
+  async getTicketsByCategory(
     @Body() request: IKakaoChatbotRequestDTO,
-  ) {
-    console.log(JSON.stringify(request, null, 2));
-    // TODO: pipe로 request input validation
-    const { action } = request;
+  ): Promise<IKakaoChatbotResponseDTO> {
+    // TODO: pipe로 request input validation -> transform
+    const { params } = request.action;
+    const param = Object.keys(params)[0];
 
     const TICKET_CATEGORIES = [
       'period_ticket',
       'hours_recharge_ticket',
       'same_day_ticket',
-    ];
+    ] as const;
 
-    const category = Object.keys(action.params).find((param) =>
-      TICKET_CATEGORIES.includes(param),
+    const indexFound = TICKET_CATEGORIES.findIndex(
+      (category) => category === param,
     );
-
-    if (!category) {
-      throw new ValidTicketCategoryNotIncludedException(category);
+    if (indexFound < 0) {
+      throw new TicketCategoryParamNotIncludedException();
     }
 
-    const ticketsResult =
-      await this.getTicketCollectionByCategoryUseCase.execute({
-        category,
-      });
-    if (ticketsResult.isErr()) {
-      const error = ticketsResult.error;
+    const category = TICKET_CATEGORIES[indexFound];
+
+    const ticketCommerceCardsCarouselResult =
+      await this.getTicketCommerceCardsCarouselUseCase.execute({ category });
+    if (ticketCommerceCardsCarouselResult.isErr()) {
+      const error = ticketCommerceCardsCarouselResult.error;
+
+      console.debug(error);
 
       switch (error.constructor) {
         case TicketNotFoundError:
@@ -116,6 +115,14 @@ export class KakaoChatbotTicketController {
       }
     }
 
-    return ticketsResult.value;
+    return this.responseMapper.toDTO({
+      outputs: [
+        {
+          carousel: this.carouselMapper.toDTO(
+            ticketCommerceCardsCarouselResult.value,
+          ),
+        },
+      ],
+    });
   }
 }

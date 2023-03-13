@@ -1,7 +1,7 @@
-import { combine, err, ok, Result } from 'src/core';
+import { combine, err, ok, Result, ValueObject } from 'src/core';
 import { Ticket } from 'src/modules/ticket';
 import { Button, ButtonActionEnum } from './button.value-object';
-import { Carousel, CarouselProps, CarouselTypeEnum } from './carousel';
+import { Carousel, CarouselTypeEnum, ListCardCarouselProps } from './carousel';
 import { ListItemError, TicketListCarouselError } from './errors';
 import { ListCard, ListHeader, ListItem } from './list-card';
 
@@ -9,28 +9,31 @@ export interface TicketListCarouselProps {
   ticketCollections: Ticket[][];
 }
 
-export class TicketListCarousel extends Carousel {
-  private constructor(props: CarouselProps) {
+export class TicketListCarousel extends ValueObject<ListCardCarouselProps> {
+  private constructor(props: ListCardCarouselProps) {
     super(props);
   }
 
-  public static build(
+  public static create(
     props: TicketListCarouselProps,
-  ): Result<TicketListCarousel, TicketListCarouselError> {
-    const ticketListCardResults = props.ticketCollections.map(
+  ): Result<Carousel, TicketListCarouselError> {
+    const ticketListCardResultCollection = props.ticketCollections.map(
       this.createTicketListCard,
     );
-    const ticketListCardsResult = combine(...ticketListCardResults);
+    const ticketListCardsResult = combine(...ticketListCardResultCollection);
     if (ticketListCardsResult.isErr()) {
       return err(ticketListCardsResult.error);
     }
 
-    return ok(
-      new TicketListCarousel({
-        type: CarouselTypeEnum.LIST_CARD,
-        items: ticketListCardsResult.value,
-      }),
-    );
+    const carouselResult = Carousel.create({
+      type: CarouselTypeEnum.LIST_CARD,
+      items: ticketListCardsResult.value,
+    });
+    if (carouselResult.isErr()) {
+      return err(carouselResult.error);
+    }
+
+    return ok(carouselResult.value);
   }
 
   private static createTicketListCard(
@@ -39,7 +42,7 @@ export class TicketListCarousel extends Carousel {
     const { category } = ticketCollection[0];
 
     const headerResult = ListHeader.create({ title: category.label });
-    const itemResults = ticketCollection.map((ticket) =>
+    const itemResultCollection = ticketCollection.map((ticket) =>
       ListItem.create({
         title: ticket.title,
         description: `${ticket.price}원`,
@@ -51,7 +54,11 @@ export class TicketListCarousel extends Carousel {
       messageText: `${category.label}`,
     });
 
-    const listCardProps = combine(headerResult, buttonResult, ...itemResults);
+    const listCardProps = combine(
+      headerResult,
+      buttonResult,
+      ...itemResultCollection,
+    );
     if (listCardProps.isErr()) {
       return err(listCardProps.error);
     }

@@ -7,7 +7,7 @@ import { TicketRepoProvider } from '../domain/ticket.repo.interface';
 import { MockTicketMapper } from './mappers/mock-ticket.mapper';
 import { InMemoryTicketRepo } from './persistence/repos/in-memory-ticket.repo';
 import { TicketInitService } from '../domain/services';
-import { GetTicketCollectionByCategoryUseCase } from '../application';
+import { GetTicketsByCategoryUseCase } from '../application';
 import { TicketCollectionService } from '../domain/services/ticket-collection.service';
 
 const ticketMapperProvider = {
@@ -22,13 +22,13 @@ const ticketRepoProvider = {
 
 @Module({
   providers: [
-    ticketMapperProvider,
-    ticketRepoProvider,
     TicketInitService,
     TicketCollectionService,
     InitTicketUseCase,
     GetAllTicketCollectionsUseCase,
-    GetTicketCollectionByCategoryUseCase,
+    GetTicketsByCategoryUseCase,
+    ticketMapperProvider,
+    ticketRepoProvider,
   ],
   exports: [
     TicketMapperProvider,
@@ -37,7 +37,7 @@ const ticketRepoProvider = {
     TicketCollectionService,
     InitTicketUseCase,
     GetAllTicketCollectionsUseCase,
-    GetTicketCollectionByCategoryUseCase,
+    GetTicketsByCategoryUseCase,
   ],
 })
 export class TicketModule {}

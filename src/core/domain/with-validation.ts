@@ -1,7 +1,11 @@
-import { ValidationNotExecutedError } from 'src/modules/kakao-chatbot/domain/errors';
+import { ValidationNotExecutedError } from 'src/modules/kakao-chatbot';
 
 export class Validation {
-  private wasExecuted = false;
+  private wasExecuted: boolean;
+
+  constructor() {
+    this.wasExecuted = false;
+  }
 
   public checkExecution(): void {
     if (this.wasExecuted === false) {

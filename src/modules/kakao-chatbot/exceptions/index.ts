@@ -1,1 +1,1 @@
-export * from './valid-ticket-category-not-included.exception';
+export * from './ticket-category-param-not-included.exception';

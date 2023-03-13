@@ -3,3 +3,8 @@ export * from './button.error';
 export * from './list-item.error';
 export * from './list-card.error';
 export * from './ticket-list-carousel.error';
+export * from './commerce-card-discount.error';
+export * from './commerce-card.error';
+export * from './carousel.error';
+export * from './ticket-commerce-cards-carousel.error';
+export * from './thumbnail.error';
