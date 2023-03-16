@@ -1,6 +1,6 @@
 import { ValueObject } from 'src/core/domain';
 import { err, ok, Result } from 'src/core';
-import { TicketTimeError, TicketTimeErrors } from './errors';
+import { TicketErrors } from './errors/ticket.error';
 
 export interface TicketTimeProps {
   unit: TTicketTimeUnit;
@@ -31,13 +31,16 @@ export class TicketTime extends ValueObject<TicketTimeProps> {
   }: {
     unit: string;
     value: number;
-  }): Result<TicketTime, TicketTimeError> {
+  }): Result<
+    TicketTime,
+    TicketErrors.TimeUnitInvalidError | TicketErrors.TimeValueInvalidError
+  > {
     if (this.isValidTimeUnit(unit) === false) {
-      return err(new TicketTimeErrors.UnitInvalidError(unit));
+      return err(new TicketErrors.TimeUnitInvalidError(unit));
     }
 
     if (this.isValidTimeValue(value) === false) {
-      return err(new TicketTimeErrors.ValueInvalidError(value));
+      return err(new TicketErrors.TimeValueInvalidError(value));
     }
 
     return ok(new TicketTime({ unit: unit as TTicketTimeUnit, value }));

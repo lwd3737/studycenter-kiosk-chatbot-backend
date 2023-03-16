@@ -1,23 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TicketModule } from 'src/modules/ticket';
-import { KakaoChatbotTicketController } from '../controllers';
-import {
-  GetTicketCommerceCardsCarouselUseCase,
-  GetTicketListCarouselUseCase,
-} from '../use-cases';
-import {
-  ButtonMapper,
-  CarouselMapper,
-  ListCardMapper,
-  ProfileMapper,
-  ThumbnailMapper,
-} from './mappers';
+import { KakaoChatbotPaymentController } from '../controllers/kakao-chatbot-payment.controller';
+import { KakaoChatbotTicketController } from '../controllers/kakao-chatbot-ticket.controller';
+import { GetTicketCommerceCardsCarouselUseCase } from '../use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
+import { GetTicketListCarouselUseCase } from '../use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
+import { ButtonMapper } from './mappers/button.mapper';
+import { CarouselMapper } from './mappers/carousel.mapper';
+
 import { CommerceCardMapper } from './mappers/commerce-card.mapper';
 import { KaKaoChatbotResponseMapper } from './mappers/kakao-chatbot-response.mapper';
+import { ListCardMapper } from './mappers/list-card.mapper';
+import { ProfileMapper } from './mappers/profile.mapper';
+import { ThumbnailMapper } from './mappers/thumbnail.mapper';
 
 @Module({
   imports: [TicketModule],
-  controllers: [KakaoChatbotTicketController],
+  controllers: [KakaoChatbotTicketController, KakaoChatbotPaymentController],
   providers: [
     KaKaoChatbotResponseMapper,
     ListCardMapper,

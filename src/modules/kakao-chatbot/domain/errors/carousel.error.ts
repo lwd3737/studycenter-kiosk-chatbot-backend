@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { DomainError } from 'src/core';
-import { CarouselItem, CarouselTypeEnum } from '../carousel';
+import {
+  CarouselItem,
+  CarouselTypeEnum,
+} from '../carousel/carousel.value-object';
 
 export type CarouselError = CarouselErrors.TypeAndItemsMismatchedError;
 

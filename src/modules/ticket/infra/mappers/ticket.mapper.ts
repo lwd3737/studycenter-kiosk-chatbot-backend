@@ -1,5 +1,5 @@
 import { IMapper } from 'src/core/adapter/mapper.interface';
-import { Ticket } from '../../domain';
+import { Ticket } from '../../domain/ticket.aggregate-root';
 
 export class TicketMapper implements IMapper<Ticket> {
   toDomain(raw: any): Ticket {

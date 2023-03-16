@@ -1,6 +1,6 @@
 import { IMapper } from 'src/core';
-import { ITicketDTO } from '../application';
-import { Ticket } from '../domain';
+import { ITicketDTO } from '../application/dtos/ticket.dto.interface';
+import { Ticket } from '../domain/ticket.aggregate-root';
 
 export const TicketMapperProvider = Symbol('ticket-mapper-token');
 

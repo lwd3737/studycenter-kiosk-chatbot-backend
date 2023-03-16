@@ -1,6 +1,6 @@
 import { ValueObject } from 'src/core/domain';
 import { err, ok, Result } from 'src/core';
-import { TicketCategoryError, TicketCategoryErrors } from './errors';
+import { TicketErrors } from './errors/ticket.error';
 
 export interface TicketCategoryProps {
   value: TicketCategoryEnum;
@@ -32,9 +32,11 @@ export class TicketCategory extends ValueObject<TicketCategoryProps> {
     super(props);
   }
 
-  static create(value: string): Result<TicketCategory, TicketCategoryError> {
+  static create(
+    value: string,
+  ): Result<TicketCategory, TicketErrors.CategoryInvalidTypeError> {
     if (this.isValidCategory(value) === false) {
-      return err(new TicketCategoryErrors.InvalidValueError(value));
+      return err(new TicketErrors.CategoryInvalidTypeError(value));
     }
 
     return ok(new TicketCategory({ value: value as TicketCategoryEnum }));

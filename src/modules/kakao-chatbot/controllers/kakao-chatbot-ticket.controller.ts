@@ -5,15 +5,16 @@ import {
   NotFoundException,
   Post,
 } from '@nestjs/common';
-import { err } from 'src/core';
-import { InitTicketUseCase, TicketNotFoundError } from 'src/modules/ticket';
-import { IKakaoChatbotRequestDTO, IKakaoChatbotResponseDTO } from '../dtos';
-import { TicketCategoryParamNotIncludedException } from '../exceptions';
-import { KaKaoChatbotResponseMapper, CarouselMapper } from '../infra/mappers';
-import {
-  GetTicketCommerceCardsCarouselUseCase,
-  GetTicketListCarouselUseCase,
-} from '../use-cases';
+import { InitTicketUseCase } from 'src/modules/ticket';
+import { GetAllTicketCollectionsErrors } from 'src/modules/ticket/application/errors/get-all-ticket-collection.error';
+import { GetTicketsByCategoryErrors } from 'src/modules/ticket/application/errors/get-ticket-collection-by-category.error';
+import { IKakaoChatbotRequestDTO } from '../dtos/kakao-chatbot-request.dto.interface';
+import { IKakaoChatbotResponseDTO } from '../dtos/kakao-chatbot-response.dto.interface';
+import { TicketCategoryParamNotIncludedException } from '../exceptions/ticket-category-param-not-included.exception';
+import { CarouselMapper } from '../infra/mappers/carousel.mapper';
+import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
+import { GetTicketCommerceCardsCarouselUseCase } from '../use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
+import { GetTicketListCarouselUseCase } from '../use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
 
 @Controller('kakao-chatbot/tickets')
 export class KakaoChatbotTicketController {
@@ -57,7 +58,7 @@ export class KakaoChatbotTicketController {
       console.debug(error);
 
       switch (error.constructor) {
-        case TicketNotFoundError:
+        case GetAllTicketCollectionsErrors.TicketNotFoundError:
           throw new NotFoundException(error.message);
         default:
           throw new InternalServerErrorException(error.message, {
@@ -106,7 +107,7 @@ export class KakaoChatbotTicketController {
       console.debug(error);
 
       switch (error.constructor) {
-        case TicketNotFoundError:
+        case GetTicketsByCategoryErrors.TicketNotFoundError:
           throw new NotFoundException(error.message);
         default:
           throw new InternalServerErrorException(error.message, {

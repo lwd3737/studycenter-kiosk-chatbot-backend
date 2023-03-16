@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { AppErrors } from 'src/core';
-import { TicketCategoryError } from 'src/modules/ticket';
-import { TicketCommerceCardsCarouselError } from '../../domain';
+import { TicketErrors } from 'src/modules/ticket';
+import { TicketCommerceCardsCarouselError } from '../../domain/errors/ticket-commerce-cards-carousel.error';
 
 export type GetTicketCommerceCardsCarouselError =
   | AppErrors.UnexpectedError
-  | TicketCategoryError
+  | TicketErrors.CategoryInvalidTypeError
   | TicketCommerceCardsCarouselError;
 
 export namespace GetTicketCommerceCardsCarouselErrors {}

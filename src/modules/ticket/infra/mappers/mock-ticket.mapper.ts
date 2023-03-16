@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { combine } from 'src/core';
-import { ITicketMapper } from '../../adpater';
-import { ITicketDTO } from '../../application';
-import { TicketCategory, Ticket, TicketTime } from '../../domain';
+import { combine, MapperError } from 'src/core';
+import { ITicketMapper } from '../../adpater/ticket.mapper.interface';
+import { ITicketDTO } from '../../application/dtos/ticket.dto.interface';
+import { TicketCategory } from '../../domain/ticket-category.value-object';
+import { TicketTime } from '../../domain/ticket-time.value-object';
+import { Ticket } from '../../domain/ticket.aggregate-root';
 import { MockTicket } from '../persistence';
 
 @Injectable()
@@ -27,7 +29,7 @@ export class MockTicketMapper implements ITicketMapper {
 
     const ticketPropsResult = combine(categoryResult, timeResult);
     if (ticketPropsResult.isErr()) {
-      throw ticketPropsResult.error;
+      throw new MapperError(ticketPropsResult.error.message);
     }
 
     const [category, time] = ticketPropsResult.value;

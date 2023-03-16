@@ -1,4 +1,4 @@
 import { ButtonError } from './button.error';
-import { ListItemError } from './list-item.error';
+import { ListCardError } from './list-card.error';
 
-export type TicketListCarouselError = ListItemError | ButtonError;
+export type TicketListCarouselError = ListCardError | ButtonError;

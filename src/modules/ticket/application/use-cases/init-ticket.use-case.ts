@@ -6,8 +6,8 @@ import {
   WithChanges,
 } from 'src/core/application';
 import { err, ok, Result } from 'src/core/result';
-import { Ticket } from '../../domain';
-import { TicketInitService } from '../../domain/services';
+import { TicketInitService } from '../../domain/services/ticket-init.service';
+import { Ticket } from '../../domain/ticket.aggregate-root';
 import {
   ITicketRepo,
   TicketRepoProvider,

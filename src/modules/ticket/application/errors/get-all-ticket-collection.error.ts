@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { AppError } from 'src/core';
-import { TicketError } from '../../domain';
-import { TicketNotFoundError } from './ticket-not-found.error';
+import { AppError, UseCaseError } from 'src/core';
+import { TicketError } from '../../domain/errors/ticket.error';
 
 export type GetAllTicketCollectionsError =
   | AppError
-  | TicketNotFoundError
+  | GetAllTicketCollectionsErrors.TicketNotFoundError
   | TicketError;
 
-export namespace GetAllTicketCollectionsErrors {}
+export namespace GetAllTicketCollectionsErrors {
+  export class TicketNotFoundError extends UseCaseError {
+    constructor() {
+      super(`Ticket not found`);
+    }
+  }
+}

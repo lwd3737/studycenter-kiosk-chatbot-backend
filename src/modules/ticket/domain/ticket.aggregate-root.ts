@@ -6,7 +6,7 @@ import {
   TicketCategory,
   TicketCategoryEnum,
 } from './ticket-category.value-object';
-import { TicketError, TicketErrors } from './errors';
+import { TicketError, TicketErrors } from './errors/ticket.error';
 
 export interface TicketProps {
   title: string;

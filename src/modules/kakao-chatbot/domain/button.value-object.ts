@@ -1,6 +1,5 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { ButtonError, ButtonErrors } from './errors';
-
+import { ButtonError, ButtonErrors } from './errors/button.error';
 export interface ButtonProps {
   label: string;
   action: ButtonActionEnum;

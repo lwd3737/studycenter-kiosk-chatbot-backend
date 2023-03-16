@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { CommerceCard, ListCard } from '../../domain';
 import {
   Carousel,
   CarouselItem,
   CarouselTypeEnum,
-} from '../../domain/carousel';
-import { ICarouselDTO, ICarouselItemDTO } from '../../dtos';
+} from '../../domain/carousel/carousel.value-object';
+import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
+import { ListCard } from '../../domain/list-card/list-card.value-object';
+import {
+  ICarouselDTO,
+  ICarouselItemDTO,
+} from '../../dtos/kakao-chatbot-ticket.dto.interface';
+
 import { CommerceCardMapper } from './commerce-card.mapper';
 import { ListCardMapper } from './list-card.mapper';
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { GetTicketsByCategoryUseCase } from 'src/modules/ticket';
-import { Carousel } from '../../domain';
+import { Carousel } from '../../domain/carousel/carousel.value-object';
 import { TicketCommerceCardsCarousel } from '../../domain/ticket-commerce-cards-carousel.value-object';
 import { GetTicketCommerceCardsCarouselError } from './get-ticket-cmmerce-cards-carousel.error';
 

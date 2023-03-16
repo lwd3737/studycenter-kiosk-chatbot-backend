@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, IUseCase } from 'src/core/application';
 import { err, ok, Result } from 'src/core/result';
 import { TicketCollectionService } from '../../domain/services/ticket-collection.service';
 import { Ticket } from '../../domain/ticket.aggregate-root';
+import {
+  ITicketRepo,
+  TicketRepoProvider,
+} from '../../domain/ticket.repo.interface';
+import {
+  GetAllTicketCollectionsError,
+  GetAllTicketCollectionsErrors,
+} from '../errors/get-all-ticket-collection.error';
 
-import { GetAllTicketCollectionsError } from '../errors';
-
-type GetAllTicketCollectionsResult = Result<
-  Ticket[][],
-  GetAllTicketCollectionsError
->;
+type UseCaseResult = Result<Ticket[][], GetAllTicketCollectionsError>;
 
 @Injectable()
 export class GetAllTicketCollectionsUseCase
-  implements IUseCase<never, GetAllTicketCollectionsResult>
+  implements IUseCase<never, UseCaseResult>
 {
-  constructor(private ticketCollectionService: TicketCollectionService) {}
+  constructor(
+    @Inject(TicketRepoProvider) private ticketRepo: ITicketRepo,
+    private ticketCollectionService: TicketCollectionService,
+  ) {}
 
   async execute() {
     try {
+      const allTickets = await this.ticketRepo.getAllTickets();
+      if (allTickets.length === 0) {
+        return err(new GetAllTicketCollectionsErrors.TicketNotFoundError());
+      }
+
       const ticketCollectionsResult =
-        await this.ticketCollectionService.groupIntoCollectionsByCategory();
+        await this.ticketCollectionService.groupIntoCollectionsByCategory(
+          allTickets,
+        );
       if (ticketCollectionsResult.isErr()) {
         return err(ticketCollectionsResult.error);
       }

@@ -3,7 +3,7 @@ import {
   IContextControlDTO,
   IKakaoChatbotResponseDTO,
   ISkillOutputDTO,
-} from '../../dtos';
+} from '../../dtos/kakao-chatbot-response.dto.interface';
 
 @Injectable()
 export class KaKaoChatbotResponseMapper {

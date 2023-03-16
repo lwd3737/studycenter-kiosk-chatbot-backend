@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { ListCard, ListHeader, ListItem } from '../../domain';
-import { IListCardDTO, IListItemDTO } from '../../dtos';
+import { ListCard } from '../../domain/list-card/list-card.value-object';
+import { ListHeader } from '../../domain/list-card/list-header.value-object';
+import { ListItem } from '../../domain/list-card/list-item.value-object';
+import {
+  IListCardDTO,
+  IListItemDTO,
+} from '../../dtos/kakao-chatbot-ticket.dto.interface';
 import { ButtonMapper } from './button.mapper';
 
 @Injectable()

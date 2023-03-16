@@ -1,5 +1,5 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { ListItemError, ListItemErrors } from '../errors';
+import { ListCardErrors } from '../errors/list-card.error';
 
 export interface ListItemProps {
   title: string;
@@ -50,7 +50,9 @@ export class ListItem extends ValueObject<ListItemProps> {
     super(props);
   }
 
-  public static create(props: ListItemProps): Result<ListItem, ListItemError> {
+  public static create(
+    props: ListItemProps,
+  ): Result<ListItem, ListCardErrors.PropsMismatchingActionIncludedError> {
     const validationResult = this.validate(props);
 
     if (validationResult.isErr()) {
@@ -60,9 +62,11 @@ export class ListItem extends ValueObject<ListItemProps> {
     return ok(new ListItem(props));
   }
 
-  protected static validate(props: ListItemProps): Result<null, ListItemError> {
+  protected static validate(
+    props: ListItemProps,
+  ): Result<null, ListCardErrors.PropsMismatchingActionIncludedError> {
     if (this.isInvalidActionDataIncluded(props)) {
-      return err(new ListItemErrors.PropsMismatchingActionIncludedError(props));
+      return err(new ListCardErrors.PropsMismatchingActionIncludedError(props));
     }
 
     return ok(null);

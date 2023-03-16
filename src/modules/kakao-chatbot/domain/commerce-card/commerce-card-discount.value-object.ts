@@ -1,8 +1,5 @@
-import { err, ok, Result, Validation, ValueObject } from 'src/core';
-import {
-  CommerceCardDiscountError,
-  CommerceCardDiscountErrors,
-} from '../errors';
+import { err, ok, Result, ValueObject } from 'src/core';
+import { CommerceCardErrors } from '../errors/commerce-card.error';
 
 export interface CommerceCardDiscountProps {
   priceToDiscount?: number;
@@ -11,8 +8,6 @@ export interface CommerceCardDiscountProps {
 }
 
 export class CommerceCardDiscount extends ValueObject<CommerceCardDiscountProps> {
-  protected validation: Validation;
-
   get priceToDiscount(): number | undefined {
     return this.props.priceToDiscount;
   }
@@ -27,7 +22,10 @@ export class CommerceCardDiscount extends ValueObject<CommerceCardDiscountProps>
 
   public static create(
     props: CommerceCardDiscountProps,
-  ): Result<CommerceCardDiscount, CommerceCardDiscountError> {
+  ): Result<
+    CommerceCardDiscount,
+    CommerceCardErrors.DiscountedPriceNotIncludedWhenRateIsIncludedError
+  > {
     const validationResult = this.validate(props);
     if (validationResult.isErr()) {
       return err(validationResult.error);
@@ -38,7 +36,10 @@ export class CommerceCardDiscount extends ValueObject<CommerceCardDiscountProps>
 
   protected static validate(
     props: CommerceCardDiscountProps,
-  ): Result<null, CommerceCardDiscountError> {
+  ): Result<
+    null,
+    CommerceCardErrors.DiscountedPriceNotIncludedWhenRateIsIncludedError
+  > {
     if (
       !this.isDiscountedPriceIncludedWhenRateIsIncluded(
         props.rate,
@@ -46,7 +47,7 @@ export class CommerceCardDiscount extends ValueObject<CommerceCardDiscountProps>
       )
     ) {
       return err(
-        new CommerceCardDiscountErrors.DiscountedPriceNotIncludedWhenRateIsIncludedError(),
+        new CommerceCardErrors.DiscountedPriceNotIncludedWhenRateIsIncludedError(),
       );
     }
 

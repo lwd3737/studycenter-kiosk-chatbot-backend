@@ -1,7 +1,7 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { CommerceCard } from '../commerce-card';
-import { CarouselError, CarouselErrors } from '../errors';
-import { ListCard } from '../list-card';
+import { CommerceCard } from '../commerce-card/commerce-card.value-object';
+import { CarouselError, CarouselErrors } from '../errors/carousel.error';
+import { ListCard } from '../list-card/list-card.value-object';
 import { CarouselHeader } from './carousel-header.value-object';
 
 // TODO: OCP 원칙 위배. 추상 Facory 패턴으로 수정 및 추가에도 수정에 열려있게 구현할 것

@@ -1,18 +1,18 @@
 import { combine, DomainError, err, ok, Result, ValueObject } from 'src/core';
-import { Ticket, TicketCategoryEnum } from 'src/modules/ticket';
+import { TicketCategoryEnum } from 'src/modules/ticket/domain/ticket-category.value-object';
+import { Ticket } from 'src/modules/ticket/domain/ticket.aggregate-root';
 import { Button, ButtonActionEnum } from './button.value-object';
 import {
   Carousel,
   CarouselTypeEnum,
   CommerceCardCarouselProps,
-} from './carousel';
-import { CommerceCard } from './commerce-card';
-import {
-  ButtonError,
-  CommerceCardError,
-  ThumbnailError,
-  TicketCommerceCardsCarouselError,
-} from './errors';
+} from './carousel/carousel.value-object';
+import { CommerceCard } from './commerce-card/commerce-card.value-object';
+import { ButtonError } from './errors/button.error';
+import { CommerceCardError } from './errors/commerce-card.error';
+import { ThumbnailError } from './errors/thumbnail.error';
+import { TicketCommerceCardsCarouselError } from './errors/ticket-commerce-cards-carousel.error';
+
 import { Profile } from './profile.value-object';
 import { Thumbnail } from './thumbnail.value-object';
 
@@ -44,9 +44,9 @@ export class TicketCommerceCardsCarousel extends ValueObject<CommerceCardCarouse
     ticket: Ticket,
   ): Result<CommerceCard, CommerceCardError | ButtonError> {
     const buyButtonResult = Button.create({
-      label: '구매하기',
+      label: '좌석 선택',
       action: ButtonActionEnum.MESSAGE,
-      messageText: `${ticket.title} 구매하기`,
+      messageText: `좌석 선택`,
     });
     const thumbnailResult = this.createTicketThumbnail(ticket.category.value);
 

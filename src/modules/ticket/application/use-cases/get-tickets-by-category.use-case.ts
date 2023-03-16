@@ -1,25 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import {
-  ITicketRepo,
-  Ticket,
   TicketCategory,
   TicketCategoryEnum,
+} from '../../domain/ticket-category.value-object';
+import { Ticket } from '../../domain/ticket.aggregate-root';
+import {
+  ITicketRepo,
   TicketRepoProvider,
-} from '../../domain';
-import { GetAllTicketCollectionsError } from '../errors';
+} from '../../domain/ticket.repo.interface';
+import { GetAllTicketCollectionsError } from '../errors/get-all-ticket-collection.error';
+import {
+  GetTicketsByCategoryError,
+  GetTicketsByCategoryErrors,
+} from '../errors/get-ticket-collection-by-category.error';
 
-type GetTicketsByCategoryInput = {
+type UseCaseInput = {
   category: string;
 };
 
-type GetTicketsByCategoryResult = Promise<
-  Result<Ticket[], GetAllTicketCollectionsError>
->;
+type UseCaseResult = Promise<Result<Ticket[], GetTicketsByCategoryError>>;
 
 @Injectable()
 export class GetTicketsByCategoryUseCase
-  implements IUseCase<GetTicketsByCategoryInput, GetTicketsByCategoryResult>
+  implements IUseCase<UseCaseInput, UseCaseResult>
 {
   private static TICKET_CATEGORIES_MAP: {
     [category: string]: TicketCategoryEnum;
@@ -31,7 +35,7 @@ export class GetTicketsByCategoryUseCase
 
   constructor(@Inject(TicketRepoProvider) private ticketRepo: ITicketRepo) {}
 
-  async execute(input: GetTicketsByCategoryInput) {
+  async execute(input: UseCaseInput) {
     const category =
       GetTicketsByCategoryUseCase.TICKET_CATEGORIES_MAP[input.category];
 
@@ -44,6 +48,9 @@ export class GetTicketsByCategoryUseCase
       const tickets = await this.ticketRepo.getTicketsByCategory(
         categoryResult.value,
       );
+      if (tickets.length === 0) {
+        return err(new GetTicketsByCategoryErrors.TicketNotFoundError());
+      }
 
       return ok(tickets);
     } catch (error) {

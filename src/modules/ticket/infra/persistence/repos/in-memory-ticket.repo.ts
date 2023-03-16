@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TicketNotFoundError } from 'src/modules/ticket/application';
-import { TicketCategory } from 'src/modules/ticket/domain';
+import { TicketCategory } from 'src/modules/ticket/domain/ticket-category.value-object';
 import {
   ITicketMapper,
   TicketMapperProvider,
@@ -27,25 +26,15 @@ export class InMemoryTicketRepo implements ITicketRepo {
   ) {}
 
   async getAllTickets(): Promise<Ticket[]> {
-    const count = this.storage.length;
-    if (count === 0) {
-      throw new TicketNotFoundError();
-    }
-
-    const rawTickets = this.storage;
-
-    return rawTickets.map((ticket) => this.ticketMapper.toDomain(ticket));
+    return this.storage.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
   async getTicketsByCategory(category: TicketCategory): Promise<Ticket[]> {
-    const ticketsFound = this.storage.filter(
+    const filteredTickets = this.storage.filter(
       (ticket) => ticket.category === category.value,
     );
-    if (ticketsFound.length === 0) {
-      throw new TicketNotFoundError();
-    }
 
-    return ticketsFound.map((ticket) => this.ticketMapper.toDomain(ticket));
+    return filteredTickets.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
   async bulkCreate(tickets: Ticket[]): Promise<void> {

@@ -1,6 +1,6 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button.value-object';
-import { ListCardError, ListCardErrors } from '../errors';
+import { ListCardError, ListCardErrors } from '../errors/list-card.error';
 import { ListHeader } from './list-header.value-object';
 import { ListItem } from './list-item.value-object';
 
@@ -40,7 +40,7 @@ export class ListCard extends ValueObject<ListCardProps> {
 
   protected static validate(props: ListCardProps): Result<null, ListCardError> {
     if (this.isButtonMaxCountExceeded(props.buttons)) {
-      return err(new ListCardErrors.ButtonMaxCountExeededError());
+      return err(new ListCardErrors.ButtonMaxNumberExeededError());
     }
 
     return ok(null);

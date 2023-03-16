@@ -1,6 +1,9 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button.value-object';
-import { CommerceCardError, CommerceCardErrors } from '../errors';
+import {
+  CommerceCardError,
+  CommerceCardErrors,
+} from '../errors/commerce-card.error';
 import { Profile } from '../profile.value-object';
 import { Thumbnail } from '../thumbnail.value-object';
 import { CommerceCardDiscount } from './commerce-card-discount.value-object';

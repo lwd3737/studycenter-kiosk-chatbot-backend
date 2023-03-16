@@ -1,5 +1,5 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { ThumbnailError, ThumbnailErrors } from './errors';
+import { ThumbnailError, ThumbnailErrors } from './errors/thumbnail.error';
 
 export interface ThumbnailProps {
   imageUrl: string;

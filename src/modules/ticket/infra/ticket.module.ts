@@ -6,9 +6,10 @@ import { TicketRepoProvider } from '../domain/ticket.repo.interface';
 
 import { MockTicketMapper } from './mappers/mock-ticket.mapper';
 import { InMemoryTicketRepo } from './persistence/repos/in-memory-ticket.repo';
-import { TicketInitService } from '../domain/services';
-import { GetTicketsByCategoryUseCase } from '../application';
+
 import { TicketCollectionService } from '../domain/services/ticket-collection.service';
+import { TicketInitService } from '../domain/services/ticket-init.service';
+import { GetTicketsByCategoryUseCase } from '../application/use-cases/get-tickets-by-category.use-case';
 
 const ticketMapperProvider = {
   provide: TicketMapperProvider,

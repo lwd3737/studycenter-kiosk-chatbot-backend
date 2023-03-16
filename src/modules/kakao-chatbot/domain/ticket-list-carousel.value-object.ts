@@ -1,9 +1,16 @@
 import { combine, err, ok, Result, ValueObject } from 'src/core';
-import { Ticket } from 'src/modules/ticket';
+import { Ticket } from 'src/modules/ticket/domain/ticket.aggregate-root';
 import { Button, ButtonActionEnum } from './button.value-object';
-import { Carousel, CarouselTypeEnum, ListCardCarouselProps } from './carousel';
-import { ListItemError, TicketListCarouselError } from './errors';
-import { ListCard, ListHeader, ListItem } from './list-card';
+import {
+  Carousel,
+  CarouselTypeEnum,
+  ListCardCarouselProps,
+} from './carousel/carousel.value-object';
+import { ListCardError } from './errors/list-card.error';
+import { TicketListCarouselError } from './errors/ticket-list-carousel.error';
+import { ListCard } from './list-card/list-card.value-object';
+import { ListHeader } from './list-card/list-header.value-object';
+import { ListItem } from './list-card/list-item.value-object';
 
 export interface TicketListCarouselProps {
   ticketCollections: Ticket[][];
@@ -38,7 +45,7 @@ export class TicketListCarousel extends ValueObject<ListCardCarouselProps> {
 
   private static createTicketListCard(
     ticketCollection: Ticket[],
-  ): Result<ListCard, ListItemError> {
+  ): Result<ListCard, ListCardError> {
     const { category } = ticketCollection[0];
 
     const headerResult = ListHeader.create({ title: category.label });

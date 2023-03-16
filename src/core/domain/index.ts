@@ -3,4 +3,3 @@ export * from './entity';
 export * from './entity-id';
 export * from './value-object';
 export * from './domain-error';
-export * from './with-validation';

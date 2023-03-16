@@ -1,6 +1,6 @@
 import { ValueObject } from 'src/core/domain';
 import { err, ok, Result } from 'src/core';
-import { TicketDiscountError, TicketDiscountErrors } from './errors';
+import { TicketErrors } from './errors/ticket.error';
 
 export interface TicketDiscountProps {
   type: string;
@@ -14,9 +14,9 @@ export class TicketDiscount extends ValueObject<TicketDiscountProps> {
 
   public static create(
     props: TicketDiscountProps,
-  ): Result<TicketDiscount, TicketDiscountError> {
+  ): Result<TicketDiscount, TicketErrors.DiscountPriceInvalidError> {
     if (this.isInvalidPrice(props.price)) {
-      return err(new TicketDiscountErrors.PriceInvalidError(props.price));
+      return err(new TicketErrors.DiscountPriceInvalidError(props.price));
     }
 
     return ok(new TicketDiscount(props));
