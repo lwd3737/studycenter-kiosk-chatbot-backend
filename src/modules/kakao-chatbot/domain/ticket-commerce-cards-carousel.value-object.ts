@@ -44,9 +44,9 @@ export class TicketCommerceCardsCarousel extends ValueObject<CommerceCardCarouse
     ticket: Ticket,
   ): Result<CommerceCard, CommerceCardError | ButtonError> {
     const buyButtonResult = Button.create({
-      label: '좌석 선택',
+      label: '이용권 구매하기',
       action: ButtonActionEnum.MESSAGE,
-      messageText: `좌석 선택`,
+      messageText: `${ticket.category.label} ${ticket.title} 구매하기`,
     });
     const thumbnailResult = this.createTicketThumbnail(ticket.category.value);
 
@@ -85,12 +85,13 @@ export class TicketCommerceCardsCarousel extends ValueObject<CommerceCardCarouse
   private static createTicketThumbnail(
     category: TicketCategoryEnum,
   ): Result<Thumbnail, ThumbnailError> {
-    // TODO: config module에서 validation
+    // TODO: config 모듈에서 validation
     const host = process.env.HOST;
     if (!host) {
       throw new DomainError('HOST config not defined');
     }
 
+    // TODO: 파일 경로들도 config 모듈에서 설정
     const path = host + '/files/images';
     let imageUrl: string;
 

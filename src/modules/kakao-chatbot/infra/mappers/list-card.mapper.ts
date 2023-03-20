@@ -4,8 +4,8 @@ import { ListCard } from '../../domain/list-card/list-card.value-object';
 import { ListHeader } from '../../domain/list-card/list-header.value-object';
 import { ListItem } from '../../domain/list-card/list-item.value-object';
 import {
-  IListCardDTO,
-  IListItemDTO,
+  ListCardDTO,
+  ListItemDTO,
 } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 import { ButtonMapper } from './button.mapper';
 
@@ -13,7 +13,7 @@ import { ButtonMapper } from './button.mapper';
 export class ListCardMapper implements IMapper<ListCard> {
   constructor(private buttonMapper: ButtonMapper) {}
 
-  toDTO(listCard: ListCard): IListCardDTO {
+  toDTO(listCard: ListCard): ListCardDTO {
     const { header, items, buttons } = listCard;
 
     return {
@@ -23,7 +23,7 @@ export class ListCardMapper implements IMapper<ListCard> {
     };
   }
 
-  toHeaderDTO(listHeader: ListHeader): IListItemDTO {
+  toHeaderDTO(listHeader: ListHeader): ListItemDTO {
     const { title, imageUrl, action, blockId, messageText, extra } = listHeader;
 
     return {
@@ -36,7 +36,7 @@ export class ListCardMapper implements IMapper<ListCard> {
     };
   }
 
-  toItemDTO(listItem: ListItem): IListItemDTO {
+  toItemDTO(listItem: ListItem): ListItemDTO {
     const {
       title,
       description,

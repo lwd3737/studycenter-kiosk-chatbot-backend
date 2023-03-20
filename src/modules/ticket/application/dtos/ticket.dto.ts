@@ -1,17 +1,17 @@
-export interface ITicketDTO {
+export class TicketDTO {
   id: string;
   category: 'PERIOD' | 'HOURS_RECHARGE' | 'SAME_DAY';
-  time: ITicketTimeDTO;
+  time: TicketTimeDTO;
   price: number;
-  discount?: ITicketDiscount;
+  discount?: TicketDiscount;
 }
 
-export interface ITicketTimeDTO {
+export class TicketTimeDTO {
   unit: string;
   value: number;
 }
 
-export interface ITicketDiscount {
+export class TicketDiscount {
   type: string;
   price: number;
 }

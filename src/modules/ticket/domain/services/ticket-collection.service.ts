@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { err, ok, Result } from 'src/core';
+import { ok, Result } from 'src/core';
 import { GetAllTicketCollectionsErrors } from '../../application/errors/get-all-ticket-collection.error';
 import { TicketCategoryEnum } from '../ticket-category.value-object';
 import { Ticket } from '../ticket.aggregate-root';

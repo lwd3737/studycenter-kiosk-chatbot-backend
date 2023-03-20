@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
-import { ICommerceCardDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
+import { CommerceCardDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 import { ButtonMapper } from './button.mapper';
 import { ProfileMapper } from './profile.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
@@ -14,7 +14,7 @@ export class CommerceCardMapper implements IMapper<CommerceCard> {
     private buttonMapper: ButtonMapper,
   ) {}
 
-  toDTO(commerceCard: CommerceCard): ICommerceCardDTO {
+  toDTO(commerceCard: CommerceCard): CommerceCardDTO {
     const {
       description,
       price,

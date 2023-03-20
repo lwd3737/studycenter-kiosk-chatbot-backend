@@ -1,44 +1,44 @@
-export interface ISimpleTextDTO {
+export interface SimpleTextDTO {
   text: string;
 }
 
-export interface ISimpleImageDTO {
+export interface SimpleImageDTO {
   imageUrl: string;
   altText: string;
 }
 
-export interface IBasicCardDTO {
+export interface BasicCardDTO {
   title?: string;
   description?: string;
-  thumbnail: IThumbnailDTO;
+  thumbnail: ThumbnailDTO;
   //profile?: IProfileDTO;
   //social?: ISocialDTO;
-  buttons?: IButtonDTO[];
+  buttons?: ButtonDTO[];
 }
 
-export interface ICommerceCardDTO {
+export interface CommerceCardDTO {
   description: string;
   price: number;
   currency: string;
   discount?: number;
   discountRate?: number;
   discountedPrice?: number;
-  thumbnails: IThumbnailDTO[];
-  profile?: IProfileDTO;
-  buttons: IButtonDTO[];
+  thumbnails: ThumbnailDTO[];
+  profile?: ProfileDTO;
+  buttons: ButtonDTO[];
 }
 
-export interface IListCardDTO {
-  header: IListItemDTO;
-  items: IListItemDTO[];
-  buttons?: IButtonDTO[];
+export interface ListCardDTO {
+  header: ListItemDTO;
+  items: ListItemDTO[];
+  buttons?: ButtonDTO[];
 }
 
-export interface IListItemDTO {
+export interface ListItemDTO {
   title: string;
   description?: string;
   imageUrl?: string;
-  link?: ILinkDTO;
+  link?: LinkDTO;
   action?: 'block' | 'message';
   // action이 block일 때만 사용 가능
   blockId?: string;
@@ -48,68 +48,68 @@ export interface IListItemDTO {
   extra?: Record<string, any>;
 }
 
-export interface IItemCardDTO {
-  thumbnail?: IThumbnailDTO;
+export interface ItemCardDTO {
+  thumbnail?: ThumbnailDTO;
   // head와 profile 동시에 사용 x
   // 케로셀형에서 head와 profile 섞어서 사용 x
-  head?: IItemCardHead;
-  profile?: IItemCardProfileDTO;
-  imageTitle?: IItemCardImageTitleDTO;
-  itemList: IItemCardItemListDTO[];
+  head?: ItemCardHead;
+  profile?: ItemCardProfileDTO;
+  imageTitle?: ItemCardImageTitleDTO;
+  itemList: ItemCardItemListDTO[];
   itemListAlignment?: 'left' | 'right';
-  itemListSummary?: IItemCardItemListSummaryDTO;
+  itemListSummary?: ItemCardItemListSummaryDTO;
   title?: string;
   description?: string;
-  buttons?: IButtonDTO[];
+  buttons?: ButtonDTO[];
   buttonLayout?: 'vertical' | 'horizontal';
 }
 
-export type ICarouselDTO = {
+export type CarouselDTO = {
   type: 'basicCard' | 'commerceCard' | 'listCard' | 'itemCard';
-  items: ICarouselItemDTO[];
-  header?: ICarouselHeaderDTO;
+  items: CarouselItemDTO[];
+  header?: CarouselHeaderDTO;
 };
 
-export type ICarouselItemDTO =
-  | IBasicCardDTO
-  | ICommerceCardDTO
-  | IListCardDTO
-  | IItemCardDTO;
+export type CarouselItemDTO =
+  | BasicCardDTO
+  | CommerceCardDTO
+  | ListCardDTO
+  | ItemCardDTO;
 
-export interface ICarouselHeaderDTO {
+export interface CarouselHeaderDTO {
   title: string;
   description: string;
-  thumbnail: IThumbnailDTO;
+  thumbnail: ThumbnailDTO;
 }
 
-export interface IThumbnailDTO {
+export interface ThumbnailDTO {
   imageUrl: string;
   fixedRatio?: boolean;
   width?: number;
   height?: number;
 }
 
-export interface IItemCardHead {
+export interface ItemCardHead {
   title: string;
 }
 
-export interface IItemCardImageTitleDTO {
+export interface ItemCardImageTitleDTO {
   title: string;
   description?: string;
   imageUrl?: string;
 }
 
-export interface IItemCardItemListDTO {
+export interface ItemCardItemListDTO {
   title: string;
   description: string;
 }
 
-export interface IItemCardItemListSummaryDTO {
+export interface ItemCardItemListSummaryDTO {
   title: string;
   description: string;
 }
 
-export interface IButtonDTO {
+export interface ButtonDTO {
   label: string;
   action: 'webLink' | 'message' | 'block' | 'phone' | 'share' | 'operator';
   webLinkUrl?: string;
@@ -119,7 +119,7 @@ export interface IButtonDTO {
   extra?: Record<string, any>;
 }
 
-export interface IItemCardProfileDTO {
+export interface ItemCardProfileDTO {
   imageUrl?: string;
   // width와 height 1:1 비율
   width?: number;
@@ -128,18 +128,18 @@ export interface IItemCardProfileDTO {
   title: string;
 }
 
-export interface ILinkDTO {
+export interface LinkDTO {
   pc?: string;
   mobile?: string;
   web?: string;
 }
 
-export interface IProfileDTO {
+export interface ProfileDTO {
   nickname: string;
   imageUrl?: string;
 }
 
-export interface ISkillQuickReply {
+export interface SkillQuickReply {
   label: string;
   action: 'message' | 'block';
   messageText?: string;

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { GetTicketsByCategoryUseCase } from 'src/modules/ticket';
+import { TicketCategoryEnum } from 'src/modules/ticket/domain/ticket-category.value-object';
 import { Carousel } from '../../domain/carousel/carousel.value-object';
 import { TicketCommerceCardsCarousel } from '../../domain/ticket-commerce-cards-carousel.value-object';
 import { GetTicketCommerceCardsCarouselError } from './get-ticket-cmmerce-cards-carousel.error';
 
 type UseCaseInput = {
-  category: 'period_ticket' | 'hours_recharge_ticket' | 'same_day_ticket';
+  category: TicketCategoryEnum;
 };
 
 type UseCaseResult = Promise<

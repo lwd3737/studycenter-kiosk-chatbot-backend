@@ -8,11 +8,11 @@ import {
 import { InitTicketUseCase } from 'src/modules/ticket';
 import { GetAllTicketCollectionsErrors } from 'src/modules/ticket/application/errors/get-all-ticket-collection.error';
 import { GetTicketsByCategoryErrors } from 'src/modules/ticket/application/errors/get-ticket-collection-by-category.error';
-import { IKakaoChatbotRequestDTO } from '../dtos/kakao-chatbot-request.dto.interface';
-import { IKakaoChatbotResponseDTO } from '../dtos/kakao-chatbot-response.dto.interface';
-import { TicketCategoryParamNotIncludedException } from '../exceptions/ticket-category-param-not-included.exception';
+import { TicketCategoryEnum } from 'src/modules/ticket/domain/ticket-category.value-object';
+import { KakaoChatbotResponseDTO } from '../dtos/kakao-chatbot-response.dto.interface';
 import { CarouselMapper } from '../infra/mappers/carousel.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
+import { ParseTicketCategoryParamPipe } from '../pipes/parse-ticket-category-param.pipe';
 import { GetTicketCommerceCardsCarouselUseCase } from '../use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
 import { GetTicketListCarouselUseCase } from '../use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
 
@@ -27,7 +27,7 @@ export class KakaoChatbotTicketController {
   ) {}
 
   @Post('init')
-  async init(): Promise<IKakaoChatbotResponseDTO> {
+  async init(): Promise<KakaoChatbotResponseDTO> {
     const initResult = await this.initTicketUseCase.execute();
     if (initResult.isErr()) {
       const error = initResult.error;
@@ -48,8 +48,8 @@ export class KakaoChatbotTicketController {
     });
   }
 
-  @Post('collections')
-  async getAllTicketCollections(): Promise<IKakaoChatbotResponseDTO> {
+  @Post('all-collections')
+  async getAllTicketCollections(): Promise<KakaoChatbotResponseDTO> {
     const ticketListCarouselResult =
       await this.getTicketListCarouselUseCase.execute();
     if (ticketListCarouselResult.isErr()) {
@@ -78,29 +78,13 @@ export class KakaoChatbotTicketController {
 
   @Post('by-category')
   async getTicketsByCategory(
-    @Body() request: IKakaoChatbotRequestDTO,
-  ): Promise<IKakaoChatbotResponseDTO> {
-    // TODO: pipe로 request input validation -> transform
-    const { params } = request.action;
-    const param = Object.keys(params)[0];
-
-    const TICKET_CATEGORIES = [
-      'period_ticket',
-      'hours_recharge_ticket',
-      'same_day_ticket',
-    ] as const;
-
-    const indexFound = TICKET_CATEGORIES.findIndex(
-      (category) => category === param,
-    );
-    if (indexFound < 0) {
-      throw new TicketCategoryParamNotIncludedException();
-    }
-
-    const category = TICKET_CATEGORIES[indexFound];
-
+    @Body(ParseTicketCategoryParamPipe) ticketCategory: TicketCategoryEnum,
+  ): Promise<KakaoChatbotResponseDTO> {
     const ticketCommerceCardsCarouselResult =
-      await this.getTicketCommerceCardsCarouselUseCase.execute({ category });
+      await this.getTicketCommerceCardsCarouselUseCase.execute({
+        category: ticketCategory,
+      });
+
     if (ticketCommerceCardsCarouselResult.isErr()) {
       const error = ticketCommerceCardsCarouselResult.error;
 
@@ -126,4 +110,7 @@ export class KakaoChatbotTicketController {
       ],
     });
   }
+
+  // @Post('select')
+  // async selectTicket() {}
 }

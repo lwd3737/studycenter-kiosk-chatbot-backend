@@ -8,8 +8,8 @@ import {
 import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
 import { ListCard } from '../../domain/list-card/list-card.value-object';
 import {
-  ICarouselDTO,
-  ICarouselItemDTO,
+  CarouselDTO,
+  CarouselItemDTO,
 } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 
 import { CommerceCardMapper } from './commerce-card.mapper';
@@ -22,7 +22,7 @@ export class CarouselMapper implements IMapper<Carousel> {
     private commerceMapper: CommerceCardMapper,
   ) {}
 
-  toDTO(carousel: Carousel): ICarouselDTO {
+  toDTO(carousel: Carousel): CarouselDTO {
     const { type, items } = carousel;
 
     return {
@@ -31,7 +31,7 @@ export class CarouselMapper implements IMapper<Carousel> {
     };
   }
 
-  toItemDTO(type: CarouselTypeEnum, item: CarouselItem): ICarouselItemDTO {
+  toItemDTO(type: CarouselTypeEnum, item: CarouselItem): CarouselItemDTO {
     switch (type) {
       case CarouselTypeEnum.LIST_CARD:
         return this.listCardMapper.toDTO(item as ListCard);

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { Button } from '../../domain/button.value-object';
-import { IButtonDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
+import { ButtonDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 
 @Injectable()
 export class ButtonMapper implements IMapper<Button> {
-  toDTO(button: Button): IButtonDTO {
+  toDTO(button: Button): ButtonDTO {
     const {
       label,
       action,

@@ -1,38 +1,38 @@
 import {
-  IBasicCardDTO,
-  ICarouselDTO,
-  ICommerceCardDTO,
-  IListCardDTO,
-  ISimpleImageDTO,
-  ISimpleTextDTO,
-  ISkillQuickReply,
+  BasicCardDTO,
+  CarouselDTO,
+  CommerceCardDTO,
+  ListCardDTO,
+  SimpleImageDTO,
+  SimpleTextDTO,
+  SkillQuickReply,
 } from './kakao-chatbot-ticket.dto.interface';
 
-export interface IKakaoChatbotResponseDTO {
+export interface KakaoChatbotResponseDTO {
   version: '2.0';
-  template: ITemplateDTO;
-  context?: IContextControlDTO;
+  template: TemplateDTO;
+  context?: ContextControlDTO;
   data?: Record<string, any>;
 }
 
-export interface ITemplateDTO {
-  outputs: ISkillOutputDTO[];
-  quickReplies?: ISkillQuickReply[];
+export interface TemplateDTO {
+  outputs: SkillOutputDTO[];
+  quickReplies?: SkillQuickReply[];
 }
 
-export type ISkillOutputDTO =
-  | { simpleText: ISimpleTextDTO }
-  | { simpleImage: ISimpleImageDTO }
-  | { basicCard: IBasicCardDTO }
-  | { commerceCard: ICommerceCardDTO }
-  | { listCard: IListCardDTO }
-  | { carousel: ICarouselDTO };
+export type SkillOutputDTO =
+  | { simpleText: SimpleTextDTO }
+  | { simpleImage: SimpleImageDTO }
+  | { basicCard: BasicCardDTO }
+  | { commerceCard: CommerceCardDTO }
+  | { listCard: ListCardDTO }
+  | { carousel: CarouselDTO };
 
-export interface IContextControlDTO {
-  values: IContextValueDTO[];
+export interface ContextControlDTO {
+  values: ContextValueDTO[];
 }
 
-export interface IContextValueDTO {
+export interface ContextValueDTO {
   name: string;
   lifeSpan: number;
   params?: Record<string, string>;
