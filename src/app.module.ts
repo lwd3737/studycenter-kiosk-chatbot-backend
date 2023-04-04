@@ -15,6 +15,7 @@ import { KakaoChatbotModule } from './modules/kakao-chatbot';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+
     KakaoChatbotModule,
   ],
   controllers: [AppController],

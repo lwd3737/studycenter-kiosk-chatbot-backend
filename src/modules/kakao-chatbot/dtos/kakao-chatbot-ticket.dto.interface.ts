@@ -50,8 +50,6 @@ export interface ListItemDTO {
 
 export interface ItemCardDTO {
   thumbnail?: ThumbnailDTO;
-  // head와 profile 동시에 사용 x
-  // 케로셀형에서 head와 profile 섞어서 사용 x
   head?: ItemCardHead;
   profile?: ItemCardProfileDTO;
   imageTitle?: ItemCardImageTitleDTO;

@@ -6,7 +6,7 @@ export type AppError = AppErrors.UnexpectedError;
 export namespace AppErrors {
   export class UnexpectedError extends UseCaseError {
     constructor(public metadata: any) {
-      super(UnexpectedError.name, 'An unexpected error occurred');
+      super('An unexpected error occurred');
     }
   }
 }

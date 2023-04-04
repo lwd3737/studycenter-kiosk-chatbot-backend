@@ -6,6 +6,7 @@ import {
   CarouselTypeEnum,
 } from '../../domain/carousel/carousel.value-object';
 import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
+import { ItemCard } from '../../domain/item-card/item-card.value-object';
 import { ListCard } from '../../domain/list-card/list-card.value-object';
 import {
   CarouselDTO,
@@ -13,6 +14,7 @@ import {
 } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 
 import { CommerceCardMapper } from './commerce-card.mapper';
+import { ItemCardMapper } from './item-card.mapper';
 import { ListCardMapper } from './list-card.mapper';
 
 @Injectable()
@@ -20,6 +22,7 @@ export class CarouselMapper implements IMapper<Carousel> {
   constructor(
     private listCardMapper: ListCardMapper,
     private commerceMapper: CommerceCardMapper,
+    private itemCardMapper: ItemCardMapper,
   ) {}
 
   toDTO(carousel: Carousel): CarouselDTO {
@@ -37,10 +40,10 @@ export class CarouselMapper implements IMapper<Carousel> {
         return this.listCardMapper.toDTO(item as ListCard);
       case CarouselTypeEnum.COMMERCE_CARD:
         return this.commerceMapper.toDTO(item as CommerceCard);
-      case CarouselTypeEnum.BASIC_CARD:
-
       case CarouselTypeEnum.ITEM_CARD:
-        throw new Error(`Carousel '${type}' is not implemented yet`);
+        return this.itemCardMapper.toDTO(item as ItemCard);
+      case CarouselTypeEnum.BASIC_CARD:
+        throw new Error('Not implemented yet');
     }
   }
 }

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { TicketCategoryEnum } from 'src/modules/ticket/domain/ticket-category.value-object';
+import { TicketCategoryEnum } from 'src/modules/ticketing/domain/ticket/ticket-category.value-object';
 import { KakaoChatbotRequestDTO } from '../dtos/kakao-chatbot-request.dto';
 
 @Injectable()

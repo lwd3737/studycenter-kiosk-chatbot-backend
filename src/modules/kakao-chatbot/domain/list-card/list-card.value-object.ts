@@ -1,6 +1,6 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { Button } from '../button.value-object';
-import { ListCardError, ListCardErrors } from '../errors/list-card.error';
+import { Button } from '../button/button.value-object';
+import { ListCardError, ListCardErrors } from './list-card.error';
 import { ListHeader } from './list-header.value-object';
 import { ListItem } from './list-item.value-object';
 

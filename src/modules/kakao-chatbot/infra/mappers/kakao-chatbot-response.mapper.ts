@@ -7,12 +7,12 @@ import {
 
 @Injectable()
 export class KaKaoChatbotResponseMapper {
-  toDTO(payload: {
+  toDTO(domain: {
     outputs: SkillOutputDTO[];
     context?: ContextControlDTO;
     data?: Record<string, any>;
   }): KakaoChatbotResponseDTO {
-    const { outputs, context, data } = payload;
+    const { outputs, context, data } = domain;
 
     return {
       version: '2.0',

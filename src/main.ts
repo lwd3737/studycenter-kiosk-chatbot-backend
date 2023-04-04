@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -13,11 +12,19 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //     enableDebugMessages: true,
+  //     whitelist: true,
+  //     validationError: {
+  //       target: true,
+  //       value: true,
+  //     },
+  //     //forbidNonWhitelisted: true,
+  //     // forbidUnknownValues: true,
+  //   }),
+  // );
 
   await app.listen(8000);
 }

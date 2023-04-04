@@ -12,6 +12,8 @@ export type ParamsDTO = Record<string, string>;
 export type DetailParamsDTO = Record<string, DetailParamDTO>;
 
 export class DetailParamDTO {
+  //@IsNumber()
+  //@IsString()
   @IsStringOrNumber()
   origin: string | number;
 

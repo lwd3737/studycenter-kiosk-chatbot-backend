@@ -5,11 +5,10 @@ export interface UserEntityProps {
 }
 
 export class UserEntity extends AggregateRoot<UserEntityProps> {
-  private constructor(props: UserEntityProps, id?: string) {
-    super(props, id);
-  }
-
-  static create(props: UserEntityProps, id?: string): UserEntity {
-    return new UserEntity(props, id);
-  }
+  // private constructor(props: UserEntityProps, id?: string) {
+  //   super(props, id);
+  // }
+  // static create(props: UserEntityProps, id?: string): UserEntity {
+  //   return new UserEntity(props, id);
+  // }
 }

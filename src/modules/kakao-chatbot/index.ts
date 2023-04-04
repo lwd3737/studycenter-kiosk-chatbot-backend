@@ -1,1 +1,1 @@
-export * from './infra/kakao-chatbot.module';
+export * from './kakao-chatbot.module';

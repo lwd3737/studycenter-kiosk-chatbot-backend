@@ -1,6 +1,5 @@
-import { AnyObject } from 'src/shared/types';
-
-export abstract class ValueObject<T extends AnyObject> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export abstract class ValueObject<T = {}> {
   protected props: T;
 
   constructor(props: T) {

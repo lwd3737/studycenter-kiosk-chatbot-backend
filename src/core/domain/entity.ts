@@ -1,10 +1,11 @@
-import { AnyObject } from 'src/shared/types';
 import { EntityId } from './entity-id';
 
-export abstract class Entity<T extends AnyObject> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export abstract class Entity<T = {}> {
   protected _id: EntityId;
   protected props: T;
 
+  // TODO: 리팩터링 후 id 자동 생성 로직 없애기
   constructor(props: T, id?: string) {
     this._id = new EntityId(id);
     this.props = props;

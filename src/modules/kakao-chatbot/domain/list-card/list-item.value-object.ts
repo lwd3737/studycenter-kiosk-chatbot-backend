@@ -1,5 +1,5 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { ListCardErrors } from '../errors/list-card.error';
+import { ListCardErrors } from './list-card.error';
 
 export interface ListItemProps {
   title: string;

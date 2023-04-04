@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { Profile } from '../../domain/profile.value-object';
+import { Profile } from '../../domain/profile/profile.value-object';
 import { ProfileDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
 
 @Injectable()

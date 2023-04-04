@@ -1,9 +1,8 @@
-import { AnyObject } from 'src/shared/types';
 import { IDomainEvent } from '../events';
 import { DomainEvents } from '../events/domain-events';
 import { Entity } from './entity';
 
-export abstract class AggregateRoot<T extends AnyObject> extends Entity<T> {
+export abstract class AggregateRoot<T> extends Entity<T> {
   private _events: IDomainEvent[];
 
   get events(): IDomainEvent[] {

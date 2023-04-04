@@ -1,18 +1,15 @@
 import { err, ok, Result, ValueObject } from 'src/core';
-import { Button } from '../button.value-object';
-import {
-  CommerceCardError,
-  CommerceCardErrors,
-} from '../errors/commerce-card.error';
-import { Profile } from '../profile.value-object';
-import { Thumbnail } from '../thumbnail.value-object';
-import { CommerceCardDiscount } from './commerce-card-discount.value-object';
+import { Button } from '../button/button.value-object';
+import { CommerceCardError, CommerceCardErrors } from './commerce-card.error';
+import { Profile } from '../profile/profile.value-object';
+import { Thumbnail } from '../thumbnail/thumbnail.value-object';
+import { Discount } from './discount.value-object';
 
 export interface CommerceCardProps {
   description: string;
   price: number;
   currency: 'won';
-  discount?: CommerceCardDiscount;
+  discount?: Discount;
   thumbnails: Thumbnail[];
   profile?: Profile;
   buttons: Button[];
@@ -37,7 +34,7 @@ export class CommerceCard extends ValueObject<CommerceCardProps> {
     return this.props.currency;
   }
 
-  get discount(): CommerceCardDiscount | undefined {
+  get discount(): Discount | undefined {
     return this.props.discount;
   }
 

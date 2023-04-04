@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
-import { GetAllTicketCollectionsUseCase } from 'src/modules/ticket';
+import { GetAllTicketCollectionsUseCase } from 'src/modules/ticketing';
 import { Carousel } from '../../domain/carousel/carousel.value-object';
-import { TicketListCarousel } from '../../domain/ticket-list-carousel.value-object';
+import { TicketListCarousel } from '../../domain/ticket-list-carousel/ticket-list-carousel.value-object';
 import { KakaoChatbotRequestDTO } from '../../dtos/kakao-chatbot-request.dto';
 import { GetTicketListCarouselError } from './get-ticket-list-carousel.error';
 

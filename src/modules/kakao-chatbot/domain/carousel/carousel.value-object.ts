@@ -1,12 +1,16 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { CommerceCard } from '../commerce-card/commerce-card.value-object';
-import { CarouselError, CarouselErrors } from '../errors/carousel.error';
+import { CarouselError, CarouselErrors } from './carousel.error';
 import { ListCard } from '../list-card/list-card.value-object';
 import { CarouselHeader } from './carousel-header.value-object';
+import { ItemCard } from '../item-card/item-card.value-object';
 
 // TODO: OCP 원칙 위배. 추상 Facory 패턴으로 수정 및 추가에도 수정에 열려있게 구현할 것
 
-export type CarouselProps = ListCardCarouselProps | CommerceCardCarouselProps;
+export type CarouselProps =
+  | ListCardCarouselProps
+  | CommerceCardCarouselProps
+  | ItemCardCarouselProps;
 
 export type ListCardCarouselProps = {
   header?: CarouselHeader;
@@ -20,6 +24,12 @@ export type CommerceCardCarouselProps = {
   items: CommerceCard[];
 };
 
+export type ItemCardCarouselProps = {
+  header?: CarouselHeader;
+  type: CarouselTypeEnum.ITEM_CARD;
+  items: ItemCard[];
+};
+
 export enum CarouselTypeEnum {
   COMMERCE_CARD = 'commerceCard',
   BASIC_CARD = 'basicCard',
@@ -27,7 +37,7 @@ export enum CarouselTypeEnum {
   ITEM_CARD = 'itemCard',
 }
 
-export type CarouselItem = ListCard | CommerceCard;
+export type CarouselItem = ListCard | CommerceCard | ItemCard;
 // TODO:상속할 때 validate 강제하기
 export class Carousel extends ValueObject<CarouselProps> {
   get type(): CarouselTypeEnum {
@@ -66,7 +76,7 @@ export class Carousel extends ValueObject<CarouselProps> {
     switch (type) {
       case CarouselTypeEnum.BASIC_CARD:
       case CarouselTypeEnum.ITEM_CARD:
-        throw new Error(`Carousel type '${type}' not impleted yet`);
+        return item instanceof ItemCard === false;
       case CarouselTypeEnum.COMMERCE_CARD:
         return item instanceof CommerceCard === false;
       case CarouselTypeEnum.LIST_CARD:
