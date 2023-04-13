@@ -33,7 +33,7 @@ export class KakaoChatbotSeatManagementController {
       const error = roomsResult.error;
       console.debug(error);
 
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException();
     }
 
     const roomItemCardsCarouselResult = this.getRoomItemCardsCarousel.execute({

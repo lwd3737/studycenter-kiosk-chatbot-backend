@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
-import { CommerceCardDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
+import { CommerceCardDTO } from '../../dtos/kakao-chatbot.dto.interface';
 import { ButtonMapper } from './button.mapper';
 import { ProfileMapper } from './profile.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';

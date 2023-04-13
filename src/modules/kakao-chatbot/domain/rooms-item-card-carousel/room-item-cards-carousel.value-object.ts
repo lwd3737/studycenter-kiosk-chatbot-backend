@@ -11,7 +11,7 @@ type CreateProps = {
   rooms: Room[];
 };
 
-export class RoomItemCardsCarousel extends ValueObject<object> {
+export class RoomItemCardsCarousel extends ValueObject {
   public static create(props: CreateProps): Result<Carousel, DomainError> {
     const roomItemCardsResult = this.createRoomItemCards(props.rooms);
     if (roomItemCardsResult.isErr()) {
@@ -30,7 +30,7 @@ export class RoomItemCardsCarousel extends ValueObject<object> {
     const roomItemCardResults = rooms.map((room) => {
       const roomProps = combine(
         this.createSeatsInfoItemList(room.seatsInfo),
-        this.createSeatsViewButton(room.title),
+        this.createSeatsStatusButton(room.title),
       );
       if (roomProps.isErr()) {
         return err(roomProps.error);
@@ -59,7 +59,7 @@ export class RoomItemCardsCarousel extends ValueObject<object> {
   ): Result<ItemList[], DomainError> {
     const itemListResult = combine(
       ItemList.create({
-        title: '좌석수',
+        title: '좌석',
         desciption: `${seatsStatus.availableNumber}/${seatsStatus.totalNumber}`,
       }),
     );
@@ -70,13 +70,13 @@ export class RoomItemCardsCarousel extends ValueObject<object> {
     return ok(itemListResult.value);
   }
 
-  private static createSeatsViewButton(
+  private static createSeatsStatusButton(
     roomTitle: string,
   ): Result<Button, DomainError> {
     return Button.create({
-      label: '좌석',
+      label: '좌석 선택',
       action: ButtonActionEnum.MESSAGE,
-      messageText: `${roomTitle} 좌석`,
+      messageText: `${roomTitle} 좌석 현황`,
     });
   }
 }

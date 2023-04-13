@@ -40,7 +40,7 @@ export class TicketCommerceCardsCarousel extends ValueObject {
     const purchaseButtonResult = Button.create({
       label: `${ticket.title} 선택하기`,
       action: ButtonActionEnum.MESSAGE,
-      messageText: `${ticket.title}이 선택되었습니다. 룸을 선택해주세요.`,
+      messageText: `${ticket.title} 선택.\n 룸을 보여줘`,
       extra: {
         ticketId: ticket.id.value,
       },

@@ -1,11 +1,11 @@
-import { AggregateRoot, err, ok, Result } from 'src/core';
+import { AggregateRoot, DomainError, err, ok, Result } from 'src/core';
 import { RoomErrors } from './room.error';
 import { RoomId } from './room-id';
 import { RoomNumber } from './room-number.value-object';
 import { RoomType } from './room-type.value-object';
 import { SeatsInfo } from './seats-infovalue-object';
 import { SeatIds } from './seat-ids.value-object';
-import { SeatId } from '../seat/seat-id';
+import { Seat } from '../seat/seat.aggregate-root';
 
 export interface RoomProps {
   title: string;
@@ -44,9 +44,38 @@ export class Room extends AggregateRoot<RoomProps> {
     return this.props.seatsInfo;
   }
 
-  public addSeatIds(...seatIds: SeatId[]): void {
-    const newSeatIds = this.props.seatIds.add(...seatIds);
-    this.props.seatIds = newSeatIds;
+  public addSeat(...seats: Seat[]): Result<null, DomainError> {
+    const seatIds = (this.props.seatIds = this.props.seatIds.add(
+      ...seats.map((seat) => seat.seatId),
+    ));
+
+    const newAvailableNumber = seats.reduce(
+      (availableNumber, seat) =>
+        seat.isAvailable ? availableNumber + 1 : availableNumber,
+      0,
+    );
+    const seatsInfoResult = SeatsInfo.create({
+      totalNumber: this.props.seatsInfo.totalNumber + seats.length,
+      availableNumber:
+        this.props.seatsInfo.availableNumber + newAvailableNumber,
+    });
+    if (seatsInfoResult.isErr()) {
+      return err(seatsInfoResult.error);
+    }
+    const seatsInfo = seatsInfoResult.value;
+
+    this.props.seatsInfo = seatsInfo;
+
+    if (
+      Room.areSeatsTotalNumberAndSeatIdsNumberNotEquals({
+        seatIds,
+        seatsInfo,
+      })
+    ) {
+      return err(new RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError());
+    }
+
+    return ok(null);
   }
 
   public static createNew(
@@ -58,37 +87,38 @@ export class Room extends AggregateRoot<RoomProps> {
     | RoomErrors.SeatsAvailableNumberExceededTotalNumberError
     | RoomErrors.SeatsAvailableNumberNotIntegerOrNagativeNumberError
   > {
-    const seatStatusResult = SeatsInfo.create({
+    const seatsInfoResult = SeatsInfo.create({
       totalNumber: 0,
       availableNumber: 0,
     });
-    if (seatStatusResult.isErr()) {
-      return err(seatStatusResult.error);
+    if (seatsInfoResult.isErr()) {
+      return err(seatsInfoResult.error);
     }
 
     return ok(
       new Room({
         ...props,
         seatIds: SeatIds.create(),
-        seatsInfo: seatStatusResult.value,
+        seatsInfo: seatsInfoResult.value,
       }),
     );
   }
 
-  public static createFromExsiting(
+  public static createFromExisting(
     props: CreateFromExistingProps,
+    id: string,
   ): Result<Room, RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError> {
-    if (this.areSeatsTotalNumberAndSeatIdsNumberEquals(props) === false) {
+    if (this.areSeatsTotalNumberAndSeatIdsNumberNotEquals(props)) {
       return err(new RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError());
     }
 
-    return ok(new Room(props));
+    return ok(new Room(props, id));
   }
 
-  private static areSeatsTotalNumberAndSeatIdsNumberEquals(
+  private static areSeatsTotalNumberAndSeatIdsNumberNotEquals(
     props: Pick<RoomProps, 'seatIds' | 'seatsInfo'>,
   ): boolean {
-    return props.seatIds.count !== props.seatsInfo.totalNumber;
+    return props.seatIds.length !== props.seatsInfo.totalNumber;
   }
 
   private constructor(props: RoomProps, id?: string) {

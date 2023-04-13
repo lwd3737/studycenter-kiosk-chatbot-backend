@@ -28,7 +28,7 @@ export class InitRoomsAndSeatsUseCase implements IUseCase<null, UseCaseResult> {
 
       return ok(seedResult.value);
     } catch (error) {
-      return err(new AppErrors.UnexpectedError((error as Error).message));
+      return err(new AppErrors.UnexpectedError(error as Error));
     }
   }
 }

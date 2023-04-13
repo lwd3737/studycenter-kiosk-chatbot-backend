@@ -8,7 +8,6 @@ import {
   IRoomRepo,
   RoomRepoProvider,
 } from '../../domain/room/room.repo.interface';
-import { SeatId } from '../../domain/seat/seat-id';
 import { SeatNumber } from '../../domain/seat/seat-number.value-object';
 import { Seat } from '../../domain/seat/seat.aggregate-root';
 import {
@@ -61,16 +60,15 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
       if (seatsResult.isErr()) {
         return err(seatsResult.error);
       }
-      const seats = seatsResult.value;
+      const newSeats = seatsResult.value;
+      seats.push(...newSeats);
 
-      seats.push(...seats);
-
-      const seatIds = seats.map((seat) => seat.seatId.value);
-      associations.set(room.roomId.value, seatIds);
+      const newSeatIds = newSeats.map((seat) => seat.seatId.value);
+      associations.set(room.roomId.value, newSeatIds);
     }
 
     await this.init(rooms, seats);
-    this.associateAggregates(rooms, associations);
+    this.associateAggregates({ rooms, seats }, associations);
     await this.updateAssociations(rooms);
 
     return ok({ rooms, seats });
@@ -129,8 +127,11 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
     await this.seatRepo.init(seats);
   }
 
-  private associateAggregates(rooms: Room[], associations: Associations): void {
-    rooms.forEach((room) => {
+  private associateAggregates(
+    aggregates: { rooms: Room[]; seats: Seat[] },
+    associations: Associations,
+  ): void {
+    aggregates.rooms.forEach((room) => {
       const rawSeatIds = associations.get(room.roomId.value);
       if (!rawSeatIds) {
         throw new Error(
@@ -142,7 +143,14 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
         );
       }
 
-      room.addSeatIds(...rawSeatIds.map((id) => new SeatId(id)));
+      const seatsByRoomId = aggregates.seats.filter((seat) =>
+        seat.roomId.equals(room.roomId.value),
+      );
+
+      const addSeatsResult = room.addSeat(...seatsByRoomId);
+      if (addSeatsResult.isErr()) {
+        throw addSeatsResult.error;
+      }
     });
   }
 

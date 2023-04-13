@@ -6,7 +6,7 @@ import { ListItem } from '../../domain/list-card/list-item.value-object';
 import {
   ListCardDTO,
   ListItemDTO,
-} from '../../dtos/kakao-chatbot-ticket.dto.interface';
+} from '../../dtos/kakao-chatbot.dto.interface';
 import { ButtonMapper } from './button.mapper';
 
 @Injectable()

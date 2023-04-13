@@ -19,7 +19,7 @@ export class Seat extends AggregateRoot<SeatProps> {
     return new SeatId(this._id.value);
   }
 
-  get roomid(): RoomId {
+  get roomId(): RoomId {
     return this.props.roomId;
   }
 
@@ -31,13 +31,13 @@ export class Seat extends AggregateRoot<SeatProps> {
     return this.props.isAvailable;
   }
 
-  public static createNew(props: CreateNewProps, id?: string): Seat {
-    return new Seat({ ...props, isAvailable: true }, id);
+  public static createNew(props: CreateNewProps): Seat {
+    return new Seat({ ...props, isAvailable: true });
   }
 
   public static createFromExisiting(
     props: CreateFromExistingProps,
-    id?: string,
+    id: string,
   ): Seat {
     return new Seat(props, id);
   }

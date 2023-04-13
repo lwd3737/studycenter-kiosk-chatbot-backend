@@ -5,7 +5,6 @@ import { KakaoChatbotPaymentController } from './controllers/kakao-chatbot-payme
 import { KakaoChatbotTicketController } from './controllers/kakao-chatbot-ticket.controller';
 import { ParseTicketCategoryParamPipe } from './pipes/parse-ticket-category-param.pipe';
 import { ParseTicketTimeParamPipe } from './pipes/parse-ticket-time-param.pipe';
-import { SelectTicketSimpleTextUseCase } from './use-cases/select-ticket-simple-text.use-case.ts/select-ticket-simple-text.use-case';
 import { GetTicketCommerceCardsCarouselUseCase } from './use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
 import { GetTicketListCarouselUseCase } from './use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
 import { ButtonMapper } from './infra/mappers/button.mapper';
@@ -21,13 +20,19 @@ import { ThumbnailMapper } from './infra/mappers/thumbnail.mapper';
 import { KakaoChatbotSeatManagementController } from './controllers/kakao-chatbot-seat-management.controller';
 import { GetRoomItemCardsCarouselUseCase } from './use-cases/get-room-item-cards-carousel/get-room-item-cards-carousel.use-case';
 import { ItemCardMapper } from './infra/mappers/item-card.mapper';
+import { UseAuthBlockUseCase } from './use-cases/use-auth-block/use-auth-block.use-case';
+import { PluginRepo } from './infra/repos/plugin.repo';
+import { KakaoChatbotAuthController } from './controllers/kakao-chatbot-auth.controller';
+import { ParseSyncOtpParamPipe } from './pipes/parse-sync-otp-param.pipe';
+import { AuthModule } from '../auth';
 
 @Module({
-  imports: [TicketModule, SeatManagementModule],
+  imports: [TicketModule, SeatManagementModule, AuthModule],
   controllers: [
     KakaoChatbotTicketController,
     KakaoChatbotPaymentController,
     KakaoChatbotSeatManagementController,
+    KakaoChatbotAuthController,
   ],
   providers: [
     KaKaoChatbotResponseMapper,
@@ -41,13 +46,16 @@ import { ItemCardMapper } from './infra/mappers/item-card.mapper';
     SimpleTextMapper,
     ContextControlMapper,
 
+    PluginRepo,
+
+    UseAuthBlockUseCase,
     GetTicketListCarouselUseCase,
     GetTicketCommerceCardsCarouselUseCase,
-    SelectTicketSimpleTextUseCase,
     GetRoomItemCardsCarouselUseCase,
 
     ParseTicketCategoryParamPipe,
     ParseTicketTimeParamPipe,
+    ParseSyncOtpParamPipe,
   ],
   exports: [],
 })

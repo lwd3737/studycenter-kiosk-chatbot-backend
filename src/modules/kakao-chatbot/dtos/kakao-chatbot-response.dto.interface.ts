@@ -6,7 +6,7 @@ import {
   SimpleImageDTO,
   SimpleTextDTO,
   SkillQuickReply,
-} from './kakao-chatbot-ticket.dto.interface';
+} from './kakao-chatbot.dto.interface';
 
 export interface KakaoChatbotResponseDTO {
   version: '2.0';

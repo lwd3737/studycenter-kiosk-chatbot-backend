@@ -14,7 +14,7 @@ export class SeatIds extends ValueObject<SeatIdsProps> {
     return this.props.ids.map((id) => id.value);
   }
 
-  get count(): number {
+  get length(): number {
     return this.props.ids.length;
   }
 

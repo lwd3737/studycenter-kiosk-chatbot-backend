@@ -33,13 +33,18 @@ export class MockRoomMapper implements IRoomMapper {
     }
     const [roomType, roomNumber, seatsStatus] = roomPropsResult.value;
 
-    const roomResult = Room.createFromExsiting({
-      title: raw.title,
-      type: roomType,
-      number: roomNumber,
-      seatIds: SeatIds.create({ ids: raw.seatIds.map((id) => new SeatId(id)) }),
-      seatsInfo: seatsStatus,
-    });
+    const roomResult = Room.createFromExisting(
+      {
+        title: raw.title,
+        type: roomType,
+        number: roomNumber,
+        seatIds: SeatIds.create({
+          ids: raw.seatIds.map((id) => new SeatId(id)),
+        }),
+        seatsInfo: seatsStatus,
+      },
+      raw.id,
+    );
     if (roomResult.isErr()) {
       throw roomResult.error;
     }

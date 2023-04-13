@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { ItemCard } from '../../domain/item-card/item-card.value-object';
-import { ItemCardDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
+import { ItemCardDTO } from '../../dtos/kakao-chatbot.dto.interface';
 import { ButtonMapper } from './button.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
 
@@ -13,7 +13,6 @@ export class ItemCardMapper implements IMapper<ItemCard> {
   ) {}
 
   toDTO(domain: ItemCard): ItemCardDTO {
-    console.log(domain.head?.title);
     return {
       thumbnail: domain.thumbnail
         ? this.thumbnailMapper.toDTO(domain.thumbnail)

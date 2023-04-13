@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { Thumbnail } from '../../domain/thumbnail/thumbnail.value-object';
-import { ThumbnailDTO } from '../../dtos/kakao-chatbot-ticket.dto.interface';
+import { ThumbnailDTO } from '../../dtos/kakao-chatbot.dto.interface';
 
 @Injectable()
 export class ThumbnailMapper implements IMapper<Thumbnail> {

@@ -11,7 +11,7 @@ import { ListCard } from '../../domain/list-card/list-card.value-object';
 import {
   CarouselDTO,
   CarouselItemDTO,
-} from '../../dtos/kakao-chatbot-ticket.dto.interface';
+} from '../../dtos/kakao-chatbot.dto.interface';
 
 import { CommerceCardMapper } from './commerce-card.mapper';
 import { ItemCardMapper } from './item-card.mapper';
