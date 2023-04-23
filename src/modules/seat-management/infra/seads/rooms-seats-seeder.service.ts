@@ -14,8 +14,8 @@ import {
   ISeatRepo,
   SeatRepoProvider,
 } from '../../domain/seat/seat.repo.interface';
-import { PRESET_ROOMS } from './rooms.data';
-import { PRESET_SEATS } from './seats.data';
+import roomsData from './rooms.data.json';
+import seatsData from './seats.data.json';
 import { PresetRoom } from './seeds.schema';
 
 type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
@@ -23,7 +23,7 @@ type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
 type Associations = Map<string, string[]>;
 
 @Injectable()
-export class SeatManagementSeederService implements OnApplicationBootstrap {
+export class RoomsSeatsSeederService implements OnApplicationBootstrap {
   constructor(
     @Inject(RoomRepoProvider) private roomRepo: IRoomRepo,
     @Inject(SeatRepoProvider) private seatRepo: ISeatRepo,
@@ -31,10 +31,10 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     if ((await this.roomRepo.exist()) === false) {
-      const result = await this.seed();
+      const seedOrError = await this.seed();
 
-      if (result.isErr()) {
-        throw result.error;
+      if (seedOrError.isErr()) {
+        throw seedOrError.error;
       }
 
       console.info('Seed data created successfully');
@@ -47,20 +47,23 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
     const rooms: Room[] = [];
     const seats: Seat[] = [];
 
-    for (const roomData of PRESET_ROOMS) {
-      const roomResult = this.createRoom(roomData);
-      if (roomResult.isErr()) {
-        return err(roomResult.error);
+    for (const roomIndex in roomsData) {
+      const roomOrError = this.createRoom(roomsData[roomIndex]);
+      if (roomOrError.isErr()) {
+        return err(roomOrError.error);
       }
-      const room = roomResult.value;
+      const room = roomOrError.value;
 
       rooms.push(room);
 
-      const seatsResult = this.createSeats(roomData.id, room.roomId);
-      if (seatsResult.isErr()) {
-        return err(seatsResult.error);
+      const seatsOrError = this.createSeats(
+        roomsData[roomIndex].id,
+        room.roomId,
+      );
+      if (seatsOrError.isErr()) {
+        return err(seatsOrError.error);
       }
-      const newSeats = seatsResult.value;
+      const newSeats = seatsOrError.value;
       seats.push(...newSeats);
 
       const newSeatIds = newSeats.map((seat) => seat.seatId.value);
@@ -75,51 +78,51 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
   }
 
   private createRoom(roomData: PresetRoom): Result<Room, DomainError> {
-    const roomPropsResult = combine(
+    const roomPropsOrError = combine(
       RoomType.create({ value: roomData.type }),
       RoomNumber.create({ value: roomData.number }),
     );
-    if (roomPropsResult.isErr()) {
-      return err(roomPropsResult.error);
+    if (roomPropsOrError.isErr()) {
+      return err(roomPropsOrError.error);
     }
 
-    const [roomType, roomNumber] = roomPropsResult.value;
+    const [roomType, roomNumber] = roomPropsOrError.value;
 
-    const roomResult = Room.createNew({
+    const roomOrError = Room.createNew({
       title: roomData.title,
       type: roomType,
       number: roomNumber,
     });
-    if (roomResult.isErr()) {
-      return err(roomResult.error);
+    if (roomOrError.isErr()) {
+      return err(roomOrError.error);
     }
-    return ok(roomResult.value);
+    return ok(roomOrError.value);
   }
 
   private createSeats(
     presetRoomId: string,
     roomId: RoomId,
   ): Result<Seat[], DomainError> {
-    const seatsDataByRoomId = PRESET_SEATS.filter(
+    const seatsDataByRoomId = seatsData.filter(
       (seatData) => seatData.roomId === presetRoomId,
     );
 
-    const seatResults = seatsDataByRoomId.map((seatData) => {
-      const seatNumberResult = SeatNumber.create({ value: seatData.number });
+    const seatOrErrors = seatsDataByRoomId.map((seatData) => {
+      const seatNumberOrError = SeatNumber.create({ value: seatData.number });
 
-      if (seatNumberResult.isErr()) {
-        return err(seatNumberResult.error);
+      if (seatNumberOrError.isErr()) {
+        return err(seatNumberOrError.error);
       }
 
       return ok(
         Seat.createNew({
           roomId: roomId,
-          number: seatNumberResult.value,
+          number: seatNumberOrError.value,
         }),
       );
     });
 
-    return combine(...seatResults);
+    return combine(...seatOrErrors);
   }
 
   private async init(rooms: Room[], seats: Seat[]): Promise<void> {
@@ -147,9 +150,9 @@ export class SeatManagementSeederService implements OnApplicationBootstrap {
         seat.roomId.equals(room.roomId.value),
       );
 
-      const addSeatsResult = room.addSeat(...seatsByRoomId);
-      if (addSeatsResult.isErr()) {
-        throw addSeatsResult.error;
+      const addSeatsOrError = room.addSeat(...seatsByRoomId);
+      if (addSeatsOrError.isErr()) {
+        throw addSeatsOrError.error;
       }
     });
   }

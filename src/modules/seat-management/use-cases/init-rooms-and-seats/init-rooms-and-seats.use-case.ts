@@ -4,7 +4,7 @@ import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
 import { Room } from '../../domain/room/room.aggregate-root';
 
 import { Seat } from '../../domain/seat/seat.aggregate-root';
-import { SeatManagementSeederService } from '../../infra/seads/seat-management-seeder.service';
+import { RoomsSeatsSeederService } from '../../infra/seads/rooms-seats-seeder.service';
 
 import { InitRoomsAndSeatsError } from './init-rooms-and-seats.error';
 
@@ -15,9 +15,7 @@ type UseCaseResult = Result<
 
 @Injectable()
 export class InitRoomsAndSeatsUseCase implements IUseCase<null, UseCaseResult> {
-  constructor(
-    private roomsAndSeatsSeeaderService: SeatManagementSeederService,
-  ) {}
+  constructor(private roomsAndSeatsSeeaderService: RoomsSeatsSeederService) {}
 
   async execute(): Promise<UseCaseResult> {
     try {

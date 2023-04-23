@@ -7,12 +7,12 @@ import { RoomMapperProvider } from './infra/mappers/room.mapper.interace';
 import { SeatMapperProvider } from './infra/mappers/seat.mapper.interface';
 import { MockRoomRepo } from './infra/repos/mocks/mock-room.repo';
 import { MockSeatRepo } from './infra/repos/mocks/mock-seat.repo';
-import { SeatManagementSeederService } from './infra/seads/seat-management-seeder.service';
+import { RoomsSeatsSeederService } from './infra/seads/rooms-seats-seeder.service';
 import { GetRoomsStatusUseCase } from './use-cases/get-rooms-status/get-rooms-status.use-case';
 
 @Module({
   providers: [
-    SeatManagementSeederService,
+    RoomsSeatsSeederService,
     GetRoomsStatusUseCase,
 
     {
@@ -33,6 +33,6 @@ import { GetRoomsStatusUseCase } from './use-cases/get-rooms-status/get-rooms-st
       useClass: MockSeatRepo,
     },
   ],
-  exports: [SeatManagementSeederService, GetRoomsStatusUseCase],
+  exports: [RoomsSeatsSeederService, GetRoomsStatusUseCase],
 })
 export class SeatManagementModule {}
