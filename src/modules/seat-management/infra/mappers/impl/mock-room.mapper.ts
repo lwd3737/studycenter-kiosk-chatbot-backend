@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { combine } from 'src/core';
-import { RoomNumber } from 'src/modules/seat-management/domain/room/room-number.value-object';
-import { RoomType } from 'src/modules/seat-management/domain/room/room-type.value-object';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
-import { SeatIds } from 'src/modules/seat-management/domain/room/seat-ids.value-object';
-import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-infovalue-object';
-import { SeatId } from 'src/modules/seat-management/domain/seat/seat-id';
 import { IRoomMapper } from '../room.mapper.interace';
 
 export type MockRoom = {
@@ -23,33 +17,12 @@ export type MockRoom = {
 @Injectable()
 export class MockRoomMapper implements IRoomMapper {
   toDomain(raw: MockRoom): Room {
-    const roomPropsResult = combine(
-      RoomType.create({ value: raw.type }),
-      RoomNumber.create({ value: raw.number }),
-      SeatsInfo.create({ ...raw.seatsInfo }),
-    );
-    if (roomPropsResult.isErr()) {
-      throw roomPropsResult.error;
-    }
-    const [roomType, roomNumber, seatsStatus] = roomPropsResult.value;
-
-    const roomResult = Room.createFromExisting(
-      {
-        title: raw.title,
-        type: roomType,
-        number: roomNumber,
-        seatIds: SeatIds.create({
-          ids: raw.seatIds.map((id) => new SeatId(id)),
-        }),
-        seatsInfo: seatsStatus,
-      },
-      raw.id,
-    );
-    if (roomResult.isErr()) {
-      throw roomResult.error;
+    const roomOrError = Room.createFromExisting(raw, raw.id);
+    if (roomOrError.isErr()) {
+      throw roomOrError.error;
     }
 
-    return roomResult.value;
+    return roomOrError.value;
   }
 
   toPersistence(domain: Room): MockRoom {

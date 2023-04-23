@@ -1,11 +1,12 @@
-import { AggregateRoot, DomainError, err, ok, Result } from 'src/core';
-import { RoomErrors } from './room.error';
+import { AggregateRoot, combine, DomainError, err, ok, Result } from 'src/core';
+import { RoomError, RoomErrors } from './room.error';
 import { RoomId } from './room-id';
 import { RoomNumber } from './room-number.value-object';
 import { RoomType } from './room-type.value-object';
-import { SeatsInfo } from './seats-infovalue-object';
+import { SeatsInfo } from './seats-info.value-object';
 import { SeatIds } from './seat-ids.value-object';
 import { Seat } from '../seat/seat.aggregate-root';
+import { SeatId } from '../seat/seat-id';
 
 export interface RoomProps {
   title: string;
@@ -15,9 +16,22 @@ export interface RoomProps {
   seatsInfo: SeatsInfo;
 }
 
-type CreateNewProps = Pick<RoomProps, 'title' | 'type' | 'number'>;
+type CreateNewProps = {
+  title: string;
+  type: string;
+  number: number;
+};
 
-type CreateFromExistingProps = RoomProps;
+type CreateFromExistingProps = {
+  title: string;
+  type: string;
+  number: number;
+  seatIds: string[];
+  seatsInfo: {
+    totalNumber: number;
+    availableNumber: number;
+  };
+};
 
 export class Room extends AggregateRoot<RoomProps> {
   get roomId(): RoomId {
@@ -78,28 +92,25 @@ export class Room extends AggregateRoot<RoomProps> {
     return ok(null);
   }
 
-  public static createNew(
-    props: CreateNewProps,
-  ): Result<
-    Room,
-    | RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError
-    | RoomErrors.SeatsTotalNumberNotIntegerOrNegativeNumberError
-    | RoomErrors.SeatsAvailableNumberExceededTotalNumberError
-    | RoomErrors.SeatsAvailableNumberNotIntegerOrNagativeNumberError
-  > {
-    const seatsInfoResult = SeatsInfo.create({
-      totalNumber: 0,
-      availableNumber: 0,
-    });
-    if (seatsInfoResult.isErr()) {
-      return err(seatsInfoResult.error);
-    }
+  public static createNew(props: CreateNewProps): Result<Room, RoomError> {
+    const propsOrError = combine(
+      RoomType.create({ value: props.type }),
+      RoomNumber.create({ value: props.number }),
+      SeatsInfo.create({
+        totalNumber: 0,
+        availableNumber: 0,
+      }),
+    );
+    if (propsOrError.isErr()) return err(propsOrError.error);
+    const [type, number, seatsInfo] = propsOrError.value;
 
     return ok(
       new Room({
-        ...props,
+        title: props.title,
+        type,
+        number,
         seatIds: SeatIds.create(),
-        seatsInfo: seatsInfoResult.value,
+        seatsInfo,
       }),
     );
   }
@@ -107,12 +118,36 @@ export class Room extends AggregateRoot<RoomProps> {
   public static createFromExisting(
     props: CreateFromExistingProps,
     id: string,
-  ): Result<Room, RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError> {
-    if (this.areSeatsTotalNumberAndSeatIdsNumberNotEquals(props)) {
+  ): Result<Room, RoomError> {
+    const propsOrError = combine(
+      RoomType.create({ value: props.type }),
+      RoomNumber.create({ value: props.number }),
+      SeatsInfo.create(props.seatsInfo),
+    );
+    if (propsOrError.isErr()) return err(propsOrError.error);
+    const [type, number, seatsInfo] = propsOrError.value;
+    const seatIds = SeatIds.create({
+      ids: props.seatIds.map((id) => new SeatId(id)),
+    });
+
+    if (
+      this.areSeatsTotalNumberAndSeatIdsNumberNotEquals({ seatIds, seatsInfo })
+    ) {
       return err(new RoomErrors.SeatsTotalNumberNotEqualsSeatIdsNumberError());
     }
 
-    return ok(new Room(props, id));
+    return ok(
+      new Room(
+        {
+          title: props.title,
+          type,
+          number,
+          seatIds,
+          seatsInfo,
+        },
+        id,
+      ),
+    );
   }
 
   private static areSeatsTotalNumberAndSeatIdsNumberNotEquals(

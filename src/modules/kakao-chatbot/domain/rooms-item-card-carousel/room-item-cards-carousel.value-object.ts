@@ -1,6 +1,6 @@
 import { combine, DomainError, err, ok, Result, ValueObject } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
-import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-infovalue-object';
+import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-info.value-object';
 import { Button, ButtonActionEnum } from '../button/button.value-object';
 import { Carousel, CarouselTypeEnum } from '../carousel/carousel.value-object';
 import { ImageTitle } from '../item-card/image-title.value-object';

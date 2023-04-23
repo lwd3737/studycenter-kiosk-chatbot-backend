@@ -13,7 +13,9 @@ import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ParseTicketIdFromClientExtraPipe } from '../pipes/parse-ticket-id-from-client-extra.pipe';
 import { GetRoomItemCardsCarouselUseCase } from '../use-cases/get-room-item-cards-carousel/get-room-item-cards-carousel.use-case';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
 
+@Public()
 @Controller('kakao-chatbot')
 export class KakaoChatbotSeatManagementController {
   constructor(

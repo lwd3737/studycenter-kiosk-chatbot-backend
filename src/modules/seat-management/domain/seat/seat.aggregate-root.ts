@@ -2,6 +2,8 @@ import { AggregateRoot } from 'src/core/domain';
 import { RoomId } from '../room/room-id';
 import { SeatId } from './seat-id';
 import { SeatNumber } from './seat-number.value-object';
+import { Result, combine, err, ok } from 'src/core';
+import { SeatError } from './seat.error';
 
 export interface SeatProps {
   roomId: RoomId;
@@ -10,9 +12,14 @@ export interface SeatProps {
   // userInUse: UserId
 }
 
-type CreateNewProps = Pick<SeatProps, 'roomId' | 'number'>;
+type CreateNewProps = {
+  roomId: string;
+  number: number;
+};
 
-type CreateFromExistingProps = SeatProps;
+type CreateFromExistingProps = CreateNewProps & {
+  isAvailable: boolean;
+};
 
 export class Seat extends AggregateRoot<SeatProps> {
   get seatId(): SeatId {
@@ -31,15 +38,34 @@ export class Seat extends AggregateRoot<SeatProps> {
     return this.props.isAvailable;
   }
 
-  public static createNew(props: CreateNewProps): Seat {
-    return new Seat({ ...props, isAvailable: true });
+  public static createNew(props: CreateNewProps): Result<Seat, SeatError> {
+    const propsOrError = combine(SeatNumber.create({ value: props.number }));
+    if (propsOrError.isErr()) return err(propsOrError.error);
+    const [number] = propsOrError.value;
+
+    return ok(
+      new Seat({ roomId: new RoomId(props.roomId), number, isAvailable: true }),
+    );
   }
 
   public static createFromExisiting(
     props: CreateFromExistingProps,
     id: string,
-  ): Seat {
-    return new Seat(props, id);
+  ): Result<Seat, SeatError> {
+    const propsOrError = combine(SeatNumber.create({ value: props.number }));
+    if (propsOrError.isErr()) return err(propsOrError.error);
+    const [number] = propsOrError.value;
+
+    return ok(
+      new Seat(
+        {
+          roomId: new RoomId(props.roomId),
+          number,
+          isAvailable: props.isAvailable,
+        },
+        id,
+      ),
+    );
   }
 
   private constructor(props: SeatProps, id?: string) {

@@ -1,14 +1,11 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { combine, DomainError, err, ok, Result } from 'src/core';
 import { RoomId } from '../../domain/room/room-id';
-import { RoomNumber } from '../../domain/room/room-number.value-object';
-import { RoomType } from '../../domain/room/room-type.value-object';
 import { Room } from '../../domain/room/room.aggregate-root';
 import {
   IRoomRepo,
   RoomRepoProvider,
 } from '../../domain/room/room.repo.interface';
-import { SeatNumber } from '../../domain/seat/seat-number.value-object';
 import { Seat } from '../../domain/seat/seat.aggregate-root';
 import {
   ISeatRepo,
@@ -78,21 +75,7 @@ export class RoomsSeatsSeederService implements OnApplicationBootstrap {
   }
 
   private createRoom(roomData: PresetRoom): Result<Room, DomainError> {
-    const roomPropsOrError = combine(
-      RoomType.create({ value: roomData.type }),
-      RoomNumber.create({ value: roomData.number }),
-    );
-    if (roomPropsOrError.isErr()) {
-      return err(roomPropsOrError.error);
-    }
-
-    const [roomType, roomNumber] = roomPropsOrError.value;
-
-    const roomOrError = Room.createNew({
-      title: roomData.title,
-      type: roomType,
-      number: roomNumber,
-    });
+    const roomOrError = Room.createNew(roomData);
     if (roomOrError.isErr()) {
       return err(roomOrError.error);
     }
@@ -107,20 +90,9 @@ export class RoomsSeatsSeederService implements OnApplicationBootstrap {
       (seatData) => seatData.roomId === presetRoomId,
     );
 
-    const seatOrErrors = seatsDataByRoomId.map((seatData) => {
-      const seatNumberOrError = SeatNumber.create({ value: seatData.number });
-
-      if (seatNumberOrError.isErr()) {
-        return err(seatNumberOrError.error);
-      }
-
-      return ok(
-        Seat.createNew({
-          roomId: roomId,
-          number: seatNumberOrError.value,
-        }),
-      );
-    });
+    const seatOrErrors = seatsDataByRoomId.map((seatData) =>
+      Seat.createNew({ ...seatData, roomId: roomId.value }),
+    );
 
     return combine(...seatOrErrors);
   }
