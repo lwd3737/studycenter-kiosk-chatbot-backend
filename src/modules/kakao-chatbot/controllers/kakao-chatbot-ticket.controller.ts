@@ -7,18 +7,14 @@ import {
 } from '@nestjs/common';
 import {
   GetAllTicketCollectionsErrors,
-  GetTicketByTimeErrors,
   GetTicketsByCategoryErrors,
   GetTicketsByCategoryUseCase,
   InitTicketUseCase,
 } from 'src/modules/ticketing';
-import { GetTicketByTimeUseCase } from 'src/modules/ticketing/application/use-cases/get-ticket-by-time.use-case';
 import { TicketCategoryEnum } from 'src/modules/ticketing/domain/ticket/ticket-category.value-object';
 import { KakaoChatbotResponseDTO } from '../dtos/kakao-chatbot-response.dto.interface';
 import { CarouselMapper } from '../infra/mappers/carousel.mapper';
-import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ParseTicketCategoryParamPipe } from '../pipes/parse-ticket-category-param.pipe';
 import { GetTicketCommerceCardsCarouselUseCase } from '../use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
 import { GetTicketListCarouselUseCase } from '../use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
@@ -28,13 +24,10 @@ export class KakaoChatbotTicketController {
   constructor(
     private initTicketUseCase: InitTicketUseCase,
     private getTicketListCarouselUseCase: GetTicketListCarouselUseCase,
-    private getTicketByTimeUseCase: GetTicketByTimeUseCase,
     private getTicketsByCategoryUseCase: GetTicketsByCategoryUseCase,
     private getTicketCommerceCardsCarouselUseCase: GetTicketCommerceCardsCarouselUseCase,
     private responseMapper: KaKaoChatbotResponseMapper,
     private carouselMapper: CarouselMapper,
-    private simpleTextMapper: SimpleTextMapper,
-    private contextControlMapper: ContextControlMapper,
   ) {}
 
   @Post('init')

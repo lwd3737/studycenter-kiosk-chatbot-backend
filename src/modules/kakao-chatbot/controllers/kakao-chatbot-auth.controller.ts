@@ -7,43 +7,40 @@ import {
 } from '../pipes/parse-sync-otp-param.pipe';
 import { UseAuthBlockErrors } from '../use-cases/use-auth-block/use-auth-block.error';
 import { UseAuthBlockUseCase } from '../use-cases/use-auth-block/use-auth-block.use-case';
+import { ErrorDTOCreator } from '../utils/error-dto-handling';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { SignupUseCase } from 'src/modules/auth';
 
 @Controller('kakao-chatbot/auth')
 export class KakaoChatbotAuthController {
   constructor(
     private useAuthBlockUseCase: UseAuthBlockUseCase,
+    private signupUseCase: SignupUseCase,
+
     private responseMapper: KaKaoChatbotResponseMapper,
   ) {}
 
   @Post('signup')
+  @Public()
   public async signup(
     @Body(ParseSyncOtpParamPipe) syncOtp: SyncOtp,
   ): Promise<KakaoChatbotResponseDTO> {
     const authBlockResult = await this.useAuthBlockUseCase.execute(syncOtp);
+    //const signupResult = await this.signupUseCase.execute({ profile });
+
     if (authBlockResult.isErr()) {
       const error = authBlockResult.error;
-
+      console.log('error', error);
       switch (error.constructor) {
         case UseAuthBlockErrors.AlreadyAuthenticatedError:
-          return this.responseMapper.toDTO({
-            outputs: [
-              {
-                simpleText: {
-                  text: '이미 회원가입 되었습니다. 아래 메뉴를 통해 서비스를 이용하실 수 있어요!',
-                },
-              },
-            ],
-          });
+          return ErrorDTOCreator.toSimpleTextOutput(
+            '이미 회원가입 되어 있습니다. 아래 메뉴를 통해 서비스를 이용하실 수 있어요!',
+          );
+
         default:
-          return this.responseMapper.toDTO({
-            outputs: [
-              {
-                simpleText: {
-                  text: '회원가입에 실패했어요! 아래 메뉴를 통해 상담연결 하실 수 있어요',
-                },
-              },
-            ],
-          });
+          return ErrorDTOCreator.toSimpleTextOutput(
+            '회원가입에 실패했어요! 아래 메뉴를 통해 상담연결 하실 수 있어요',
+          );
       }
     }
 
@@ -57,9 +54,4 @@ export class KakaoChatbotAuthController {
       ],
     });
   }
-
-  // @Post('signup')
-  // public async signup(request: KakaoChatbotRequestDTO) {
-  //   console.log('signup', JSON.stringify(request, null, 2));
-  // }
 }

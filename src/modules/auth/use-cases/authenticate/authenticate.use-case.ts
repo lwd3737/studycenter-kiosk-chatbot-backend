@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
 import { IMemberRepo, MemberRepoProvider } from 'src/modules/membership';
+import { AuthenticateError, AuthenticateErrors } from './authenticate.error';
+import { Member } from 'src/modules/membership/domain/member/member.aggregate-root';
 
 type UseCaseInput = {
   appUserId: string;
 };
 
-type UseCaseResult = Result<boolean, AppErrors.UnexpectedError>;
+type UseCaseResult = Result<Member | null, AuthenticateError>;
 
 @Injectable()
 export class AuthenticateUseCase
@@ -15,8 +17,9 @@ export class AuthenticateUseCase
   constructor(@Inject(MemberRepoProvider) private memberRepo: IMemberRepo) {}
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     try {
-      const exist = await this.memberRepo.existByAppUserId(input.appUserId);
-      return ok(exist);
+      const member = await this.memberRepo.getByAppUserId(input.appUserId);
+
+      return ok(member);
     } catch (error) {
       return err(new AppErrors.UnexpectedError(error));
     }

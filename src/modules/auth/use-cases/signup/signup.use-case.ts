@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
 import { IMemberRepo, MemberRepoProvider } from 'src/modules/membership';
 import { Member } from 'src/modules/membership/domain/member/member.aggregate-root';
-import { SignupError } from './signup.erorr';
+import { SignupError, SignupErrors } from './signup.erorr';
 
 type UseCaseInput = {
   profile: {
@@ -22,6 +22,13 @@ export class SignupUseCase implements IUseCase<UseCaseInput, UseCaseResult> {
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     const { profile } = input;
+
+    const isMemberAlreadyExist = await this.memberRepo.existByAppUserId(
+      profile.app_user_id,
+    );
+    if (isMemberAlreadyExist) {
+      return err(new SignupErrors.AlreadySignedupError());
+    }
 
     const memberResult = Member.create({
       nickName: profile.nickname,

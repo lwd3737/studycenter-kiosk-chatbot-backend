@@ -15,4 +15,20 @@ export class MockMemberMapper implements IMemberMapper {
       profileImageUrl: member.profileImageUrl,
     };
   }
+
+  toDomain(raw: MockMember): Member {
+    const memberResult = Member.create(
+      {
+        appUserId: raw.appUserId,
+        nickName: raw.nickName,
+        phoneNumber: raw.phoneNumber,
+        email: raw.email,
+        profileImageUrl: raw.profileImageUrl,
+      },
+      raw.id,
+    );
+    if (memberResult.isErr()) throw memberResult.error;
+
+    return memberResult.value;
+  }
 }

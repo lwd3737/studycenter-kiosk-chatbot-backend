@@ -5,6 +5,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KakaoChatbotModule } from './modules/kakao-chatbot';
+import { AuthModule } from './modules/auth';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { KakaoChatbotModule } from './modules/kakao-chatbot';
       rootPath: join(__dirname, '..', 'public'),
     }),
 
+    AuthModule,
     KakaoChatbotModule,
   ],
   controllers: [AppController],

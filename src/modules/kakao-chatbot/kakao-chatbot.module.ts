@@ -25,9 +25,12 @@ import { PluginRepo } from './infra/repos/plugin.repo';
 import { KakaoChatbotAuthController } from './controllers/kakao-chatbot-auth.controller';
 import { ParseSyncOtpParamPipe } from './pipes/parse-sync-otp-param.pipe';
 import { AuthModule } from '../auth';
+import { MembershipModule } from '../membership';
+import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
-  imports: [TicketModule, SeatManagementModule, AuthModule],
+  imports: [TicketModule, SeatManagementModule, AuthModule, MembershipModule],
   controllers: [
     KakaoChatbotTicketController,
     KakaoChatbotPaymentController,
@@ -35,6 +38,11 @@ import { AuthModule } from '../auth';
     KakaoChatbotAuthController,
   ],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AuthExceptionFilter,
+    },
+
     KaKaoChatbotResponseMapper,
     ListCardMapper,
     ItemCardMapper,

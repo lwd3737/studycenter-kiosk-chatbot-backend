@@ -4,6 +4,7 @@ import { AuthenticateUseCase, SignupUseCase } from 'src/modules/auth';
 import { PluginRepo } from '../../infra/repos/plugin.repo';
 import { SyncOtp } from '../../pipes/parse-sync-otp-param.pipe';
 import { UseAuthBlockError, UseAuthBlockErrors } from './use-auth-block.error';
+import { SignupErrors } from 'src/modules/auth/use-cases/signup/signup.erorr';
 
 type UseCaseResult = Result<null, UseAuthBlockError>;
 
@@ -24,8 +25,8 @@ export class UseAuthBlockUseCase implements IUseCase<SyncOtp, UseCaseResult> {
         return err(authenticateResult.error);
       }
 
-      const isAlreadyAuthenciated = authenticateResult.value;
-      if (isAlreadyAuthenciated) {
+      const authenticatedMember = authenticateResult.value;
+      if (authenticatedMember) {
         return err(new UseAuthBlockErrors.AlreadyAuthenticatedError());
       }
 
@@ -33,6 +34,10 @@ export class UseAuthBlockUseCase implements IUseCase<SyncOtp, UseCaseResult> {
 
       const signupResult = await this.signupUseCase.execute({ profile });
       if (signupResult.isErr()) {
+        if (signupResult.error instanceof SignupErrors.AlreadySignedupError) {
+          return err(new UseAuthBlockErrors.AlreadyAuthenticatedError());
+        }
+
         return err(signupResult.error);
       }
 

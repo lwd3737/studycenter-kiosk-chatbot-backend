@@ -30,4 +30,11 @@ export class MockMemberRepo implements IMemberRepo {
     const raw = this.memberMapper.toPersistence(member) as MockMember;
     this.storage.push(raw);
   }
+
+  public async getByAppUserId(appUserId: string): Promise<Member | null> {
+    const raw = this.storage.find((raw) => raw.appUserId === appUserId);
+    if (!raw) return null;
+
+    return this.memberMapper.toDomain(raw);
+  }
 }
