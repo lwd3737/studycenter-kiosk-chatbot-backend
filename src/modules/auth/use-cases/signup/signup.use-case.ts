@@ -30,19 +30,19 @@ export class SignupUseCase implements IUseCase<UseCaseInput, UseCaseResult> {
       return err(new SignupErrors.AlreadySignedupError());
     }
 
-    const memberResult = Member.create({
+    const memberOrError = Member.create({
       nickName: profile.nickname,
       profileImageUrl: profile.profile_image_url,
       phoneNumber: profile.phone_number,
       email: profile.email,
       appUserId: profile.app_user_id,
     });
-    if (memberResult.isErr()) {
-      return err(memberResult.error);
+    if (memberOrError.isErr()) {
+      return err(memberOrError.error);
     }
 
     try {
-      await this.memberRepo.create(memberResult.value);
+      await this.memberRepo.create(memberOrError.value);
 
       return ok(null);
     } catch (error) {

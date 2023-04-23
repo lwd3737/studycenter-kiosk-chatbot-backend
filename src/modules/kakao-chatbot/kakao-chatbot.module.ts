@@ -4,7 +4,6 @@ import { TicketModule } from 'src/modules/ticketing';
 import { KakaoChatbotPaymentController } from './controllers/kakao-chatbot-payment.controller';
 import { KakaoChatbotTicketController } from './controllers/kakao-chatbot-ticket.controller';
 import { ParseTicketCategoryParamPipe } from './pipes/parse-ticket-category-param.pipe';
-import { ParseTicketTimeParamPipe } from './pipes/parse-ticket-time-param.pipe';
 import { GetTicketCommerceCardsCarouselUseCase } from './use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
 import { GetTicketListCarouselUseCase } from './use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
 import { ButtonMapper } from './infra/mappers/button.mapper';
@@ -62,7 +61,6 @@ import { APP_FILTER } from '@nestjs/core';
     GetRoomItemCardsCarouselUseCase,
 
     ParseTicketCategoryParamPipe,
-    ParseTicketTimeParamPipe,
     ParseSyncOtpParamPipe,
   ],
   exports: [],

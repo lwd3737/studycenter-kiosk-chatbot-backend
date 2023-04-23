@@ -14,9 +14,9 @@ import {
   ISeatRepo,
   SeatRepoProvider,
 } from '../../domain/seat/seat.repo.interface';
-import { PRESET_ROOMS } from './preset-rooms.data';
-import { PRESET_SEATS } from './preset-seats.data';
-import { PresetRoom } from './preset.schema';
+import { PRESET_ROOMS } from './rooms.data';
+import { PRESET_SEATS } from './seats.data';
+import { PresetRoom } from './seeds.schema';
 
 type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
 

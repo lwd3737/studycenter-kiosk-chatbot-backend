@@ -3,10 +3,7 @@ import { IMapper } from 'src/core';
 import { ListCard } from '../../domain/list-card/list-card.value-object';
 import { ListHeader } from '../../domain/list-card/list-header.value-object';
 import { ListItem } from '../../domain/list-card/list-item.value-object';
-import {
-  ListCardDTO,
-  ListItemDTO,
-} from '../../dtos/kakao-chatbot.dto.interface';
+import { ListCardDTO, ListItemDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 
 @Injectable()

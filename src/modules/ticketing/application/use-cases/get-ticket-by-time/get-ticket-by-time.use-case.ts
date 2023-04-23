@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
-import { TicketTime } from '../../domain/ticket/ticket-time.value-object';
-import { Ticket } from '../../domain/ticket/ticket.aggregate-root';
+import { TicketTime } from '../../../domain/ticket/ticket-time.value-object';
+import { Ticket } from '../../../domain/ticket/ticket.aggregate-root';
 import {
   ITicketRepo,
   TicketRepoProvider,
-} from '../../domain/ticket/ticket.repo.interface';
+} from '../../../domain/ticket/ticket.repo.interface';
 import {
   GetTicketByTimeError,
   GetTicketByTimeErrors,
-} from '../errors/get-ticket-by-time.error';
+} from './get-ticket-by-time.error';
 
 type UseCaseInput = {
   ticketTime: TicketTime;

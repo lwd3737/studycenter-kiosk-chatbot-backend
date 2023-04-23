@@ -45,38 +45,38 @@ export class TicketCommerceCardsCarousel extends ValueObject {
         ticketId: ticket.id.value,
       },
     });
-    const thumbnailResult = this.createTicketThumbnail(ticket.category.value);
+    const thumbnailOrError = this.createTicketThumbnail(ticket.category.value);
 
     // TODO: config module에서 validation
     const locationName = process.env.LOCATION_NAME;
     if (!locationName) {
       throw new DomainError('Location name config not defined');
     }
-    const profileResult = Profile.create({ nickname: locationName });
+    const profileOrError = Profile.create({ nickname: locationName });
 
-    const ticketPropsResult = combine(
-      thumbnailResult,
-      profileResult,
+    const ticketPropsOrError = combine(
+      thumbnailOrError,
+      profileOrError,
       purchaseButtonResult,
     );
-    if (ticketPropsResult.isErr()) {
-      return err(ticketPropsResult.error);
+    if (ticketPropsOrError.isErr()) {
+      return err(ticketPropsOrError.error);
     }
 
-    const [thumbnail, profile, purchaseButton] = ticketPropsResult.value;
+    const [thumbnail, profile, purchaseButton] = ticketPropsOrError.value;
 
-    const commerceCardResult = CommerceCard.create({
+    const commerceCardOrError = CommerceCard.create({
       description: ticket.title,
       price: ticket.price,
       thumbnails: [thumbnail],
       profile,
       buttons: [purchaseButton],
     });
-    if (commerceCardResult.isErr()) {
-      return err(commerceCardResult.error);
+    if (commerceCardOrError.isErr()) {
+      return err(commerceCardOrError.error);
     }
 
-    return ok(commerceCardResult.value);
+    return ok(commerceCardOrError.value);
   }
 
   private static createTicketThumbnail(

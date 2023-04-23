@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { AppErrors, UseCaseError } from 'src/core';
-import { TicketTime } from '../../domain/ticket/ticket-time.value-object';
+import { TicketTime } from '../../../domain/ticket/ticket-time.value-object';
 
 export type GetTicketByTimeError =
   | AppErrors.UnexpectedError

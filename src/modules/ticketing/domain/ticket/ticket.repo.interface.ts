@@ -6,6 +6,7 @@ import { Ticket } from './ticket.aggregate-root';
 export const TicketRepoProvider = Symbol('TicketRepoProvider');
 
 export interface ITicketRepo extends IRepo<Ticket> {
+  isEmpty(): Promise<boolean>;
   getAllTickets(): Promise<Ticket[]>;
   getTicketsByCategory(category: TicketCategory): Promise<Ticket[]>;
   getTicketByTime(time: TicketTime): Promise<Ticket | null>;

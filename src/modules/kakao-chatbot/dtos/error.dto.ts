@@ -1,5 +1,5 @@
-import { KakaoChatbotResponseDTO } from '../dtos/kakao-chatbot-response.dto.interface';
-import { SkillQuickReply } from '../dtos/kakao-chatbot.dto.interface';
+import { KakaoChatbotResponseDTO } from './response.dto.interface';
+import { SkillQuickReply } from './template-output.interface';
 
 export class ErrorDTOCreator {
   private static createResponseDTO(): KakaoChatbotResponseDTO {

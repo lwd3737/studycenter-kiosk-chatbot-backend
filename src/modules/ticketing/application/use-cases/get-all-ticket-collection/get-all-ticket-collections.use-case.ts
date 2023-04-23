@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, IUseCase } from 'src/core/application';
 import { err, ok, Result } from 'src/core/result';
-import { TicketCollectionService } from '../../domain/services/ticket-collection.service';
-import { Ticket } from '../../domain/ticket/ticket.aggregate-root';
+import { TicketCollectionService } from '../../../domain/services/ticket-collection.service';
+import { Ticket } from '../../../domain/ticket/ticket.aggregate-root';
 import {
   ITicketRepo,
   TicketRepoProvider,
-} from '../../domain/ticket/ticket.repo.interface';
+} from '../../../domain/ticket/ticket.repo.interface';
 
 import {
   GetAllTicketCollectionsError,
   GetAllTicketCollectionsErrors,
-} from '../errors/get-all-ticket-collection.error';
+} from './get-all-ticket-collection.error';
 
 type UseCaseResult = Result<Ticket[][], GetAllTicketCollectionsError>;
 
@@ -28,7 +28,7 @@ export class GetAllTicketCollectionsUseCase
     try {
       const allTickets = await this.ticketRepo.getAllTickets();
       if (allTickets.length === 0) {
-        return err(new GetAllTicketCollectionsErrors.TicketNotFoundError());
+        return err(new GetAllTicketCollectionsErrors.TicketNotExistError());
       }
 
       const ticketCollectionsResult =

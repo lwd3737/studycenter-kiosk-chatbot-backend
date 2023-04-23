@@ -1,6 +1,6 @@
 import { ValueObject } from 'src/core/domain';
 import { err, ok, Result } from 'src/core';
-import { TicketErrors } from '../errors/ticket.error';
+import { TicketErrors } from './ticket.error';
 
 export interface TicketDiscountProps {
   type: string;

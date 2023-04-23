@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { KakaoChatbotRequestDTO } from '../dtos/kakao-chatbot-request.dto';
+import { KakaoChatbotRequestDTO } from '../dtos/request.dto';
 
 @Injectable()
 export class ParseTicketIdFromClientExtraPipe

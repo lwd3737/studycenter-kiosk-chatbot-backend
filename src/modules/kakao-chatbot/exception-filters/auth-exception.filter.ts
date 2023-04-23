@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { ErrorDTOCreator } from '../utils/error-dto-handling';
+import { ErrorDTOCreator } from '../dtos/error.dto';
 import { AuthExceptions } from 'src/modules/auth/auth-exceptions';
 
 @Catch(UnauthorizedException)

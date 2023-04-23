@@ -1,21 +1,28 @@
 import { AggregateRoot } from 'src/core/domain/aggregate-root';
-import { err, ok, Result } from 'src/core';
-import { TicketDiscount } from './ticket-discount.value-object';
+import { combine, err, ok, Result } from 'src/core';
 import { TicketTimeUnitEnum, TicketTime } from './ticket-time.value-object';
 import {
   TicketCategory,
   TicketCategoryEnum,
 } from './ticket-category.value-object';
 import { TicketId } from './ticket-id';
-import { TicketError, TicketErrors } from '../errors/ticket.error';
+import { TicketError, TicketErrors } from './ticket.error';
 
 export interface TicketProps {
   title: string;
   category: TicketCategory;
   time: TicketTime;
   price: number;
-  discount?: TicketDiscount;
+  //discount?: TicketDiscount;
 }
+
+export type CreateProps = {
+  title: string;
+  category: string;
+  time: { unit: string; value: number };
+  price: number;
+  //discount?: { type: string; price: number };
+};
 
 export class Ticket extends AggregateRoot<TicketProps> {
   get ticketId(): TicketId {
@@ -42,35 +49,44 @@ export class Ticket extends AggregateRoot<TicketProps> {
     super(props, id);
   }
 
-  static create(props: TicketProps, id?: string): Result<Ticket, TicketError> {
-    if (this.isCategoryAndTimeUnitMatched(props) === false) {
+  static create(props: CreateProps, id?: string): Result<Ticket, TicketError> {
+    const propsOrError = combine(
+      TicketCategory.create({ value: props.category }),
+      TicketTime.create(props.time),
+    );
+    if (propsOrError.isErr()) {
+      return err(propsOrError.error);
+    }
+    const [category, time] = propsOrError.value;
+
+    if (this.isCategoryAndTimeUnitMatched({ category, time }) === false) {
       return err(
         new TicketErrors.CategoryAndTimeUnitMismatchedError({
-          category: props.category.value,
-          timeUnit: props.time.unit,
+          category: category.value,
+          timeUnit: time.unit,
         }),
       );
     }
 
-    return ok(new Ticket(props, id));
+    return ok(new Ticket({ ...props, category, time }, id));
   }
 
-  private static isCategoryAndTimeUnitMatched(props: TicketProps): boolean {
-    const { category, time } = props;
-
-    switch (category.value) {
+  private static isCategoryAndTimeUnitMatched(
+    props: Pick<TicketProps, 'category' | 'time'>,
+  ): boolean {
+    switch (props.category.value) {
       case TicketCategoryEnum.PERIOD:
-        if (time.unit !== TicketTimeUnitEnum.DAYS) {
+        if (props.time.unit !== TicketTimeUnitEnum.DAYS) {
           return false;
         }
         break;
       case TicketCategoryEnum.HOURS_RECHARGE:
-        if (time.unit !== TicketTimeUnitEnum.HOURS) {
+        if (props.time.unit !== TicketTimeUnitEnum.HOURS) {
           return false;
         }
         break;
       case TicketCategoryEnum.SAME_DAY:
-        if (time.unit !== TicketTimeUnitEnum.HOURS) {
+        if (props.time.unit !== TicketTimeUnitEnum.HOURS) {
           return false;
         }
         break;

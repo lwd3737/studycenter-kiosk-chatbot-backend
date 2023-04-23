@@ -1,6 +1,6 @@
 import { ValueObject } from 'src/core/domain';
 import { err, ok, Result } from 'src/core';
-import { TicketErrors } from '../errors/ticket.error';
+import { TicketErrors } from './ticket.error';
 
 export interface TicketTimeProps {
   unit: TicketTimeUnitEnum;
@@ -11,6 +11,11 @@ export enum TicketTimeUnitEnum {
   DAYS = 'DAYS',
   HOURS = 'HOURS',
 }
+
+type CreateProps = {
+  unit: string;
+  value: number;
+};
 
 export class TicketTime extends ValueObject<TicketTimeProps> {
   public get unit(): TicketTimeUnitEnum {
@@ -25,32 +30,33 @@ export class TicketTime extends ValueObject<TicketTimeProps> {
     super(props);
   }
 
-  public static create({
-    unit,
-    value,
-  }: {
-    unit: string;
-    value: number;
-  }): Result<
+  public static create(
+    props: CreateProps,
+  ): Result<
     TicketTime,
     TicketErrors.TimeUnitInvalidError | TicketErrors.TimeValueInvalidError
   > {
-    if (this.isValidTimeUnit(unit) === false) {
-      return err(new TicketErrors.TimeUnitInvalidError(unit));
+    if (this.isTimeUnitValid(props.unit) === false) {
+      return err(new TicketErrors.TimeUnitInvalidError(props.unit));
     }
 
-    if (this.isValidTimeValue(value) === false) {
-      return err(new TicketErrors.TimeValueInvalidError(value));
+    if (this.isTimeValueValid(props.value) === false) {
+      return err(new TicketErrors.TimeValueInvalidError(props.value));
     }
 
-    return ok(new TicketTime({ unit: unit as TicketTimeUnitEnum, value }));
+    return ok(
+      new TicketTime({
+        unit: props.unit as TicketTimeUnitEnum,
+        value: props.value,
+      }),
+    );
   }
 
-  private static isValidTimeUnit(unit: string): boolean {
+  private static isTimeUnitValid(unit: string): boolean {
     return Object.values<string>(TicketTimeUnitEnum).includes(unit);
   }
 
-  private static isValidTimeValue(value: number): boolean {
+  private static isTimeValueValid(value: number): boolean {
     return value > 0 && Number.isInteger(value);
   }
 }

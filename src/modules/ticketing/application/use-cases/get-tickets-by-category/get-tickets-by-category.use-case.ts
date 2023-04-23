@@ -3,21 +3,21 @@ import { err, IUseCase, ok, Result } from 'src/core';
 import {
   TicketCategory,
   TicketCategoryEnum,
-} from '../../domain/ticket/ticket-category.value-object';
-import { Ticket } from '../../domain/ticket/ticket.aggregate-root';
+} from '../../../domain/ticket/ticket-category.value-object';
+import { Ticket } from '../../../domain/ticket/ticket.aggregate-root';
 import {
   ITicketRepo,
   TicketRepoProvider,
-} from '../../domain/ticket/ticket.repo.interface';
+} from '../../../domain/ticket/ticket.repo.interface';
 
-import { GetAllTicketCollectionsError } from '../errors/get-all-ticket-collection.error';
+import { GetAllTicketCollectionsError } from '../get-all-ticket-collection/get-all-ticket-collection.error';
 import {
   GetTicketsByCategoryError,
   GetTicketsByCategoryErrors,
-} from '../errors/get-ticket-collection-by-category.error';
+} from './get-ticket-collection-by-category.error';
 
 type UseCaseInput = {
-  category: TicketCategoryEnum;
+  category: string;
 };
 
 type UseCaseResult = Promise<Result<Ticket[], GetTicketsByCategoryError>>;
@@ -29,7 +29,7 @@ export class GetTicketsByCategoryUseCase
   constructor(@Inject(TicketRepoProvider) private ticketRepo: ITicketRepo) {}
 
   async execute(input: UseCaseInput) {
-    const categoryResult = TicketCategory.create(input.category);
+    const categoryResult = TicketCategory.create({ value: input.category });
     if (categoryResult.isErr()) {
       return err(categoryResult.error);
     }

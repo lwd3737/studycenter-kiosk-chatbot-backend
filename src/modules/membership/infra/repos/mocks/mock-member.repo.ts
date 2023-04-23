@@ -32,9 +32,9 @@ export class MockMemberRepo implements IMemberRepo {
   }
 
   public async getByAppUserId(appUserId: string): Promise<Member | null> {
-    const raw = this.storage.find((raw) => raw.appUserId === appUserId);
-    if (!raw) return null;
+    const found = this.storage.find((raw) => raw.appUserId == appUserId);
+    if (found === undefined) return null;
 
-    return this.memberMapper.toDomain(raw);
+    return this.memberMapper.toDomain(found);
   }
 }

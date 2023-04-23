@@ -6,38 +6,38 @@ import {
   WithChanges,
 } from 'src/core/application';
 import { err, ok, Result } from 'src/core/result';
-import { TicketInitService } from '../../domain/services/ticket-init.service';
-import { Ticket } from '../../domain/ticket/ticket.aggregate-root';
+import { Ticket } from '../../../domain/ticket/ticket.aggregate-root';
 import {
   ITicketRepo,
   TicketRepoProvider,
-} from '../../domain/ticket/ticket.repo.interface';
+} from '../../../domain/ticket/ticket.repo.interface';
+import { TicketSeederService } from '../../ticket-seeder.service';
 
 type InitTicketsResult = Result<null, AppErrors.UnexpectedError>;
 
 @Injectable()
-export class InitTicketUseCase
+export class InitTicketsUseCase
   implements IUseCase<never, InitTicketsResult>, WithChanges
 {
   changes: Changes;
 
   constructor(
     @Inject(TicketRepoProvider) private ticketRepo: ITicketRepo,
-    private initTicketsService: TicketInitService,
+    private ticketSeederService: TicketSeederService,
   ) {
     this.changes = new Changes();
   }
 
   async execute(): Promise<InitTicketsResult> {
     try {
-      this.changes.addChange(this.initTicketsService.initToDefault());
+      this.changes.addChange(await this.ticketSeederService.seed());
 
-      const changesResult = this.changes.getChangesResult();
-      if (changesResult.isErr()) {
-        return err(changesResult.error);
+      const changesOrError = this.changes.getChangesResult();
+      if (changesOrError.isErr()) {
+        return err(changesOrError.error);
       }
 
-      const tickets = changesResult.value[0] as Ticket[];
+      const tickets = changesOrError.value[0] as Ticket[];
 
       await this.ticketRepo.clear();
       await this.ticketRepo.bulkCreate(tickets);

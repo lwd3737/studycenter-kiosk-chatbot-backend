@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ok, Result } from 'src/core';
-import { GetAllTicketCollectionsErrors } from '../../application/errors/get-all-ticket-collection.error';
+import { GetAllTicketCollectionsErrors } from '../../application/use-cases/get-all-ticket-collection/get-all-ticket-collection.error';
 import { TicketCategoryEnum } from '../ticket/ticket-category.value-object';
 import { Ticket } from '../ticket/ticket.aggregate-root';
 import {
@@ -15,7 +15,7 @@ export class TicketCollectionService {
   public async groupIntoCollectionsByCategory(
     allTickets: Ticket[],
   ): Promise<
-    Result<Ticket[][], GetAllTicketCollectionsErrors.TicketNotFoundError>
+    Result<Ticket[][], GetAllTicketCollectionsErrors.TicketNotExistError>
   > {
     const periodCollection = allTickets.filter(
       (ticket) => ticket.category.value === TicketCategoryEnum.PERIOD,

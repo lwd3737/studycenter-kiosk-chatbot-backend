@@ -1,4 +1,4 @@
-import { PresetSeat } from './preset.schema';
+import { PresetSeat } from './seeds.schema';
 
 export const PRESET_SEATS: PresetSeat[] = [
   {

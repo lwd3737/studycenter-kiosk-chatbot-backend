@@ -1,4 +1,4 @@
-import { PresetRoom } from './preset.schema';
+import { PresetRoom } from './seeds.schema';
 
 export const PRESET_ROOMS: PresetRoom[] = [
   {
