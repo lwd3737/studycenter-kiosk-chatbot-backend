@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
-import { Carousel } from '../../domain/carousel/carousel.value-object';
 import { TicketCommerceCardsCarousel } from '../../domain/ticket-commerce-cards-carousel/ticket-commerce-cards-carousel.value-object';
 import { GetTicketCommerceCardsCarouselError } from './get-ticket-cmmerce-cards-carousel.error';
+import { Carousel } from '../../domain/base/carousel/carousel.value-object';
 
 type UseCaseInput = {
   tickets: Ticket[];

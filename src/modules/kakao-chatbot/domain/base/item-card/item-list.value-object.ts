@@ -3,7 +3,7 @@ import { ItemCardErrors } from './item-card.error';
 
 export interface ItemListProps {
   title: string;
-  desciption: string;
+  description: string;
 }
 
 export class ItemList extends ValueObject<ItemListProps> {
@@ -14,7 +14,7 @@ export class ItemList extends ValueObject<ItemListProps> {
   }
 
   get description(): string {
-    return this.props.desciption;
+    return this.props.description;
   }
 
   public static create(

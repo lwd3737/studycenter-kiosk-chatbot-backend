@@ -26,11 +26,9 @@ export class KakaoChatbotAuthController {
     @Body(ParseSyncOtpParamPipe) syncOtp: SyncOtp,
   ): Promise<KakaoChatbotResponseDTO> {
     const authBlockResult = await this.useAuthBlockUseCase.execute(syncOtp);
-    //const signupResult = await this.signupUseCase.execute({ profile });
 
     if (authBlockResult.isErr()) {
       const error = authBlockResult.error;
-      console.log('error', error);
       switch (error.constructor) {
         case UseAuthBlockErrors.AlreadyAuthenticatedError:
           return ErrorDTOCreator.toSimpleTextOutput(

@@ -8,9 +8,16 @@ export class MockSeatMapper implements ISeatMapper {
   toPersistence(seat: Seat): MockSeat {
     return {
       id: seat.id.value,
-      roomId: seat.id.value,
+      roomId: seat.roomId.value,
+      roomNumber: seat.roomNumber.value,
       number: seat.number.value,
       isAvailable: seat.isAvailable,
     };
+  }
+
+  toDomain(raw: MockSeat): Seat {
+    const seatOrError = Seat.createFromExisiting({ ...raw }, raw.id);
+    if (seatOrError.isErr()) throw seatOrError.error;
+    return seatOrError.value;
   }
 }

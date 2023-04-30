@@ -28,8 +28,8 @@ type CreateFromExistingProps = {
   number: number;
   seatIds: string[];
   seatsInfo: {
-    totalNumber: number;
-    availableNumber: number;
+    totalCount: number;
+    availableCount: number;
   };
 };
 
@@ -58,7 +58,7 @@ export class Room extends AggregateRoot<RoomProps> {
     return this.props.seatsInfo;
   }
 
-  public addSeat(...seats: Seat[]): Result<null, DomainError> {
+  public addSeats(...seats: Seat[]): Result<null, DomainError> {
     const seatIds = (this.props.seatIds = this.props.seatIds.add(
       ...seats.map((seat) => seat.seatId),
     ));
@@ -69,9 +69,8 @@ export class Room extends AggregateRoot<RoomProps> {
       0,
     );
     const seatsInfoResult = SeatsInfo.create({
-      totalNumber: this.props.seatsInfo.totalNumber + seats.length,
-      availableNumber:
-        this.props.seatsInfo.availableNumber + newAvailableNumber,
+      totalCount: this.props.seatsInfo.totalCount + seats.length,
+      availableCount: this.props.seatsInfo.availableCount + newAvailableNumber,
     });
     if (seatsInfoResult.isErr()) {
       return err(seatsInfoResult.error);
@@ -97,8 +96,8 @@ export class Room extends AggregateRoot<RoomProps> {
       RoomType.create({ value: props.type }),
       RoomNumber.create({ value: props.number }),
       SeatsInfo.create({
-        totalNumber: 0,
-        availableNumber: 0,
+        totalCount: 0,
+        availableCount: 0,
       }),
     );
     if (propsOrError.isErr()) return err(propsOrError.error);
@@ -153,7 +152,7 @@ export class Room extends AggregateRoot<RoomProps> {
   private static areSeatsTotalNumberAndSeatIdsNumberNotEquals(
     props: Pick<RoomProps, 'seatIds' | 'seatsInfo'>,
   ): boolean {
-    return props.seatIds.length !== props.seatsInfo.totalNumber;
+    return props.seatIds.length !== props.seatsInfo.totalCount;
   }
 
   private constructor(props: RoomProps, id?: string) {

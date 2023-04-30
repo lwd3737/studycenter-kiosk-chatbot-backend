@@ -2,17 +2,17 @@ import { err, ok, Result, ValueObject } from 'src/core';
 import { RoomErrors } from './room.error';
 
 export interface SeatsInfoProps {
-  totalNumber: number;
-  availableNumber: number;
+  totalCount: number;
+  availableCount: number;
 }
 
 export class SeatsInfo extends ValueObject<SeatsInfoProps> {
-  get totalNumber(): number {
-    return this.props.totalNumber;
+  get totalCount(): number {
+    return this.props.totalCount;
   }
 
-  get availableNumber(): number {
-    return this.props.availableNumber;
+  get availableCount(): number {
+    return this.props.availableCount;
   }
 
   public static create(
@@ -37,7 +37,7 @@ export class SeatsInfo extends ValueObject<SeatsInfoProps> {
     | RoomErrors.SeatsTotalNumberNotIntegerOrNegativeNumberError
     | RoomErrors.SeatsAvailableNumberNotIntegerOrNagativeNumberError
   > {
-    const { totalNumber, availableNumber } = props;
+    const { totalCount: totalNumber, availableCount: availableNumber } = props;
 
     if (Number.isInteger(totalNumber) === false || totalNumber < 0) {
       return err(

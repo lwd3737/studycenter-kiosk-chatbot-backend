@@ -22,6 +22,10 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest();
+
+    this.verifyAuthHeader(req);
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -30,10 +34,8 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const req = context.switchToHttp().getRequest();
-
     try {
-      const member = await this.verify(req);
+      const member = await this.verifyAppUserId(req);
       req.member = member;
 
       return true;
@@ -43,7 +45,7 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  private async verify(req: Request): Promise<Member> {
+  private verifyAuthHeader(req: Request): void {
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
     const authorizationKey = process.env.AUTHORIZATION_TOKEN;
 
@@ -54,7 +56,9 @@ export class AuthGuard implements CanActivate {
     if (token !== authorizationKey) {
       throw new AuthExceptions.InvalidAuthorizationTokenError();
     }
+  }
 
+  private async verifyAppUserId(req: Request): Promise<Member> {
     const appUserId = req.body.userRequest?.user?.properties?.appUserId ?? null;
     if (appUserId === null) {
       throw new AuthExceptions.AppUserIdNotExistError();

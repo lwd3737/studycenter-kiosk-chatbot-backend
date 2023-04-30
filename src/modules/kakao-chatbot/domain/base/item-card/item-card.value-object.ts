@@ -3,8 +3,9 @@ import { Button } from '../button/button.value-object';
 import { Thumbnail } from '../thumbnail/thumbnail.value-object';
 import { ImageTitle } from './image-title.value-object';
 import { ItemCardHead } from './item-card-head.value-object';
-import { ItemCardErrors } from './item-card.error';
+import { ItemCardError, ItemCardErrors } from './item-card.error';
 import { ItemList } from './item-list.value-object';
+import { ItemListSummary } from './item-list-summary.value-object';
 
 export interface ItemCardProps {
   thumbnail?: Thumbnail;
@@ -13,7 +14,7 @@ export interface ItemCardProps {
   imageTitle?: ImageTitle;
   itemList: ItemList[];
   itemListAlignment?: 'left' | 'right';
-  // itemListSummary?: ItemListSummary
+  itemListSummary?: ItemListSummary;
   title?: string;
   description?: string;
   buttons?: ReadonlyArray<Button>;
@@ -23,13 +24,6 @@ export interface ItemCardProps {
 export interface CreateProps extends ItemCardProps {
   isCarousel: boolean;
 }
-
-type ValidationError =
-  | ItemCardErrors.ItemListTitleNotIncludedWhenDescriptionExistError
-  | ItemCardErrors.ItemListTitleAndDescriptionMaxLengthExceededError
-  | ItemCardErrors.ItemListTitleMaxLengthExceededError
-  | ItemCardErrors.ButtonsMaxNumberExceededWhenLayoutHorizontalError
-  | ItemCardErrors.ButtonsMaxNumberExceededWhenLayoutVerticalError;
 
 export class ItemCard extends ValueObject<ItemCardProps> {
   private static TITLE_DESCRIPTION_MAX_LENGTH_IN_SINGLE_TYPE = 200;
@@ -57,6 +51,10 @@ export class ItemCard extends ValueObject<ItemCardProps> {
     return this.props.itemListAlignment;
   }
 
+  get itemListSummary(): ItemListSummary | undefined {
+    return this.props.itemListSummary;
+  }
+
   get title(): string | undefined {
     return this.props.title;
   }
@@ -73,45 +71,39 @@ export class ItemCard extends ValueObject<ItemCardProps> {
     return this.props.buttonLayout;
   }
 
-  public static create(props: CreateProps): Result<ItemCard, ValidationError> {
-    const validationResult = this.validate(props);
-    if (validationResult.isErr()) {
-      return err(validationResult.error);
+  public static create(props: CreateProps): Result<ItemCard, ItemCardError> {
+    const validOrError = this.validate(props);
+    if (validOrError.isErr()) {
+      return err(validOrError.error);
     }
 
     return ok(new ItemCard(props));
   }
 
-  private static validate(props: CreateProps): Result<null, ValidationError> {
-    if (this.isTitleNotIncludedWhenDescriptionExist(props)) {
+  private static validate(props: CreateProps): Result<null, ItemCardError> {
+    if (this.areItemListEmpty(props.itemList))
+      return err(new ItemCardErrors.ItemListEmptyError());
+    if (this.isTitleNotIncludedWhenDescriptionExist(props))
       return err(
         new ItemCardErrors.ItemListTitleNotIncludedWhenDescriptionExistError(),
       );
-    }
-
-    if (this.isTitleAndDescriptionMaxLengthExceeded(props)) {
+    if (this.areTitleAndDescriptionMaxLengthExceeded(props))
       return err(
         new ItemCardErrors.ItemListTitleAndDescriptionMaxLengthExceededError(),
       );
-    }
-
-    if (this.isButtonLayoutVerticalWhenCarousel(props)) {
-      return err(new ItemCardErrors.InvalidButtonLayoutWhenCarouselError());
-    }
-
-    if (this.isButtonsMaxNumberExceededWhenLayoutVertical(props)) {
+    if (this.isButtonsMaxNumberExceededWhenLayoutVertical(props))
       return err(
         new ItemCardErrors.ButtonsMaxNumberExceededWhenLayoutVerticalError(),
       );
-    }
-
-    if (this.isButtonsMaxNumberExceededWhenLayoutHorizontal(props)) {
+    if (this.isButtonsMaxNumberExceededWhenLayoutHorizontal(props))
       return err(
         new ItemCardErrors.ButtonsMaxNumberExceededWhenLayoutHorizontalError(),
       );
-    }
-
     return ok(null);
+  }
+
+  private static areItemListEmpty(itemList: ItemList[]): boolean {
+    return itemList.length === 0;
   }
 
   private static isTitleNotIncludedWhenDescriptionExist(
@@ -124,7 +116,7 @@ export class ItemCard extends ValueObject<ItemCardProps> {
     return false;
   }
 
-  private static isTitleAndDescriptionMaxLengthExceeded(
+  private static areTitleAndDescriptionMaxLengthExceeded(
     props: Pick<CreateProps, 'title' | 'description' | 'isCarousel'>,
   ): boolean {
     const { title, description, isCarousel } = props;

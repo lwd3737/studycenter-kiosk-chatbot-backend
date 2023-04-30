@@ -5,10 +5,12 @@ import {
   ISeatMapper,
   SeatMapperProvider,
 } from '../../mappers/seat.mapper.interface';
+import { SeatIds } from 'src/modules/seat-management/domain/room/seat-ids.value-object';
 
 export type MockSeat = {
   id: string;
   roomId: string;
+  roomNumber: number;
   number: number;
   isAvailable: boolean;
 };
@@ -42,5 +44,13 @@ export class MockSeatRepo implements ISeatRepo {
         ...rawsToUpdate[index],
       };
     });
+  }
+
+  public async getCollectionByIds(seatIds: SeatIds): Promise<Seat[]> {
+    //console.log(this.storage.map((raw) => [raw.roomId, raw.id]));
+    const filtered = this.storage.filter((raw) =>
+      seatIds.values.includes(raw.id),
+    );
+    return filtered.map((raw) => this.seatMapper.toDomain(raw));
   }
 }

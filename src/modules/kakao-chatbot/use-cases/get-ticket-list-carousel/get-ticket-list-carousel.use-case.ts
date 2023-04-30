@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { GetAllTicketCollectionsUseCase } from 'src/modules/ticketing';
-import { Carousel } from '../../domain/carousel/carousel.value-object';
 import { TicketListCarousel } from '../../domain/ticket-list-carousel/ticket-list-carousel.value-object';
 import { KakaoChatbotRequestDTO } from '../../dtos/request.dto';
 import { GetTicketListCarouselError } from './get-ticket-list-carousel.error';
+import { Carousel } from '../../domain/base/carousel/carousel.value-object';
 
 type TicketListCarouselResult = Promise<
   Result<Carousel, GetTicketListCarouselError>

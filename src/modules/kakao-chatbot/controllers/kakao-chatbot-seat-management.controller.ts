@@ -1,77 +1,60 @@
-import {
-  Body,
-  Controller,
-  InternalServerErrorException,
-  Post,
-} from '@nestjs/common';
-import { GetRoomsStatusUseCase } from 'src/modules/seat-management';
-import { ContextControl } from '../domain/context-control/context-control.value-object';
-import { ContextValue } from '../domain/context-control/context-value.value-object';
+import { Controller, Post } from '@nestjs/common';
+import { GetSeatCollectionsByRoomUseCase } from 'src/modules/seat-management';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { CarouselMapper } from '../infra/mappers/carousel.mapper';
-import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { ParseTicketIdFromClientExtraPipe } from '../pipes/parse-ticket-id-from-client-extra.pipe';
 import { GetRoomItemCardsCarouselUseCase } from '../use-cases/get-room-item-cards-carousel/get-room-item-cards-carousel.use-case';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { ErrorDTOCreator } from '../dtos/error.dto';
+import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 
 @Public()
-@Controller('kakao-chatbot')
+@Controller(`${KAKAO_CHATBOT_PREFIX}/seat-management`)
 export class KakaoChatbotSeatManagementController {
   constructor(
-    private getRoomsStatusUseCase: GetRoomsStatusUseCase,
+    private getRoomsStatusUseCase: GetSeatCollectionsByRoomUseCase,
     private getRoomItemCardsCarousel: GetRoomItemCardsCarouselUseCase,
     private repoponseMapper: KaKaoChatbotResponseMapper,
     private carouselMapper: CarouselMapper,
-    private contextControlMapper: ContextControlMapper,
   ) {}
 
-  @Post('rooms/status')
-  async getRoomsStatus(
-    @Body(ParseTicketIdFromClientExtraPipe) ticketId: string,
-  ): Promise<KakaoChatbotResponseDTO> {
-    const roomsResult = await this.getRoomsStatusUseCase.execute();
-    if (roomsResult.isErr()) {
-      const error = roomsResult.error;
+  @Post('rooms-status')
+  async getRoomsStatus(): Promise<KakaoChatbotResponseDTO> {
+    const roomsOrError = await this.getRoomsStatusUseCase.execute();
+    if (roomsOrError.isErr()) {
+      const error = roomsOrError.error;
       console.debug(error);
 
-      throw new InternalServerErrorException();
+      return ErrorDTOCreator.toSimpleTextOutput(
+        '룸에 대한 정보를 가져오지 못했어요! 다시 시도해주세요.',
+      );
     }
 
-    const roomItemCardsCarouselResult = this.getRoomItemCardsCarousel.execute({
-      rooms: roomsResult.value,
+    const roomItemCardsCarouselOrError = this.getRoomItemCardsCarousel.execute({
+      seatCollectionsByRoom: roomsOrError.value,
     });
-    if (roomItemCardsCarouselResult.isErr()) {
-      const error = roomItemCardsCarouselResult.error;
+    if (roomItemCardsCarouselOrError.isErr()) {
+      const error = roomItemCardsCarouselOrError.error;
       console.debug(error);
 
-      throw new InternalServerErrorException(error);
+      return ErrorDTOCreator.toSimpleTextOutput(
+        '룸에 대한 정보를 출력하는 중에 오류가 발생했어요! 다시 시도해주세요.',
+      );
     }
-
-    const context = ContextControl.create({
-      values: [
-        ContextValue.create({
-          name: 'ticketing',
-          lifeSpan: 10,
-          params: { selected_ticket_id: ticketId },
-        }),
-      ],
-    });
 
     return this.repoponseMapper.toDTO({
       outputs: [
         {
           carousel: this.carouselMapper.toDTO(
-            roomItemCardsCarouselResult.value,
+            roomItemCardsCarouselOrError.value,
           ),
         },
       ],
-      context: this.contextControlMapper.toDTO(context),
     });
   }
 
-  // @Post('seats/status')
-  // async getSeatStatus(@Body()) {
+  // @Post('seats-status')
+  // async getSeatsStatus(@Body()) {
 
   // }
 }

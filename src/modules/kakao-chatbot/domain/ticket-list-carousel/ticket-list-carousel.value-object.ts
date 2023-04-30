@@ -1,12 +1,15 @@
 import { combine, err, ok, Result, ValueObject } from 'src/core';
 import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
-import { Button, ButtonActionEnum } from '../button/button.value-object';
-import { Carousel, CarouselTypeEnum } from '../carousel/carousel.value-object';
-import { ListCardError } from '../list-card/list-card.error';
+import { Button, ButtonActionEnum } from '../base/button/button.value-object';
 import { TicketListCarouselError } from './ticket-list-carousel.error';
-import { ListCard } from '../list-card/list-card.value-object';
-import { ListHeader } from '../list-card/list-header.value-object';
-import { ListItem } from '../list-card/list-item.value-object';
+import {
+  Carousel,
+  CarouselTypeEnum,
+} from '../base/carousel/carousel.value-object';
+import { ListCardError } from '../base/list-card/list-card.error';
+import { ListCard } from '../base/list-card/list-card.value-object';
+import { ListHeader } from '../base/list-card/list-header.value-object';
+import { ListItem } from '../base/list-card/list-item.value-object';
 
 export interface TicketListCarouselProps {
   ticketCollections: Ticket[][];
@@ -19,20 +22,20 @@ export class TicketListCarousel extends ValueObject {
     const ticketListCardResultCollection = props.ticketCollections.map(
       this.createTicketListCard,
     );
-    const ticketListCardsResult = combine(...ticketListCardResultCollection);
-    if (ticketListCardsResult.isErr()) {
-      return err(ticketListCardsResult.error);
+    const ticketListCardsOrError = combine(...ticketListCardResultCollection);
+    if (ticketListCardsOrError.isErr()) {
+      return err(ticketListCardsOrError.error);
     }
 
-    const carouselResult = Carousel.create({
+    const carouselOrError = Carousel.create({
       type: CarouselTypeEnum.LIST_CARD,
-      items: ticketListCardsResult.value,
+      items: ticketListCardsOrError.value,
     });
-    if (carouselResult.isErr()) {
-      return err(carouselResult.error);
+    if (carouselOrError.isErr()) {
+      return err(carouselOrError.error);
     }
 
-    return ok(carouselResult.value);
+    return ok(carouselOrError.value);
   }
 
   private static createTicketListCard(
@@ -40,23 +43,23 @@ export class TicketListCarousel extends ValueObject {
   ): Result<ListCard, ListCardError> {
     const { category } = ticketCollection[0];
 
-    const headerResult = ListHeader.create({ title: category.label });
-    const itemResultCollection = ticketCollection.map((ticket) =>
+    const headerOrError = ListHeader.create({ title: category.label });
+    const itemOrErrors = ticketCollection.map((ticket) =>
       ListItem.create({
         title: ticket.title,
         description: `${ticket.price}원`,
       }),
     );
-    const buttonResult = Button.create({
-      label: '더보기',
+    const buttonOrError = Button.create({
+      label: `${category.label} 선택`,
       action: ButtonActionEnum.MESSAGE,
-      messageText: `${category.label}`,
+      messageText: `${category.label} 선택`,
     });
 
     const listCardProps = combine(
-      headerResult,
-      buttonResult,
-      ...itemResultCollection,
+      headerOrError,
+      buttonOrError,
+      ...itemOrErrors,
     );
     if (listCardProps.isErr()) {
       return err(listCardProps.error);

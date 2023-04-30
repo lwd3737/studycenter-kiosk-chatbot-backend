@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { ItemCard } from '../../domain/item-card/item-card.value-object';
 import { ItemCardDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
+import { ItemCard } from '../../domain/base/item-card/item-card.value-object';
 
 @Injectable()
 export class ItemCardMapper implements IMapper<ItemCard> {
@@ -34,6 +34,12 @@ export class ItemCardMapper implements IMapper<ItemCard> {
         description: item.description,
       })),
       itemListAlignment: domain.itemListAlignment,
+      itemListSummary: domain.itemListSummary
+        ? {
+            title: domain.itemListSummary.title,
+            description: domain.itemListSummary.description,
+          }
+        : undefined,
       title: domain.title,
       description: domain.description,
       buttons: domain.buttons?.map((button) => this.buttonMapper.toDTO(button)),

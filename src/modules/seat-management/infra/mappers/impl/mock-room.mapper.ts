@@ -9,8 +9,8 @@ export type MockRoom = {
   number: number;
   seatIds: string[];
   seatsInfo: {
-    totalNumber: number;
-    availableNumber: number;
+    totalCount: number;
+    availableCount: number;
   };
 };
 
@@ -33,8 +33,8 @@ export class MockRoomMapper implements IRoomMapper {
       number: domain.number.value,
       seatIds: domain.seatIds.values,
       seatsInfo: {
-        totalNumber: domain.seatsInfo.totalNumber,
-        availableNumber: domain.seatsInfo.availableNumber,
+        totalCount: domain.seatsInfo.totalCount,
+        availableCount: domain.seatsInfo.availableCount,
       },
     };
   }

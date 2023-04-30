@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import {
-  Carousel,
-  CarouselItem,
-  CarouselTypeEnum,
-} from '../../domain/carousel/carousel.value-object';
-import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
-import { ItemCard } from '../../domain/item-card/item-card.value-object';
-import { ListCard } from '../../domain/list-card/list-card.value-object';
-import {
   CarouselDTO,
   CarouselItemDTO,
 } from '../../dtos/template-output.interface';
@@ -16,6 +8,14 @@ import {
 import { CommerceCardMapper } from './commerce-card.mapper';
 import { ItemCardMapper } from './item-card.mapper';
 import { ListCardMapper } from './list-card.mapper';
+import {
+  Carousel,
+  CarouselItem,
+  CarouselTypeEnum,
+} from '../../domain/base/carousel/carousel.value-object';
+import { ListCard } from '../../domain/base/list-card/list-card.value-object';
+import { CommerceCard } from '../../domain/base/commerce-card/commerce-card.value-object';
+import { ItemCard } from '../../domain/base/item-card/item-card.value-object';
 
 @Injectable()
 export class CarouselMapper implements IMapper<Carousel> {

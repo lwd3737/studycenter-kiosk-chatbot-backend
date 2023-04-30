@@ -4,9 +4,11 @@ import { SeatId } from './seat-id';
 import { SeatNumber } from './seat-number.value-object';
 import { Result, combine, err, ok } from 'src/core';
 import { SeatError } from './seat.error';
+import { RoomNumber } from '../room/room-number.value-object';
 
 export interface SeatProps {
   roomId: RoomId;
+  roomNumber: RoomNumber;
   number: SeatNumber;
   isAvailable: boolean;
   // userInUse: UserId
@@ -14,6 +16,7 @@ export interface SeatProps {
 
 type CreateNewProps = {
   roomId: string;
+  roomNumber: number;
   number: number;
 };
 
@@ -30,6 +33,10 @@ export class Seat extends AggregateRoot<SeatProps> {
     return this.props.roomId;
   }
 
+  get roomNumber(): RoomNumber {
+    return this.props.roomNumber;
+  }
+
   get number(): SeatNumber {
     return this.props.number;
   }
@@ -39,12 +46,20 @@ export class Seat extends AggregateRoot<SeatProps> {
   }
 
   public static createNew(props: CreateNewProps): Result<Seat, SeatError> {
-    const propsOrError = combine(SeatNumber.create({ value: props.number }));
+    const propsOrError = combine(
+      RoomNumber.create({ value: props.roomNumber }),
+      SeatNumber.create({ value: props.number }),
+    );
     if (propsOrError.isErr()) return err(propsOrError.error);
-    const [number] = propsOrError.value;
+    const [roomNumber, number] = propsOrError.value;
 
     return ok(
-      new Seat({ roomId: new RoomId(props.roomId), number, isAvailable: true }),
+      new Seat({
+        roomId: new RoomId(props.roomId),
+        roomNumber,
+        number,
+        isAvailable: true,
+      }),
     );
   }
 
@@ -52,14 +67,18 @@ export class Seat extends AggregateRoot<SeatProps> {
     props: CreateFromExistingProps,
     id: string,
   ): Result<Seat, SeatError> {
-    const propsOrError = combine(SeatNumber.create({ value: props.number }));
+    const propsOrError = combine(
+      RoomNumber.create({ value: props.roomNumber }),
+      SeatNumber.create({ value: props.number }),
+    );
     if (propsOrError.isErr()) return err(propsOrError.error);
-    const [number] = propsOrError.value;
+    const [roomNumber, number] = propsOrError.value;
 
     return ok(
       new Seat(
         {
           roomId: new RoomId(props.roomId),
+          roomNumber,
           number,
           isAvailable: props.isAvailable,
         },

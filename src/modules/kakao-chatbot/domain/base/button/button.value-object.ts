@@ -91,7 +91,6 @@ export class Button extends ValueObject<ButtonProps> {
       case ButtonActionEnum.BLOCK: {
         if (isWebLinkIncluded) return false;
         if (isPhoneNumberIncluded) return false;
-        if (!isMessageTextIncluded) return false;
         if (!isBlockIdIncluded) return false;
 
         return true;

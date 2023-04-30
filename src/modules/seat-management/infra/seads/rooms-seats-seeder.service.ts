@@ -1,6 +1,5 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { combine, DomainError, err, ok, Result } from 'src/core';
-import { RoomId } from '../../domain/room/room-id';
+import { AppErrors, combine, DomainError, err, ok, Result } from 'src/core';
 import { Room } from '../../domain/room/room.aggregate-root';
 import {
   IRoomRepo,
@@ -13,11 +12,8 @@ import {
 } from '../../domain/seat/seat.repo.interface';
 import roomsData from './rooms.data.json';
 import seatsData from './seats.data.json';
-import { PresetRoom } from './seeds.schema';
 
 type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
-
-type Associations = Map<string, string[]>;
 
 @Injectable()
 export class RoomsSeatsSeederService implements OnApplicationBootstrap {
@@ -33,48 +29,49 @@ export class RoomsSeatsSeederService implements OnApplicationBootstrap {
       if (seedOrError.isErr()) {
         throw seedOrError.error;
       }
-
-      console.info('Seed data created successfully');
     }
   }
 
   public async seed(): Promise<SeederResult> {
-    const associations: Associations = new Map();
+    try {
+      const roomsOrError = await this.createAllRooms();
+      if (roomsOrError.isErr()) return err(roomsOrError.error);
+      const rooms = roomsOrError.value;
 
+      const seatsOrError = await this.createSeats(rooms);
+      if (seatsOrError.isErr()) {
+        return err(seatsOrError.error);
+      }
+
+      await this.roomRepo.bulkUpdate(rooms);
+
+      return ok({ rooms, seats: seatsOrError.value });
+    } catch (error) {
+      return err(new AppErrors.UnexpectedError(error as Error));
+    }
+  }
+
+  private async createAllRooms(): Promise<Result<Room[], DomainError>> {
     const rooms: Room[] = [];
-    const seats: Seat[] = [];
-
     for (const roomIndex in roomsData) {
       const roomOrError = this.createRoom(roomsData[roomIndex]);
       if (roomOrError.isErr()) {
         return err(roomOrError.error);
       }
-      const room = roomOrError.value;
 
-      rooms.push(room);
-
-      const seatsOrError = this.createSeats(
-        roomsData[roomIndex].id,
-        room.roomId,
-      );
-      if (seatsOrError.isErr()) {
-        return err(seatsOrError.error);
-      }
-      const newSeats = seatsOrError.value;
-      seats.push(...newSeats);
-
-      const newSeatIds = newSeats.map((seat) => seat.seatId.value);
-      associations.set(room.roomId.value, newSeatIds);
+      rooms.push(roomOrError.value);
     }
 
-    await this.init(rooms, seats);
-    this.associateAggregates({ rooms, seats }, associations);
-    await this.updateAssociations(rooms);
+    await this.roomRepo.init(rooms);
 
-    return ok({ rooms, seats });
+    return ok(rooms);
   }
 
-  private createRoom(roomData: PresetRoom): Result<Room, DomainError> {
+  private createRoom(roomData: {
+    title: string;
+    type: string;
+    number: number;
+  }): Result<Room, DomainError> {
     const roomOrError = Room.createNew(roomData);
     if (roomOrError.isErr()) {
       return err(roomOrError.error);
@@ -82,54 +79,31 @@ export class RoomsSeatsSeederService implements OnApplicationBootstrap {
     return ok(roomOrError.value);
   }
 
-  private createSeats(
-    presetRoomId: string,
-    roomId: RoomId,
-  ): Result<Seat[], DomainError> {
-    const seatsDataByRoomId = seatsData.filter(
-      (seatData) => seatData.roomId === presetRoomId,
-    );
-
-    const seatOrErrors = seatsDataByRoomId.map((seatData) =>
-      Seat.createNew({ ...seatData, roomId: roomId.value }),
-    );
-
-    return combine(...seatOrErrors);
-  }
-
-  private async init(rooms: Room[], seats: Seat[]): Promise<void> {
-    await this.roomRepo.init(rooms);
-    await this.seatRepo.init(seats);
-  }
-
-  private associateAggregates(
-    aggregates: { rooms: Room[]; seats: Seat[] },
-    associations: Associations,
-  ): void {
-    aggregates.rooms.forEach((room) => {
-      const rawSeatIds = associations.get(room.roomId.value);
-      if (!rawSeatIds) {
-        throw new Error(
-          `Seat ids for associating room(${JSON.stringify(
-            room,
-            null,
-            2,
-          )}) does not exist`,
-        );
-      }
-
-      const seatsByRoomId = aggregates.seats.filter((seat) =>
-        seat.roomId.equals(room.roomId.value),
+  private async createSeats(
+    rooms: Room[],
+  ): Promise<Result<Seat[], DomainError>> {
+    const seats: Seat[] = [];
+    for (const room of rooms) {
+      const filtered = seatsData.filter(
+        (seatData) => seatData.roomNumber === room.number.value,
       );
 
-      const addSeatsOrError = room.addSeat(...seatsByRoomId);
-      if (addSeatsOrError.isErr()) {
-        throw addSeatsOrError.error;
-      }
-    });
-  }
+      const newSeatsOrError = combine(
+        ...filtered.map((seatData) =>
+          Seat.createNew({ ...seatData, roomId: room.id.value }),
+        ),
+      );
+      if (newSeatsOrError.isErr()) return err(newSeatsOrError.error);
+      const newSeats = newSeatsOrError.value;
 
-  private async updateAssociations(rooms: Room[]) {
-    await this.roomRepo.bulkUpdate(rooms);
+      seats.push(...newSeats);
+
+      const addSeatsOrError = room.addSeats(...newSeats);
+      if (addSeatsOrError.isErr()) return err(addSeatsOrError.error);
+    }
+
+    await this.seatRepo.init(seats);
+
+    return ok(seats);
   }
 }

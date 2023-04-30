@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { Button } from '../../domain/button/button.value-object';
+import { Button } from '../../domain/base/button/button.value-object';
 import { ButtonDTO } from '../../dtos/template-output.interface';
 
 @Injectable()

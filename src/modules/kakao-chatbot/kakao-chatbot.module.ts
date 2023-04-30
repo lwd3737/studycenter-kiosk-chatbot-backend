@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { SeatManagementModule } from 'src/modules/seat-management';
 import { TicketModule } from 'src/modules/ticketing';
 import { KakaoChatbotPaymentController } from './controllers/kakao-chatbot-payment.controller';
-import { KakaoChatbotTicketController } from './controllers/kakao-chatbot-ticket.controller';
+import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-ticketing.controller';
 import { ParseTicketCategoryParamPipe } from './pipes/parse-ticket-category-param.pipe';
 import { GetTicketCommerceCardsCarouselUseCase } from './use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
 import { GetTicketListCarouselUseCase } from './use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
@@ -31,7 +31,7 @@ import { APP_FILTER } from '@nestjs/core';
 @Module({
   imports: [TicketModule, SeatManagementModule, AuthModule, MembershipModule],
   controllers: [
-    KakaoChatbotTicketController,
+    KakaoChatbotTicketingController,
     KakaoChatbotPaymentController,
     KakaoChatbotSeatManagementController,
     KakaoChatbotAuthController,
