@@ -46,7 +46,9 @@ export class TicketCommerceCardsCarousel extends ValueObject {
       blockId: process.env.GET_ROOMS_STATUS_FOR_TICKETING_BLOCK_ID,
       messageText: `${ticket.title} 선택`,
       extra: {
-        ticketId: ticket.id.value,
+        ticketing: {
+          ticket_id: ticket.id.value,
+        },
       },
     });
     const thumbnailOrError = this.createTicketThumbnail(ticket.category.value);

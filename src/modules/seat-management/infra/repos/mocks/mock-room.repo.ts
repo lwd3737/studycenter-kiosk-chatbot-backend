@@ -6,6 +6,7 @@ import {
   IRoomMapper,
   RoomMapperProvider,
 } from '../../mappers/room.mapper.interace';
+import { RoomId } from 'src/modules/seat-management/domain/room/room-id';
 
 @Injectable()
 export class MockRoomRepo implements IRoomRepo {
@@ -30,11 +31,17 @@ export class MockRoomRepo implements IRoomRepo {
     });
   }
 
-  public async getAll(): Promise<Room[]> {
+  public async exist(): Promise<boolean> {
+    return this.storage.length > 0;
+  }
+
+  public async findAll(): Promise<Room[]> {
     return this.storage.map((raw) => this.roomMapper.toDomain(raw));
   }
 
-  public async exist(): Promise<boolean> {
-    return this.storage.length > 0;
+  public async findOneById(roomId: RoomId): Promise<Room | null> {
+    const found = this.storage.find((raw) => roomId.equals(raw.id));
+    if (found === undefined) return null;
+    return this.roomMapper.toDomain(found);
   }
 }

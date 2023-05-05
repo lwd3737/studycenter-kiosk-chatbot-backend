@@ -1,9 +1,9 @@
 import { Controller, Post } from '@nestjs/common';
-import { GetSeatCollectionsByRoomUseCase } from 'src/modules/seat-management';
+import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { CarouselMapper } from '../infra/mappers/carousel.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { GetRoomItemCardsCarouselUseCase } from '../use-cases/get-room-item-cards-carousel/get-room-item-cards-carousel.use-case';
+import { RenderRoomItemCardsCarouselUseCase } from '../use-cases/render-room-item-cards-carousel/render-room-item-cards-carousel.use-case';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
@@ -12,8 +12,8 @@ import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 @Controller(`${KAKAO_CHATBOT_PREFIX}/seat-management`)
 export class KakaoChatbotSeatManagementController {
   constructor(
-    private getRoomsStatusUseCase: GetSeatCollectionsByRoomUseCase,
-    private getRoomItemCardsCarousel: GetRoomItemCardsCarouselUseCase,
+    private getRoomsStatusUseCase: GetRoomSeatsGroupUseCase,
+    private getRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
     private repoponseMapper: KaKaoChatbotResponseMapper,
     private carouselMapper: CarouselMapper,
   ) {}
@@ -31,7 +31,7 @@ export class KakaoChatbotSeatManagementController {
     }
 
     const roomItemCardsCarouselOrError = this.getRoomItemCardsCarousel.execute({
-      seatCollectionsByRoom: roomsOrError.value,
+      roomSeatsGroup: roomsOrError.value,
     });
     if (roomItemCardsCarouselOrError.isErr()) {
       const error = roomItemCardsCarouselOrError.error;

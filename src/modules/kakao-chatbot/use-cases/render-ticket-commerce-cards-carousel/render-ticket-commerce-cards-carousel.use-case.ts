@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
 import { TicketCommerceCardsCarousel } from '../../domain/ticket-commerce-cards-carousel/ticket-commerce-cards-carousel.value-object';
-import { GetTicketCommerceCardsCarouselError } from './get-ticket-cmmerce-cards-carousel.error';
+import { RenderTicketCommerceCardsCarouselError } from './render-ticket-cmmerce-cards-carousel.error';
 import { Carousel } from '../../domain/base/carousel/carousel.value-object';
 
 type UseCaseInput = {
@@ -10,11 +10,11 @@ type UseCaseInput = {
 };
 
 type UseCaseResult = Promise<
-  Result<Carousel, GetTicketCommerceCardsCarouselError>
+  Result<Carousel, RenderTicketCommerceCardsCarouselError>
 >;
 
 @Injectable()
-export class GetTicketCommerceCardsCarouselUseCase
+export class RenderTicketCommerceCardsCarouselUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
   async execute(input: UseCaseInput): Promise<UseCaseResult> {

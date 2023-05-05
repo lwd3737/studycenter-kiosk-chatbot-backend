@@ -2,9 +2,9 @@
 import { AppErrors, DomainError } from 'src/core';
 import { TicketErrors } from 'src/modules/ticketing';
 
-export type GetTicketCommerceCardsCarouselError =
+export type RenderTicketCommerceCardsCarouselError =
   | AppErrors.UnexpectedError
   | TicketErrors.CategoryInvalidTypeError
   | DomainError;
 
-export namespace GetTicketCommerceCardsCarouselErrors {}
+export namespace RenderTicketCommerceCardsCarouselErrors {}

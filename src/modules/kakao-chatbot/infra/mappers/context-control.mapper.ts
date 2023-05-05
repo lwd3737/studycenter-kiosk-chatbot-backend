@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { ContextControl } from '../../domain/context-control/context-control.value-object';
 import { ContextControlDTO } from '../../dtos/response.dto.interface';
+import { ContextControl } from '../../domain/base/context-control/context-control.value-object';
 
 @Injectable()
 export class ContextControlMapper implements IMapper<ContextControl> {

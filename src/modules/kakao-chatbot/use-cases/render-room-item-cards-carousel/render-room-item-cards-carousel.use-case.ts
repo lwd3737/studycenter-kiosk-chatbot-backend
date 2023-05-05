@@ -6,19 +6,21 @@ import { Carousel } from '../../domain/base/carousel/carousel.value-object';
 import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
 
 type UseCaseInput = {
-  seatCollectionsByRoom: { room: Room; seats: Seat[] }[];
-  ticketing?: boolean;
+  roomSeatsGroup: { room: Room; seats: Seat[] }[];
+  ticketing?: {
+    ticket_id: string;
+  };
 };
 
 type UseCaseResult = Result<Carousel, DomainError>;
 
 @Injectable()
-export class GetRoomItemCardsCarouselUseCase
+export class RenderRoomItemCardsCarouselUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
   execute(input: UseCaseInput): UseCaseResult {
     return RoomItemCardsCarousel.create({
-      seatCollectionsByRoom: input.seatCollectionsByRoom,
+      roomSeatsGroup: input.roomSeatsGroup,
       ticketing: input.ticketing,
     });
   }

@@ -13,16 +13,20 @@ import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-roo
 import { ItemListSummary } from '../base/item-card/item-list-summary.value-object';
 
 type CreateProps = {
-  seatCollectionsByRoom: SeatCollectionByRoom[];
-  ticketing?: boolean;
+  roomSeatsGroup: RoomSeatsGroup[];
+  ticketing?: Ticketing;
 };
 
-type SeatCollectionByRoom = { room: Room; seats: Seat[] };
+type RoomSeatsGroup = { room: Room; seats: Seat[] };
+
+type Ticketing = {
+  ticket_id: string;
+};
 
 export class RoomItemCardsCarousel extends ValueObject {
   public static create(props: CreateProps): Result<Carousel, DomainError> {
     const roomItemCardsOrError = this.createRoomItemCards(
-      props.seatCollectionsByRoom,
+      props.roomSeatsGroup,
       props.ticketing,
     );
     if (roomItemCardsOrError.isErr()) {
@@ -36,8 +40,8 @@ export class RoomItemCardsCarousel extends ValueObject {
   }
 
   private static createRoomItemCards(
-    seatCollectionsByRoom: SeatCollectionByRoom[],
-    ticketing?: boolean,
+    seatCollectionsByRoom: RoomSeatsGroup[],
+    ticketing?: Ticketing,
   ): Result<ItemCard[], DomainError> {
     const roomItemCardOrErrors = seatCollectionsByRoom.map(
       (seatCollectionByRoom) => {
@@ -46,7 +50,7 @@ export class RoomItemCardsCarousel extends ValueObject {
         const roomProps = combine(
           this.createSeatsInfoItemList(room.seatsInfo),
           this.createSeatSummary(room.seatsInfo),
-          this.createSeatsStatusButton(room.title, ticketing),
+          this.createSelectRoomButton(room, ticketing),
         );
         if (roomProps.isErr()) {
           return err(roomProps.error);
@@ -62,8 +66,8 @@ export class RoomItemCardsCarousel extends ValueObject {
           itemList: seatsInfoItemList,
           itemListAlignment: 'right',
           itemListSummary: seatSummary,
-          title: '[이용가능한 자리번호]',
-          description: `${this.toAvailableSeatNumbersString(seats)}`,
+          title: '[이용가능한 좌석번호]',
+          description: `${this.formatAvailableSeatNumbers(seats)}`,
           buttons: [SeatsViewButton],
         });
       },
@@ -88,7 +92,11 @@ export class RoomItemCardsCarousel extends ValueObject {
         description: `${seatsStatus.totalCount}`,
       }),
       ItemList.create({
-        title: '이용중인좌석',
+        title: '이용가능좌석',
+        description: `${seatsStatus.availableCount}`,
+      }),
+      ItemList.create({
+        title: '이용불가좌석',
         description: `${seatCountInUse}`,
       }),
     );
@@ -111,27 +119,33 @@ export class RoomItemCardsCarousel extends ValueObject {
     return ok(summaryOrError.value);
   }
 
-  private static createSeatsStatusButton(
-    roomTitle: string,
-    ticketing?: boolean,
+  private static createSelectRoomButton(
+    room: Room,
+    ticketing?: Ticketing,
   ): Result<Button, DomainError> {
     if (ticketing) {
       return Button.create({
-        label: `자리 선택`,
+        label: `${room.title} 선택하기`,
         action: ButtonActionEnum.BLOCK,
-        blockId: process.env.GET_SEATS_STATUS_FOR_TICKETING_BLOCK_ID,
-        messageText: `자리 선택`,
+        blockId: process.env.SELECT_ROOM_BLOCK_ID,
+        messageText: `${room.title} 선택`,
+        extra: {
+          ticketing: {
+            ticket_id: ticketing.ticket_id,
+            room_id: room.id.value,
+          },
+        },
       });
     } else {
       return Button.create({
-        label: `이용가능한 자리보기`,
+        label: `이용가능한 좌석보기`,
         action: ButtonActionEnum.MESSAGE,
-        messageText: `이용가능한 자리보기`,
+        messageText: `이용가능한 좌석보기`,
       });
     }
   }
 
-  private static toAvailableSeatNumbersString(seats: Seat[]): string {
+  private static formatAvailableSeatNumbers(seats: Seat[]): string {
     const availableSeats = seats.filter((seat) => seat.isAvailable);
     const availableSeatNumbers = availableSeats.map(
       (seat) => seat.number.value,

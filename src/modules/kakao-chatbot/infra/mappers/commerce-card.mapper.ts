@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
-import { CommerceCard } from '../../domain/commerce-card/commerce-card.value-object';
 import { CommerceCardDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ProfileMapper } from './profile.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
+import { CommerceCard } from '../../domain/base/commerce-card/commerce-card.value-object';
 
 @Injectable()
 export class CommerceCardMapper implements IMapper<CommerceCard> {

@@ -4,8 +4,8 @@ import { TicketModule } from 'src/modules/ticketing';
 import { KakaoChatbotPaymentController } from './controllers/kakao-chatbot-payment.controller';
 import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-ticketing.controller';
 import { ParseTicketCategoryParamPipe } from './pipes/parse-ticket-category-param.pipe';
-import { GetTicketCommerceCardsCarouselUseCase } from './use-cases/get-ticket-commerce-cards-carousel/get-ticket-commerce-cards-carousel.use-case';
-import { GetTicketListCarouselUseCase } from './use-cases/get-ticket-list-carousel/get-ticket-list-carousel.use-case';
+import { RenderTicketCommerceCardsCarouselUseCase } from './use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
+import { RenderTicketListCarouselUseCase } from './use-cases/render-ticket-list-carousel/render-ticket-list-carousel.use-case';
 import { ButtonMapper } from './infra/mappers/button.mapper';
 import { CarouselMapper } from './infra/mappers/carousel.mapper';
 
@@ -17,7 +17,7 @@ import { ProfileMapper } from './infra/mappers/profile.mapper';
 import { SimpleTextMapper } from './infra/mappers/simple-text.mapper';
 import { ThumbnailMapper } from './infra/mappers/thumbnail.mapper';
 import { KakaoChatbotSeatManagementController } from './controllers/kakao-chatbot-seat-management.controller';
-import { GetRoomItemCardsCarouselUseCase } from './use-cases/get-room-item-cards-carousel/get-room-item-cards-carousel.use-case';
+import { RenderRoomItemCardsCarouselUseCase } from './use-cases/render-room-item-cards-carousel/render-room-item-cards-carousel.use-case';
 import { ItemCardMapper } from './infra/mappers/item-card.mapper';
 import { UseAuthBlockUseCase } from './use-cases/use-auth-block/use-auth-block.use-case';
 import { PluginRepo } from './infra/repos/plugin.repo';
@@ -27,6 +27,37 @@ import { AuthModule } from '../auth';
 import { MembershipModule } from '../membership';
 import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { RenderSeatPromptSimpleTextUseCase } from './use-cases/render-seat-prompt-simple-text/render-seat-prompt-simple-text.use-case';
+import { ParseTicketingFromParamsPipe } from './pipes/parse-ticketing-from-params.pipe';
+
+const Mappers = [
+  KaKaoChatbotResponseMapper,
+  ListCardMapper,
+  ItemCardMapper,
+  CarouselMapper,
+  CommerceCardMapper,
+  ThumbnailMapper,
+  ProfileMapper,
+  ButtonMapper,
+  SimpleTextMapper,
+  ContextControlMapper,
+];
+
+const Repos = [PluginRepo];
+
+const UseCases = [
+  UseAuthBlockUseCase,
+  RenderTicketListCarouselUseCase,
+  RenderTicketCommerceCardsCarouselUseCase,
+  RenderRoomItemCardsCarouselUseCase,
+  RenderSeatPromptSimpleTextUseCase,
+];
+
+const Pipes = [
+  ParseTicketCategoryParamPipe,
+  ParseSyncOtpParamPipe,
+  ParseTicketingFromParamsPipe,
+];
 
 @Module({
   imports: [TicketModule, SeatManagementModule, AuthModule, MembershipModule],
@@ -42,26 +73,10 @@ import { APP_FILTER } from '@nestjs/core';
       useClass: AuthExceptionFilter,
     },
 
-    KaKaoChatbotResponseMapper,
-    ListCardMapper,
-    ItemCardMapper,
-    CarouselMapper,
-    CommerceCardMapper,
-    ThumbnailMapper,
-    ProfileMapper,
-    ButtonMapper,
-    SimpleTextMapper,
-    ContextControlMapper,
-
-    PluginRepo,
-
-    UseAuthBlockUseCase,
-    GetTicketListCarouselUseCase,
-    GetTicketCommerceCardsCarouselUseCase,
-    GetRoomItemCardsCarouselUseCase,
-
-    ParseTicketCategoryParamPipe,
-    ParseSyncOtpParamPipe,
+    ...Mappers,
+    ...Repos,
+    ...UseCases,
+    ...Pipes,
   ],
   exports: [],
 })

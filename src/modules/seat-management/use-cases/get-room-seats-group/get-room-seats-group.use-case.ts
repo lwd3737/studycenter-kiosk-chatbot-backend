@@ -5,7 +5,7 @@ import {
   IRoomRepo,
   RoomRepoProvider,
 } from '../../domain/room/room.repo.interface';
-import { GetSeatCollectionsByRoomError } from './get-seat-collections-by-room.error';
+import { GetRoomSeatsGroupError } from './get-room-seats-group.error';
 import {
   ISeatRepo,
   SeatRepoProvider,
@@ -14,11 +14,11 @@ import { Seat } from '../../domain/seat/seat.aggregate-root';
 
 export type UseCaseResult = Result<
   { room: Room; seats: Seat[] }[],
-  GetSeatCollectionsByRoomError
+  GetRoomSeatsGroupError
 >;
 
 @Injectable()
-export class GetSeatCollectionsByRoomUseCase
+export class GetRoomSeatsGroupUseCase
   implements IUseCase<undefined, UseCaseResult>
 {
   constructor(
@@ -28,17 +28,17 @@ export class GetSeatCollectionsByRoomUseCase
 
   async execute(): Promise<UseCaseResult> {
     try {
-      const allRooms = await this.roomRepo.getAll();
-      const seatCollectionsByRoom = await Promise.all(
+      const allRooms = await this.roomRepo.findAll();
+      const roomSeatsGroup = await Promise.all(
         allRooms.map(async (room) => {
-          const seats = await this.seatRepo.getCollectionByIds(room.seatIds);
+          const seats = await this.seatRepo.findByIds(room.seatIds);
           return {
             room,
             seats,
           };
         }),
       );
-      return ok(seatCollectionsByRoom);
+      return ok(roomSeatsGroup);
     } catch (error) {
       return err(new AppErrors.UnexpectedError(error));
     }

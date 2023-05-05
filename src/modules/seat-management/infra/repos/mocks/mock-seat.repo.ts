@@ -6,6 +6,7 @@ import {
   SeatMapperProvider,
 } from '../../mappers/seat.mapper.interface';
 import { SeatIds } from 'src/modules/seat-management/domain/room/seat-ids.value-object';
+import { RoomId } from 'src/modules/seat-management/domain/room/room-id';
 
 export type MockSeat = {
   id: string;
@@ -46,11 +47,15 @@ export class MockSeatRepo implements ISeatRepo {
     });
   }
 
-  public async getCollectionByIds(seatIds: SeatIds): Promise<Seat[]> {
-    //console.log(this.storage.map((raw) => [raw.roomId, raw.id]));
+  public async findByIds(seatIds: SeatIds): Promise<Seat[]> {
     const filtered = this.storage.filter((raw) =>
       seatIds.values.includes(raw.id),
     );
+    return filtered.map((raw) => this.seatMapper.toDomain(raw));
+  }
+
+  public async findByRoomId(roomId: RoomId): Promise<Seat[]> {
+    const filtered = this.storage.filter((raw) => roomId.equals(raw.roomId));
     return filtered.map((raw) => this.seatMapper.toDomain(raw));
   }
 }
