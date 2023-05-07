@@ -27,7 +27,7 @@ import { AuthModule } from '../auth';
 import { MembershipModule } from '../membership';
 import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
-import { RenderSeatPromptSimpleTextUseCase } from './use-cases/render-seat-prompt-simple-text/render-seat-prompt-simple-text.use-case';
+import { RenderAvailableSeatsListCardsCarouselUseCase } from './use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
 import { ParseTicketingFromParamsPipe } from './pipes/parse-ticketing-from-params.pipe';
 
 const Mappers = [
@@ -50,7 +50,7 @@ const UseCases = [
   RenderTicketListCarouselUseCase,
   RenderTicketCommerceCardsCarouselUseCase,
   RenderRoomItemCardsCarouselUseCase,
-  RenderSeatPromptSimpleTextUseCase,
+  RenderAvailableSeatsListCardsCarouselUseCase,
 ];
 
 const Pipes = [

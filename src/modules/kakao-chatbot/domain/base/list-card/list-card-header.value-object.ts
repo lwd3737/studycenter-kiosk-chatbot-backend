@@ -1,9 +1,9 @@
 import { ok, Result, ValueObject } from 'src/core';
 import { ListItemAction, ListItemProps } from './list-item.value-object';
 
-export type ListHeaderProps = Exclude<ListItemProps, 'description'>;
+export type ListCardHeaderProps = Exclude<ListItemProps, 'description'>;
 
-export class ListHeader extends ValueObject<ListHeaderProps> {
+export class ListCardHeader extends ValueObject<ListCardHeaderProps> {
   get title(): string {
     return this.props.title;
   }
@@ -28,11 +28,11 @@ export class ListHeader extends ValueObject<ListHeaderProps> {
     return this.props.extra;
   }
 
-  protected constructor(props: ListHeaderProps) {
+  protected constructor(props: ListCardHeaderProps) {
     super(props);
   }
 
-  public static create(props: ListHeaderProps): Result<ListHeader> {
-    return ok(new ListHeader(props));
+  public static create(props: ListCardHeaderProps): Result<ListCardHeader> {
+    return ok(new ListCardHeader(props));
   }
 }

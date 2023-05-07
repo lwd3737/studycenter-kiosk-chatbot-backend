@@ -49,9 +49,9 @@ export class Carousel extends ValueObject<CarouselProps> {
   }
 
   public static create(props: CarouselProps): Result<Carousel, CarouselError> {
-    const validationResult = this.validate(props);
-    if (validationResult.isErr()) {
-      return err(validationResult.error);
+    const validOrError = this.validate(props);
+    if (validOrError.isErr()) {
+      return err(validOrError.error);
     }
 
     return ok(new Carousel(props));

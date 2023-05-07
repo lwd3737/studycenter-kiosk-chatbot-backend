@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   InternalServerErrorException,
@@ -29,18 +28,13 @@ import { RenderRoomItemCardsCarouselUseCase } from '../use-cases/render-room-ite
 import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-cases/get-available-room-seats.use-case.ts/get-available-room-seats.use-case';
-import { RenderSeatPromptSimpleTextUseCase } from '../use-cases/render-seat-prompt-simple-text/render-seat-prompt-simple-text.use-case';
+import { RenderAvailableSeatsListCardsCarouselUseCase } from '../use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
 import {
   ParseTicketingFromParamsPipe,
   TicketingParamsResult,
 } from '../pipes/parse-ticketing-from-params.pipe';
-
-type TicketingMetadata = {
-  ticket_id: string;
-  room_id: string;
-};
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
@@ -58,7 +52,7 @@ export class KakaoChatbotTicketingController {
     private getRoomSeatsGroupUseCase: GetRoomSeatsGroupUseCase,
     private renderRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
     private getAvailableSeatsUseCase: GetAvailableRoomSeatsUseCase,
-    private renderSeatPromptSimpleTextUseCase: RenderSeatPromptSimpleTextUseCase,
+    private renderAvailableSeatsListCardsCarouselUseCase: RenderAvailableSeatsListCardsCarouselUseCase,
   ) {}
 
   @Post('init')
@@ -182,7 +176,7 @@ export class KakaoChatbotTicketingController {
       console.debug(new InternalServerErrorException(error));
 
       return ErrorDTOCreator.toSimpleTextOutput(
-        '룸에 대한 정보를 가져오지 못했어요! 다시 시도해주세요.',
+        '룸에 대한 정보를 가져오지 못했어요!',
       );
     }
 
@@ -196,7 +190,7 @@ export class KakaoChatbotTicketingController {
       console.debug(new InternalServerErrorException(error));
 
       return ErrorDTOCreator.toSimpleTextOutput(
-        '룸에 대한 정보를 출력하는 중에 오류가 발생했어요! 다시 시도해주세요.',
+        '룸에 대한 정보를 출력하는 중에 오류가 발생했어요!',
       );
     }
 
@@ -211,8 +205,8 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('select-room')
-  async selectRoom(
+  @Post('available-seats')
+  async availableSeats(
     @Body(
       new ParseTicketingFromClientExtraPipe({
         roomIdRequired: true,
@@ -223,12 +217,11 @@ export class KakaoChatbotTicketingController {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
     const ticketing = ticketingOrError.value;
 
-    const availableRoomSeatsOrError =
-      await this.getAvailableSeatsUseCase.execute({
-        roomId: ticketing.room_id,
-      });
-    if (availableRoomSeatsOrError.isErr()) {
-      const error = availableRoomSeatsOrError.error;
+    const availableSeatsOrError = await this.getAvailableSeatsUseCase.execute({
+      roomId: ticketing.room_id,
+    });
+    if (availableSeatsOrError.isErr()) {
+      const error = availableSeatsOrError.error;
 
       switch (error.constructor) {
         default:
@@ -237,15 +230,16 @@ export class KakaoChatbotTicketingController {
           );
       }
     }
-    const availableRoomSeats = availableRoomSeatsOrError.value;
+    const { room, seats } = availableSeatsOrError.value;
 
-    const seatPromptSimpleTextOrError =
-      this.renderSeatPromptSimpleTextUseCase.execute({
-        room: availableRoomSeats.room,
-        availableSeats: availableRoomSeats.seats,
+    const carouselsOrError =
+      this.renderAvailableSeatsListCardsCarouselUseCase.execute({
+        ticketId: ticketing.ticket_id,
+        room,
+        seats: seats,
       });
-    if (seatPromptSimpleTextOrError.isErr()) {
-      const error = seatPromptSimpleTextOrError.error;
+    if (carouselsOrError.isErr()) {
+      const error = carouselsOrError.error;
       console.debug(error);
 
       switch (error.constructor) {
@@ -258,11 +252,9 @@ export class KakaoChatbotTicketingController {
 
     return this.responseMapper.toDTO({
       outputs: [
-        {
-          simpleText: this.simpleTextMapper.toDTO(
-            seatPromptSimpleTextOrError.value,
-          ),
-        },
+        ...carouselsOrError.value.map((carousel) => ({
+          carousel: this.carouselMapper.toDTO(carousel),
+        })),
       ],
       context: this.contextControlMapper.toDTO(
         ContextControl.create({

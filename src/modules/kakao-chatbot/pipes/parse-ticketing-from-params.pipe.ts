@@ -17,11 +17,18 @@ export type TicketingParamsResult = Result<
 export class ParseTicketingFromParamsPipe
   implements PipeTransform<KakaoChatbotRequestDTO, TicketingParamsResult>
 {
-  private SELECT_SEAT_NUMBER_COMMAND_REGEX = /\/(s|좌석)\s+(\d+)/i;
+  private SELECT_SEAT_COMMAND_REGEX = /\/(좌석)\s+(\d+)/i;
 
   transform(value: KakaoChatbotRequestDTO): TicketingParamsResult {
-    const { ticket_id, room_id, select_seat_number_command } =
-      value.action.params;
+    // command에 공백이 삽입?
+    console.log(
+      'ticketing',
+      value.action.params,
+      value.userRequest.utterance,
+      value.action.params.select_seat_command.length,
+    );
+    const { ticket_id, room_id, select_seat_command } = value.action.params;
+    const command = value.userRequest.utterance;
 
     if (!ticket_id) {
       console.debug(
@@ -33,16 +40,14 @@ export class ParseTicketingFromParamsPipe
       console.debug(new BadRequestException('room id not contained in params'));
       return err(TicketingErrorDTOCreator.onRoomNotSelected());
     }
-    if (!select_seat_number_command) {
+    if (!select_seat_command) {
       console.debug(
         new BadRequestException('select seat command not contained in params'),
       );
       return err(TicketingErrorDTOCreator.onSelectSeatNumberCommandNotInput());
     }
 
-    const commandRegex = this.SELECT_SEAT_NUMBER_COMMAND_REGEX.exec(
-      select_seat_number_command,
-    );
+    const commandRegex = this.SELECT_SEAT_COMMAND_REGEX.exec(command);
     if (!commandRegex) {
       console.debug(
         new BadRequestException('select seat number command not valid'),

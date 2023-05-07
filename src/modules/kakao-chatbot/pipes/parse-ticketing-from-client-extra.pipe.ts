@@ -25,7 +25,6 @@ export class ParseTicketingFromClientExtraPipe
   }
 
   transform(value: KakaoChatbotRequestDTO): TicketingClientExtraResult {
-    console.log(value.intent.name, value.action.clientExtra?.ticketing);
     const { ticket_id, room_id } = value.action.clientExtra?.ticketing ?? {};
 
     if (!ticket_id) {

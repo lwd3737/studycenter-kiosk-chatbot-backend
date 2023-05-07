@@ -8,7 +8,7 @@ import {
 } from '../base/carousel/carousel.value-object';
 import { ListCardError } from '../base/list-card/list-card.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
-import { ListHeader } from '../base/list-card/list-header.value-object';
+import { ListCardHeader } from '../base/list-card/list-card-header.value-object';
 import { ListItem } from '../base/list-card/list-item.value-object';
 
 export interface TicketListCarouselProps {
@@ -43,7 +43,7 @@ export class TicketListCarousel extends ValueObject {
   ): Result<ListCard, ListCardError> {
     const { category } = ticketCollection[0];
 
-    const headerOrError = ListHeader.create({ title: category.label });
+    const headerOrError = ListCardHeader.create({ title: category.label });
     const itemOrErrors = ticketCollection.map((ticket) =>
       ListItem.create({
         title: ticket.title,

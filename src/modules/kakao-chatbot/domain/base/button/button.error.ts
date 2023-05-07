@@ -1,22 +1,20 @@
 import { DomainError } from 'src/core';
 
 export type ButtonError =
-  | LabelLengthInvalidError
-  | PropsMismatchingActionIncludedError;
+  | ButtonErrors.LabelLengthInvalidError
+  | ButtonErrors.ActionContainsInvalidDataError;
 
-class LabelLengthInvalidError extends DomainError {
-  constructor(label: string) {
-    super(`Button label ${label} length is invlid`);
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace ButtonErrors {
+  export class LabelLengthInvalidError extends DomainError {
+    constructor(label: string) {
+      super(`Button label(${label}) length is invlid`);
+    }
+  }
+
+  export class ActionContainsInvalidDataError extends DomainError {
+    constructor(action: string) {
+      super(`Button action(${action}) contains invalid data`);
+    }
   }
 }
-
-class PropsMismatchingActionIncludedError extends DomainError {
-  constructor(action: string) {
-    super(`Button data mismatching action '${action}' is included`);
-  }
-}
-
-export const ButtonErrors = {
-  LabelLengthInvalidError,
-  PropsMismatchingActionIncludedError,
-};

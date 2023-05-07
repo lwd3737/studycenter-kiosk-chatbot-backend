@@ -127,7 +127,7 @@ export class RoomItemCardsCarousel extends ValueObject {
       return Button.create({
         label: `${room.title} 선택하기`,
         action: ButtonActionEnum.BLOCK,
-        blockId: process.env.SELECT_ROOM_BLOCK_ID,
+        blockId: process.env.GET_AVAILABLE_SEATS_FOR_TICKETING_BLOCK_ID,
         messageText: `${room.title} 선택`,
         extra: {
           ticketing: {

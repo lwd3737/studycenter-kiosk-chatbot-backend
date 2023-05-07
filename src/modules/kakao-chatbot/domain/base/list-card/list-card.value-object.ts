@@ -1,19 +1,19 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button/button.value-object';
 import { ListCardError, ListCardErrors } from './list-card.error';
-import { ListHeader } from './list-header.value-object';
+import { ListCardHeader } from './list-card-header.value-object';
 import { ListItem } from './list-item.value-object';
 
 export interface ListCardProps {
-  header: ListHeader;
+  header: ListCardHeader;
   items: ListItem[];
   buttons?: Button[];
 }
 
 export class ListCard extends ValueObject<ListCardProps> {
-  private static BUTTON_MAX_COUNT = 2;
+  public static BUTTON_MAX_COUNT = 2;
 
-  get header(): ListHeader {
+  get header(): ListCardHeader {
     return this.props.header;
   }
 

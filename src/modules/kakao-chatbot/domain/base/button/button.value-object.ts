@@ -66,10 +66,8 @@ export class Button extends ValueObject<ButtonProps> {
       return err(new ButtonErrors.LabelLengthInvalidError(props.label));
     }
 
-    if (!this.isPropsMismatchingActionIncluded(props)) {
-      return err(
-        new ButtonErrors.PropsMismatchingActionIncludedError(props.action),
-      );
+    if (!this.doesActionContainsInvalidData(props)) {
+      return err(new ButtonErrors.ActionContainsInvalidDataError(props.action));
     }
 
     return ok(null);
@@ -79,7 +77,7 @@ export class Button extends ValueObject<ButtonProps> {
     return label.length > 0 && label.length <= this.LABEL_MAX_LENGTH;
   }
 
-  private static isPropsMismatchingActionIncluded(props: ButtonProps): boolean {
+  private static doesActionContainsInvalidData(props: ButtonProps): boolean {
     const { action, webLinkUrl, messageText, phoneNumber, blockId } = props;
 
     const isWebLinkIncluded = !!webLinkUrl;

@@ -4,7 +4,7 @@ import { IMapper } from 'src/core';
 import { ListCardDTO, ListItemDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ListCard } from '../../domain/base/list-card/list-card.value-object';
-import { ListHeader } from '../../domain/base/list-card/list-header.value-object';
+import { ListCardHeader } from '../../domain/base/list-card/list-card-header.value-object';
 import { ListItem } from '../../domain/base/list-card/list-item.value-object';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class ListCardMapper implements IMapper<ListCard> {
     };
   }
 
-  toHeaderDTO(listHeader: ListHeader): ListItemDTO {
+  toHeaderDTO(listHeader: ListCardHeader): ListItemDTO {
     const { title, imageUrl, action, blockId, messageText, extra } = listHeader;
 
     return {
