@@ -40,15 +40,9 @@ export class TicketingErrorDTOCreator {
     return ErrorDTOCreator.toSimpleTextOutput('이용할 룸을 먼저 선택해주세요!');
   }
 
-  public static onSelectSeatNumberCommandNotInput(): KakaoChatbotResponseDTO {
+  public static onSeatNotSelected(): KakaoChatbotResponseDTO {
     return ErrorDTOCreator.toSimpleTextOutput(
-      '이용할 좌석을 먼저 입력해주세요!',
-    );
-  }
-
-  public static onSelectSeatNumberCommandNotValid(): KakaoChatbotResponseDTO {
-    return ErrorDTOCreator.toSimpleTextOutput(
-      '잘못된 입력 형식입니다. 이용할 좌석을 다시 입력해주세요!',
+      '이용할 좌석을 먼저 선택해주세요!',
     );
   }
 }

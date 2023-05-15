@@ -1,5 +1,5 @@
 import { ok, Result, ValueObject } from 'src/core';
-import { ListItemAction, ListItemProps } from './list-item.value-object';
+import { ListItemActionEnum, ListItemProps } from './list-item.value-object';
 
 export type ListCardHeaderProps = Exclude<ListItemProps, 'description'>;
 
@@ -12,7 +12,7 @@ export class ListCardHeader extends ValueObject<ListCardHeaderProps> {
     return this.props.imageUrl;
   }
 
-  get action(): ListItemAction | undefined {
+  get action(): ListItemActionEnum | undefined {
     return this.props.action;
   }
 

@@ -8,7 +8,10 @@ import {
 import { AvailableSeatsListCardsCarouselErrors } from './available-seats-list-cards-carousel.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
 import { ListCardHeader } from '../base/list-card/list-card-header.value-object';
-import { ListItem } from '../base/list-card/list-item.value-object';
+import {
+  ListItem,
+  ListItemActionEnum,
+} from '../base/list-card/list-item.value-object';
 
 type CreateProps = {
   ticketId: string;
@@ -100,12 +103,15 @@ export class AvailableSeatsListCardsCarousel extends ValueObject<CreateProps> {
         ListItem.create({
           title: `${seat.number.value}번 좌석`,
           description: '이용가능',
-          blockId: process.env.SELECT_SEAT_BLOCK_ID,
+          action: ListItemActionEnum.BLOCK,
+          blockId: process.env.PAYMENT_FOR_TICKET_BLOCK_ID,
           messageText: `${seat.number.value}번 좌석 선택`,
           extra: {
-            ticket_id: info.ticketId,
-            room_id: info.room.id,
-            seat_id: seat.id,
+            ticketing: {
+              ticket_id: info.ticketId,
+              room_id: info.room.id.value,
+              seat_id: seat.id.value,
+            },
           },
         }),
       ),

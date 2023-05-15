@@ -28,7 +28,6 @@ import { MembershipModule } from '../membership';
 import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { RenderAvailableSeatsListCardsCarouselUseCase } from './use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
-import { ParseTicketingFromParamsPipe } from './pipes/parse-ticketing-from-params.pipe';
 
 const Mappers = [
   KaKaoChatbotResponseMapper,
@@ -53,11 +52,7 @@ const UseCases = [
   RenderAvailableSeatsListCardsCarouselUseCase,
 ];
 
-const Pipes = [
-  ParseTicketCategoryParamPipe,
-  ParseSyncOtpParamPipe,
-  ParseTicketingFromParamsPipe,
-];
+const Pipes = [ParseTicketCategoryParamPipe, ParseSyncOtpParamPipe];
 
 @Module({
   imports: [TicketModule, SeatManagementModule, AuthModule, MembershipModule],

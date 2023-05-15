@@ -31,10 +31,6 @@ import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-ca
 import { RenderAvailableSeatsListCardsCarouselUseCase } from '../use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
-import {
-  ParseTicketingFromParamsPipe,
-  TicketingParamsResult,
-} from '../pipes/parse-ticketing-from-params.pipe';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
@@ -209,16 +205,19 @@ export class KakaoChatbotTicketingController {
   async availableSeats(
     @Body(
       new ParseTicketingFromClientExtraPipe({
-        roomIdRequired: true,
+        required: {
+          room_id: true,
+        },
       }),
     )
-    ticketingOrError: TicketingClientExtraResult<true>,
+    ticketingOrError: TicketingClientExtraResult,
   ) {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
     const ticketing = ticketingOrError.value;
 
     const availableSeatsOrError = await this.getAvailableSeatsUseCase.execute({
-      roomId: ticketing.room_id,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      roomId: ticketing.room_id!,
     });
     if (availableSeatsOrError.isErr()) {
       const error = availableSeatsOrError.error;
@@ -272,10 +271,17 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('select-seat')
+  @Post('payment')
   async selectSeat(
-    @Body(ParseTicketingFromParamsPipe)
-    ticketingOrError: TicketingParamsResult,
+    @Body(
+      new ParseTicketingFromClientExtraPipe({
+        required: {
+          room_id: true,
+          seat_id: true,
+        },
+      }),
+    )
+    ticketingOrError: TicketingClientExtraResult,
   ) {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
 

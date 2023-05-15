@@ -6,13 +6,13 @@ export interface ListItemProps {
   description?: string;
   imageUrl?: string;
   //link?: Link
-  action?: ListItemAction;
+  action?: ListItemActionEnum;
   blockId?: string;
   messageText?: string;
   extra?: Record<string, any>;
 }
 
-export enum ListItemAction {
+export enum ListItemActionEnum {
   BLOCK = 'block',
   MESSAGE = 'message',
 }
@@ -30,7 +30,7 @@ export class ListItem extends ValueObject<ListItemProps> {
     return this.props.imageUrl;
   }
 
-  get action(): ListItemAction | undefined {
+  get action(): ListItemActionEnum | undefined {
     return this.props.action;
   }
 
@@ -81,13 +81,13 @@ export class ListItem extends ValueObject<ListItemProps> {
     }
 
     switch (action) {
-      case ListItemAction.BLOCK: {
+      case ListItemActionEnum.BLOCK: {
         if (!props.blockId) return false;
         if (props.messageText) return false;
         return true;
       }
 
-      case ListItemAction.MESSAGE: {
+      case ListItemActionEnum.MESSAGE: {
         if (props.blockId) return false;
         if (!props.messageText) return false;
         return true;
