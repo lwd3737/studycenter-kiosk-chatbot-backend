@@ -2,8 +2,11 @@ import { ValueObject } from 'src/core';
 
 interface Props {
   bank: string;
+  bankCode: string;
+  customerName: string;
   accountNumber: string;
-  upcomingDepositDate: Date;
+  dueDate: Date;
+  expiredAt: Date;
 }
 
 export type CreateVirtualAccountProps = Props;
@@ -17,8 +20,8 @@ export class VirtualAccount extends ValueObject<Props> {
     return this.props.accountNumber;
   }
 
-  get upcomingDepositDate(): Date {
-    return this.props.upcomingDepositDate;
+  get dueDate(): Date {
+    return this.props.dueDate;
   }
 
   public static create(props: CreateVirtualAccountProps) {
