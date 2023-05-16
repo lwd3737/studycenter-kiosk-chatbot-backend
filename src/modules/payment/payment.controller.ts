@@ -10,6 +10,6 @@ export class PaymentController {
   //   };
   // }
 
-  @Get('virtual_account')
+  @Get('virtual-account')
   async issueVirtualAccount() {}
 }

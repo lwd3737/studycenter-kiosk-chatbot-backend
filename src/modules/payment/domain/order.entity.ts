@@ -1,4 +1,5 @@
-import { Entity } from 'src/core';
+import { Entity, EntityId } from 'src/core';
+import { OrderId } from './order-id';
 
 interface Props {
   name: string;
@@ -13,6 +14,14 @@ type Product = {
 export type CreateOrderProps = Props;
 
 export class Order extends Entity<Props> {
+  get id(): EntityId {
+    return this._id;
+  }
+
+  get orderId(): OrderId {
+    return new OrderId(this.id.value);
+  }
+
   get name(): string {
     return this.props.name;
   }

@@ -6,7 +6,6 @@ interface Props {
   customerName: string;
   accountNumber: string;
   dueDate: Date;
-  expiredAt: Date;
 }
 
 export type CreateVirtualAccountProps = Props;
@@ -16,12 +15,20 @@ export class VirtualAccount extends ValueObject<Props> {
     return this.props.bank;
   }
 
+  get bankCode(): string {
+    return this.props.bankCode;
+  }
+
   get accountNumber(): string {
     return this.props.accountNumber;
   }
 
   get dueDate(): Date {
     return this.props.dueDate;
+  }
+
+  get expired(): boolean {
+    return this.props.dueDate.getTime() < Date.now();
   }
 
   public static create(props: CreateVirtualAccountProps) {

@@ -1,4 +1,6 @@
 export * from './domain/ticket/ticket.error';
+export * from './domain/ticket/ticket.aggregate-root';
+export * from './domain/ticket/ticket-id';
 
 export * from './application/use-cases/get-all-ticket-collection/get-all-ticket-collections.use-case';
 export * from './application/use-cases/get-tickets-by-category/get-tickets-by-category.use-case';

@@ -1,4 +1,12 @@
-import { AggregateRoot, DomainError, Result, combine, err, ok } from 'src/core';
+import {
+  AggregateRoot,
+  DomainError,
+  EntityId,
+  Result,
+  combine,
+  err,
+  ok,
+} from 'src/core';
 import { MemberId } from 'src/modules/membership/domain/member/member-id';
 import { CreatePGInfoProps, PGInfo } from './pg-info.value-object';
 import { CreateOrderProps, Order } from './order.entity';
@@ -13,6 +21,7 @@ import {
   PaymentMethodFactory,
   PaymentMethodType,
 } from './payment-methods/payment-method.factory';
+import { PaymentId } from './payment-id';
 
 interface Props {
   pg: PGInfo;
@@ -37,6 +46,14 @@ type CreateProps = {
 };
 
 export class Payment extends AggregateRoot<Props> {
+  get id(): EntityId {
+    return this._id;
+  }
+
+  get paymentId(): PaymentId {
+    return new PaymentId(this.id.value);
+  }
+
   get pg(): PGInfo {
     return this.props.pg;
   }
