@@ -1,21 +1,30 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TicketCategory } from 'src/modules/ticketing/domain/ticket/ticket-category.value-object';
-import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
-import { ITicketRepo } from 'src/modules/ticketing/domain/ticket/ticket.repo.interface';
 import {
   ITicketMapper,
   TicketMapperProvider,
-} from '../../mappers/ticket.mapper.interface';
-import { TicketTime } from 'src/modules/ticketing/domain/ticket/ticket-time.value-object';
+} from '../../mappers/ITicket.mapper';
+import {
+  ITicketRepo,
+  TTicketType,
+  Ticket,
+  TicketTime,
+  TicketTimeUnit,
+  TicketType,
+} from 'src/modules/ticketing/domain';
+import { ExpirationType } from 'src/modules/ticketing/domain/ticket/expiration.value-object';
 
 export type MockTicket = {
   title: string;
-  category: string;
+  type: TTicketType;
+  isFixedSeat: boolean;
   time: {
-    unit: string;
+    unit: TicketTimeUnit;
     value: number;
   };
   price: number;
+  expiration: {
+    type: ExpirationType;
+  };
 };
 
 @Injectable()
@@ -34,11 +43,10 @@ export class MockTicketRepo implements ITicketRepo {
     return this.storage.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
-  async getTicketsByCategory(category: TicketCategory): Promise<Ticket[]> {
+  async getTicketsByType(type: TicketType): Promise<Ticket[]> {
     const filtered = this.storage.filter(
-      (ticket) => ticket.category === category.value,
+      (ticket) => ticket.type === type.value,
     );
-
     return filtered.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
@@ -54,7 +62,6 @@ export class MockTicketRepo implements ITicketRepo {
 
   async bulkCreate(tickets: Ticket[]): Promise<void> {
     const raws = tickets.map(this.ticketMapper.toPersistence) as MockTicket[];
-
     this.storage = [...this.storage, ...raws];
   }
 

@@ -1,28 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { ITicketMapper } from '../ticket.mapper.interface';
+import { ITicketMapper } from '../ITicket.mapper';
 import { TicketDTO } from '../../../application/dtos/ticket.dto';
-import { Ticket } from '../../../domain/ticket/ticket.aggregate-root';
 import { MockTicket } from '../../persistence';
+import {
+  TTicketType,
+  Ticket,
+  TicketFactory,
+  TicketType,
+} from 'src/modules/ticketing/domain';
 
 @Injectable()
 export class MockTicketMapper implements ITicketMapper {
-  toPersistence(ticket: Ticket): MockTicket {
-    const { title, category, time, price } = ticket;
-
+  toPersistence(domain: Ticket): MockTicket {
     return {
-      title,
-      category: category.value,
+      title: domain.title,
+      type: domain.type.value as TTicketType,
+      isFixedSeat: domain.isFixedSeat,
       time: {
-        unit: time.unit,
-        value: time.value,
+        unit: domain.time.unit,
+        value: domain.time.value,
       },
-      price,
+      price: domain.price.value,
+      expiration: {
+        type: domain.expiration.type,
+      },
     };
   }
 
   toDomain(raw: MockTicket): Ticket {
-    const ticketOrError = Ticket.create(raw);
-
+    const ticketOrError = TicketFactory.createNew({
+      type: raw.type,
+      props: {
+        ...raw,
+        price: { value: raw.price },
+      },
+    });
     if (ticketOrError.isErr()) {
       throw ticketOrError.error;
     }
@@ -30,15 +42,19 @@ export class MockTicketMapper implements ITicketMapper {
     return ticketOrError.value;
   }
 
-  toDTO(ticket: Ticket): TicketDTO {
+  toDTO(domain: Ticket): TicketDTO {
     return {
-      id: ticket.id.value,
-      category: ticket.category.value,
+      id: domain.id.value,
+      type: domain.type as TicketType,
+      isFixedSeat: domain.isFixedSeat,
       time: {
-        unit: ticket.time.unit,
-        value: ticket.time.value,
+        unit: domain.time.unit,
+        value: domain.time.value,
       },
-      price: ticket.price,
+      price: domain.price.value,
+      expiration: {
+        type: domain.expiration.type,
+      },
     };
   }
 }

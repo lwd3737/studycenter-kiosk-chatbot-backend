@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SeatManagementModule } from 'src/modules/seat-management';
 import { TicketModule } from 'src/modules/ticketing';
-import { KakaoChatbotPaymentController } from './controllers/kakao-chatbot-payment.controller';
 import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-ticketing.controller';
-import { ParseTicketCategoryParamPipe } from './pipes/parse-ticket-category-param.pipe';
+import { ParseTicketTypeParamPipe } from './pipes/parse-ticket-category-param.pipe';
 import { RenderTicketCommerceCardsCarouselUseCase } from './use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
-import { RenderTicketListCarouselUseCase } from './use-cases/render-ticket-list-carousel/render-ticket-list-carousel.use-case';
+import { RenderTicketCollectionListCarouselUseCase } from './use-cases/render-ticket-collection-list-carousel/render-ticket-collection-list-carousel.use-case';
 import { ButtonMapper } from './infra/mappers/button.mapper';
 import { CarouselMapper } from './infra/mappers/carousel.mapper';
 
@@ -46,19 +45,18 @@ const Repos = [PluginRepo];
 
 const UseCases = [
   UseAuthBlockUseCase,
-  RenderTicketListCarouselUseCase,
+  RenderTicketCollectionListCarouselUseCase,
   RenderTicketCommerceCardsCarouselUseCase,
   RenderRoomItemCardsCarouselUseCase,
   RenderAvailableSeatsListCardsCarouselUseCase,
 ];
 
-const Pipes = [ParseTicketCategoryParamPipe, ParseSyncOtpParamPipe];
+const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
 
 @Module({
   imports: [TicketModule, SeatManagementModule, AuthModule, MembershipModule],
   controllers: [
     KakaoChatbotTicketingController,
-    KakaoChatbotPaymentController,
     KakaoChatbotSeatManagementController,
     KakaoChatbotAuthController,
   ],

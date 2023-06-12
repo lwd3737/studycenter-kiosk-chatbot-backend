@@ -1,39 +1,71 @@
-import { AggregateRoot } from 'src/core';
-import { PaymentId } from 'src/modules/payment';
+import { AggregateRoot, DomainError, Result, err, ok } from 'src/core';
 import { Ticket, TicketId } from 'src/modules/ticketing';
-import { TicketCategoryEnum } from 'src/modules/ticketing/domain/ticket/ticket-category.value-object';
+import { ValidTime } from './valid-time.value-object';
+import { PaymentId } from 'src/modules/payment/domain/base/payment-id';
 
 interface Props {
   paymentId: PaymentId;
   ticketId: TicketId;
-  startTime: Date;
-  endTime?: Date;
-  remainginMinutes?: number;
+  startAt: Date;
+  endAt?: Date;
+  validTime?: ValidTime;
 }
 
-type CreateProps = {
+type CreateNewProps = {
   paymentId: PaymentId;
   ticket: Ticket;
 };
 
 export class TicketUsage extends AggregateRoot<Props> {
-  public static create(props: CreateProps) {
-    const _props = {
-      paymentId: props.paymentId,
-      ticketId: props.ticket.id,
-      startTime: new Date(),
-    };
+  public static createNew(props: CreateNewProps) {
+    const startDate = new Date();
+    // const endDateOrValidTimeOrError = this.createEndAtOrValidTime({
+    //   ticket: props.ticket,
+    //   startDate: startDate,
+    // });
+    // if (endDateOrValidTimeOrError.isErr())
+    //   return err(endDateOrValidTimeOrError.error);
 
-    switch (props.ticket.category.value) {
-      case TicketCategoryEnum.PERIOD:
-      case TicketCategoryEnum.SAME_DAY:
-      case TicketCategoryEnum.HOURS_RECHARGE:
-    }
-
-    return new TicketUsage({
-      ..._props,
-    });
+    // return ok(
+    //   new TicketUsage({
+    //     paymentId: props.paymentId,
+    //     ticketId: props.ticket.ticketId,
+    //     startAt: startDate,
+    //     ...endDateOrValidTimeOrError.value,
+    //   }),
+    // );
   }
+
+  // private static createEndAtOrValidTime(props: {
+  //   ticket: Ticket;
+  //   startDate: Date;
+  // }): Result<{ endTime: Date } | { validTime: ValidTime }, DomainError> {
+  //   switch (props.ticket.type) {
+  //     case TicketCategoryEnum.PERIOD: {
+  //       const endDate = new Date();
+  //       endDate.setDate(props.startDate.getDate() + props.ticket.time.value);
+  //       return ok({ endTime: endDate });
+  //     }
+  //     case TicketCategoryEnum.SAME_DAY: {
+  //       const endDate = new Date();
+  //       endDate.setHours(props.startDate.getHours() + props.ticket.time.value);
+  //       return ok({ endTime: endDate });
+  //     }
+  //     case TicketCategoryEnum.HOURS_RECHARGE: {
+  //       const validTime = ValidTime.create({
+  //         seconds: Date.now() + props.ticket.time.value * 60 * 60,
+  //       });
+
+  //       return ok({ validTime });
+  //     }
+  //     default:
+  //       return err(
+  //         new TicketUsageErrors.InvalidTicketCategory(
+  //           props.ticket.category.value,
+  //         ),
+  //       );
+  //   }
+  // }
 
   private constructor(props: Props) {
     super(props);

@@ -1,97 +1,68 @@
 import { AggregateRoot } from 'src/core/domain/aggregate-root';
-import { combine, err, ok, Result } from 'src/core';
-import { TicketTimeUnitEnum, TicketTime } from './ticket-time.value-object';
-import {
-  TicketCategory,
-  TicketCategoryEnum,
-} from './ticket-category.value-object';
+import { TicketTime, CreateTicketTimeProps } from './time.value-object';
 import { TicketId } from './ticket-id';
-import { TicketError, TicketErrors } from './ticket.error';
+import { CreateTicketPriceProps, TicketPrice } from './price.value-object';
+import { TicketExpiration } from './expiration.value-object';
+import { CreateTicketExpirationProps } from './expiration.value-object';
+import { TicketType } from './type.value-object';
 
-export interface TicketProps {
+export interface TicketProps<T> {
   title: string;
-  category: TicketCategory;
+  type: T;
+  isFixedSeat: boolean;
   time: TicketTime;
-  price: number;
-  //discount?: TicketDiscount;
+  price: TicketPrice;
+  expiration: TicketExpiration;
 }
-
-export type CreateProps = {
+export type CreateNewTicketProps = {
   title: string;
-  category: string;
-  time: { unit: string; value: number };
-  price: number;
-  //discount?: { type: string; price: number };
+  time: CreateTicketTimeProps;
+  price: CreateTicketPriceProps;
+};
+export type CreateTicketFromExisting<T> = {
+  title: string;
+  type: T;
+  isFixedSeat: boolean;
+  time: CreateTicketTimeProps;
+  price: CreateTicketPriceProps;
+  expiration: CreateTicketExpirationProps;
 };
 
-export class Ticket extends AggregateRoot<TicketProps> {
+export abstract class Ticket<
+  T extends TicketType = TicketType,
+  P extends TicketProps<T> = TicketProps<T>,
+> extends AggregateRoot<P> {
   get ticketId(): TicketId {
     return new TicketId(this._id.value);
+  }
+
+  get type(): T {
+    return this.props.type;
   }
 
   get title(): string {
     return this.props.title;
   }
 
-  get category(): TicketCategory {
-    return this.props.category;
+  get isFixedSeat(): boolean {
+    return this.props.isFixedSeat;
   }
 
   get time(): TicketTime {
     return this.props.time;
   }
 
-  get price(): number {
+  get price(): TicketPrice {
     return this.props.price;
   }
 
-  private constructor(props: TicketProps, id?: string) {
+  get expiration(): TicketExpiration {
+    return this.props.expiration;
+  }
+
+  // abstract setExpiration():
+
+  protected constructor(props: P, id?: string) {
     super(props, id);
-  }
-
-  static create(props: CreateProps, id?: string): Result<Ticket, TicketError> {
-    const propsOrError = combine(
-      TicketCategory.create({ value: props.category }),
-      TicketTime.create(props.time),
-    );
-    if (propsOrError.isErr()) {
-      return err(propsOrError.error);
-    }
-    const [category, time] = propsOrError.value;
-
-    if (this.isCategoryAndTimeUnitMatched({ category, time }) === false) {
-      return err(
-        new TicketErrors.CategoryAndTimeUnitMismatchedError({
-          category: category.value,
-          timeUnit: time.unit,
-        }),
-      );
-    }
-
-    return ok(new Ticket({ ...props, category, time }, id));
-  }
-
-  private static isCategoryAndTimeUnitMatched(
-    props: Pick<TicketProps, 'category' | 'time'>,
-  ): boolean {
-    switch (props.category.value) {
-      case TicketCategoryEnum.PERIOD:
-        if (props.time.unit !== TicketTimeUnitEnum.DAYS) {
-          return false;
-        }
-        break;
-      case TicketCategoryEnum.HOURS_RECHARGE:
-        if (props.time.unit !== TicketTimeUnitEnum.HOURS) {
-          return false;
-        }
-        break;
-      case TicketCategoryEnum.SAME_DAY:
-        if (props.time.unit !== TicketTimeUnitEnum.HOURS) {
-          return false;
-        }
-        break;
-    }
-
-    return true;
   }
 }

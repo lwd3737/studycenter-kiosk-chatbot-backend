@@ -1,17 +1,18 @@
+import { TicketTimeUnit, TicketType } from '../../domain';
+import { ExpirationType } from '../../domain/ticket/expiration.value-object';
+
 export class TicketDTO {
   id: string;
-  category: 'PERIOD' | 'HOURS_RECHARGE' | 'SAME_DAY';
+  type: TicketType;
+  isFixedSeat: boolean;
   time: TicketTimeDTO;
   price: number;
-  discount?: TicketDiscount;
+  expiration: {
+    type: ExpirationType;
+  };
 }
 
 export class TicketTimeDTO {
-  unit: string;
+  unit: TicketTimeUnit;
   value: number;
-}
-
-export class TicketDiscount {
-  type: string;
-  price: number;
 }

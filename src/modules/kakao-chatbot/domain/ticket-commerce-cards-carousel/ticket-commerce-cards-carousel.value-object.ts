@@ -1,6 +1,4 @@
 import { combine, DomainError, err, ok, Result, ValueObject } from 'src/core';
-import { TicketCategoryEnum } from 'src/modules/ticketing/domain/ticket/ticket-category.value-object';
-import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
 import { Button, ButtonActionEnum } from '../base/button/button.value-object';
 import { ButtonError } from '../base/button/button.error';
 import { TicketCommerceCardsCarouselError } from './ticket-commerce-cards-carousel.error';
@@ -13,6 +11,7 @@ import { CommerceCardError } from '../base/commerce-card/commerce-card.error';
 import { Profile } from '../base/profile/profile.value-object';
 import { ThumbnailError } from '../base/thumbnail/thumbnail.error';
 import { Thumbnail } from '../base/thumbnail/thumbnail.value-object';
+import { Ticket, TicketType } from 'src/modules/ticketing';
 
 export interface TicketCommerceCardsCarouselProps {
   tickets: Ticket[];
@@ -51,7 +50,7 @@ export class TicketCommerceCardsCarousel extends ValueObject {
         },
       },
     });
-    const thumbnailOrError = this.createTicketThumbnail(ticket.category.value);
+    const thumbnailOrError = this.createTicketThumbnail(ticket.type);
 
     // TODO: config module에서 validation
     const locationName = process.env.LOCATION_NAME;
@@ -73,7 +72,7 @@ export class TicketCommerceCardsCarousel extends ValueObject {
 
     const commerceCardOrError = CommerceCard.create({
       description: ticket.title,
-      price: ticket.price,
+      price: ticket.price.value,
       thumbnails: [thumbnail],
       profile,
       buttons: [selectButton],
@@ -86,7 +85,7 @@ export class TicketCommerceCardsCarousel extends ValueObject {
   }
 
   private static createTicketThumbnail(
-    category: TicketCategoryEnum,
+    type: TicketType,
   ): Result<Thumbnail, ThumbnailError> {
     // TODO: config 모듈에서 validation
     const host = process.env.HOST;
@@ -96,19 +95,7 @@ export class TicketCommerceCardsCarousel extends ValueObject {
 
     // TODO: 파일 경로들도 config 모듈에서 설정
     const path = host + '/files/images';
-    let imageUrl: string;
-
-    switch (category) {
-      case TicketCategoryEnum.PERIOD:
-        imageUrl = path + '/period_ticket.png';
-        break;
-      case TicketCategoryEnum.HOURS_RECHARGE:
-        imageUrl = path + '/hours_recharge_ticket.png';
-        break;
-      case TicketCategoryEnum.SAME_DAY:
-        imageUrl = path + '/sameday_ticket.png';
-        break;
-    }
+    const imageUrl: string = path + type.value + '_ticket.png';
 
     return Thumbnail.create({
       imageUrl,

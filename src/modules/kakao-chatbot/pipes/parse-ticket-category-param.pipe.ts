@@ -3,39 +3,46 @@ import { KakaoChatbotRequestDTO } from '../dtos/request.dto';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
+import {
+  HoursRechargeTicketType,
+  PeriodTicketType,
+  SameDayTicketType,
+  TicketType,
+} from 'src/modules/ticketing';
 
 @Injectable()
-export class ParseTicketCategoryParamPipe
+export class ParseTicketTypeParamPipe
   implements
-    PipeTransform<KakaoChatbotRequestDTO, string | KakaoChatbotResponseDTO>
+    PipeTransform<KakaoChatbotRequestDTO, TicketType | KakaoChatbotResponseDTO>
 {
   transform(value: KakaoChatbotRequestDTO) {
-    const category = value.action.params['ticket_category'];
-    if (!category) {
-      console.debug('ticket_category param is not included');
+    const type = value.action.params['ticket_type'];
+    console.log('type', type);
+    if (!type) {
+      console.debug('ticket_ticket param is not included');
 
       return ErrorDTOCreator.toSimpleTextOutput(
-        `이용권 종류를 선택해주세요.`,
-        TicketTemplateDTOCreator.toTicketCategoriesQuickReplies(),
+        `유효하지 않은 이용권입니다.`,
+        TicketTemplateDTOCreator.toTicketTypesQuickReplies(),
       );
     }
 
-    switch (category) {
+    switch (type) {
       case '정기권':
       case '기간권':
-        return 'PERIOD';
+        return PeriodTicketType.create();
       case '시간권':
       case '시간충전권':
-        return 'HOURS_RECHARGE';
+        return HoursRechargeTicketType.create();
       case '당일권':
       case '1일권':
-        return 'SAME_DAY';
+        return SameDayTicketType.create();
       default:
-        console.debug(`Value of ticket_category '${category}' is invalid`);
+        console.debug(`Value of ticket_category '${type}' is invalid`);
 
         return ErrorDTOCreator.toSimpleTextOutput(
-          `${category}은(는) 유효하지 않은 이용권 종류입니다. 다시 선택해주세요.`,
-          TicketTemplateDTOCreator.toTicketCategoriesQuickReplies(),
+          `${type}은(는) 유효하지 않은 이용권 종류입니다. 다시 선택해주세요.`,
+          TicketTemplateDTOCreator.toTicketTypesQuickReplies(),
         );
     }
   }

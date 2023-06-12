@@ -1,11 +1,9 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import ticketsData from '../infra/seeds/tickets.data.json';
-import { Ticket } from '../domain/ticket/ticket.aggregate-root';
-import {
-  ITicketRepo,
-  TicketRepoProvider,
-} from '../domain/ticket/ticket.repo.interface';
-import { DomainError, Result, err, ok } from 'src/core';
+
+import { DomainError, Result, combine, err, ok } from 'src/core';
+import { TicketFactory } from '../domain/ticket-factory';
+import { ITicketRepo, Ticket, TicketRepoProvider } from '../domain';
 
 @Injectable()
 export class TicketSeederService implements OnApplicationBootstrap {
@@ -23,18 +21,24 @@ export class TicketSeederService implements OnApplicationBootstrap {
   }
 
   public async seed(): Promise<Result<Ticket[], DomainError>> {
-    const tickets: Ticket[] = [];
-    for (const index in ticketsData) {
-      const ticketOrError = Ticket.create(ticketsData[index]);
-      if (ticketOrError.isErr()) {
-        return err(ticketOrError.error);
-      }
+    const ticketsOrError = combine(
+      ...ticketsData.map((ticketData) => {
+        const ticketOrError = TicketFactory.createNew({
+          type: ticketData.type,
+          props: {
+            ...ticketData,
+            price: { value: ticketData.price },
+          },
+        });
+        if (ticketOrError.isErr()) return err(ticketOrError.error);
 
-      tickets.push(ticketOrError.value);
-    }
+        return ok(ticketOrError.value);
+      }),
+    );
+    if (ticketsOrError.isErr()) return err(ticketsOrError.error);
 
-    await this.ticketRepo.bulkCreate(tickets);
+    await this.ticketRepo.bulkCreate(ticketsOrError.value as Ticket[]);
 
-    return ok(tickets);
+    return ok(ticketsOrError.value);
   }
 }

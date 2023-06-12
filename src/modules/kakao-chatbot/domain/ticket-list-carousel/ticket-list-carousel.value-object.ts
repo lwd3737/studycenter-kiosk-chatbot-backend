@@ -1,5 +1,4 @@
 import { combine, err, ok, Result, ValueObject } from 'src/core';
-import { Ticket } from 'src/modules/ticketing/domain/ticket/ticket.aggregate-root';
 import { Button, ButtonActionEnum } from '../base/button/button.value-object';
 import { TicketListCarouselError } from './ticket-list-carousel.error';
 import {
@@ -10,6 +9,7 @@ import { ListCardError } from '../base/list-card/list-card.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
 import { ListCardHeader } from '../base/list-card/list-card-header.value-object';
 import { ListItem } from '../base/list-card/list-item.value-object';
+import { Ticket } from 'src/modules/ticketing';
 
 export interface TicketListCarouselProps {
   ticketCollections: Ticket[][];
@@ -19,10 +19,10 @@ export class TicketListCarousel extends ValueObject {
   public static create(
     props: TicketListCarouselProps,
   ): Result<Carousel, TicketListCarouselError> {
-    const ticketListCardResultCollection = props.ticketCollections.map(
+    const ticketListCardCollectionsOrError = props.ticketCollections.map(
       this.createTicketListCard,
     );
-    const ticketListCardsOrError = combine(...ticketListCardResultCollection);
+    const ticketListCardsOrError = combine(...ticketListCardCollectionsOrError);
     if (ticketListCardsOrError.isErr()) {
       return err(ticketListCardsOrError.error);
     }
@@ -41,19 +41,19 @@ export class TicketListCarousel extends ValueObject {
   private static createTicketListCard(
     ticketCollection: Ticket[],
   ): Result<ListCard, ListCardError> {
-    const { category } = ticketCollection[0];
+    const { type, title } = ticketCollection[0];
 
-    const headerOrError = ListCardHeader.create({ title: category.label });
+    const headerOrError = ListCardHeader.create({ title: type.label });
     const itemOrErrors = ticketCollection.map((ticket) =>
       ListItem.create({
         title: ticket.title,
-        description: `${ticket.price}원`,
+        description: `${ticket.price.value}원`,
       }),
     );
     const buttonOrError = Button.create({
-      label: `${category.label} 선택`,
+      label: `${type.label} 선택`,
       action: ButtonActionEnum.MESSAGE,
-      messageText: `${category.label} 선택`,
+      messageText: `${type.label} 선택`,
     });
 
     const listCardProps = combine(

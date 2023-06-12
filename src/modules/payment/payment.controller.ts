@@ -9,7 +9,4 @@ export class PaymentController {
   //     price: '10,000',
   //   };
   // }
-
-  @Get('virtual-account')
-  async issueVirtualAccount() {}
 }

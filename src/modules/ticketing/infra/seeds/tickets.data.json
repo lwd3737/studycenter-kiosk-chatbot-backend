@@ -1,27 +1,27 @@
 [
   {
     "title": "15일권",
-    "category": "PERIOD",
+    "type": "period",
     "time": {
-      "unit": "DAYS",
+      "unit": "days",
       "value": 15
     },
     "price": 80000
   },
   {
     "title": "30일권",
-    "category": "PERIOD",
+    "type": "period",
     "time": {
-      "unit": "DAYS",
+      "unit": "days",
       "value": 30
     },
     "price": 130000
   },
   {
     "title": "50시간권",
-    "category": "HOURS_RECHARGE",
+    "type": "hours_recharge",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 50
     },
 
@@ -29,63 +29,63 @@
   },
   {
     "title": "100시간권",
-    "category": "HOURS_RECHARGE",
+    "type": "hours_recharge",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 100
     },
     "price": 650000
   },
   {
     "title": "1시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 1
     },
     "price": 2000
   },
   {
     "title": "2시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 2
     },
     "price": 3000
   },
   {
     "title": "4시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 4
     },
     "price": 5000
   },
   {
     "title": "6시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 6
     },
     "price": 6000
   },
   {
     "title": "9시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 9
     },
     "price": 8000
   },
   {
     "title": "12시간권",
-    "category": "SAME_DAY",
+    "type": "same_day",
     "time": {
-      "unit": "HOURS",
+      "unit": "hours",
       "value": 12
     },
     "price": 10000

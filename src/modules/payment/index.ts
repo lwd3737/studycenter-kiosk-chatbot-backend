@@ -1,1 +1,1 @@
-export * from './domain/payment-id';
+export * from './domain/base/payment-id';

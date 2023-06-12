@@ -1,7 +1,7 @@
 import { SkillQuickReply } from './template-output.interface';
 
 export class TicketTemplateDTOCreator {
-  public static toTicketCategoriesQuickReplies(): SkillQuickReply[] {
+  public static toTicketTypesQuickReplies(): SkillQuickReply[] {
     return [
       {
         label: '정기권',

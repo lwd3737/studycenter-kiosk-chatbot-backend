@@ -6,16 +6,17 @@ import {
 } from '@nestjs/common';
 import {
   GetAllTicketCollectionsErrors,
-  GetTicketsByCategoryErrors,
-  GetTicketsByCategoryUseCase,
+  GetTicketsByTypeErrors,
+  GetTicketsByTypeUseCase,
   InitTicketsUseCase,
+  TicketType,
 } from 'src/modules/ticketing';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { CarouselMapper } from '../infra/mappers/carousel.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { ParseTicketCategoryParamPipe } from '../pipes/parse-ticket-category-param.pipe';
+import { ParseTicketTypeParamPipe } from '../pipes/parse-ticket-category-param.pipe';
 import { RenderTicketCommerceCardsCarouselUseCase } from '../use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
-import { RenderTicketListCarouselUseCase } from '../use-cases/render-ticket-list-carousel/render-ticket-list-carousel.use-case';
+import { RenderTicketCollectionListCarouselUseCase } from '../use-cases/render-ticket-collection-list-carousel/render-ticket-collection-list-carousel.use-case';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
@@ -42,8 +43,8 @@ export class KakaoChatbotTicketingController {
     private contextControlMapper: ContextControlMapper,
 
     private initTicketUseCase: InitTicketsUseCase,
-    private renderTicketListCarouselUseCase: RenderTicketListCarouselUseCase,
-    private getTicketsByCategoryUseCase: GetTicketsByCategoryUseCase,
+    private renderTicketListCarouselUseCase: RenderTicketCollectionListCarouselUseCase,
+    private getTicketsByTypeUseCase: GetTicketsByTypeUseCase,
     private renderTicketCommerceCardsCarouselUseCase: RenderTicketCommerceCardsCarouselUseCase,
     private getRoomSeatsGroupUseCase: GetRoomSeatsGroupUseCase,
     private renderRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
@@ -75,12 +76,12 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('all-collections')
+  @Post('ticket-all-collections')
   async getAllTicketCollections(): Promise<KakaoChatbotResponseDTO> {
-    const ticketListCarouselResult =
+    const ticketListCarouselOrError =
       await this.renderTicketListCarouselUseCase.execute();
-    if (ticketListCarouselResult.isErr()) {
-      const error = ticketListCarouselResult.error;
+    if (ticketListCarouselOrError.isErr()) {
+      const error = ticketListCarouselOrError.error;
 
       console.debug(error);
 
@@ -99,30 +100,30 @@ export class KakaoChatbotTicketingController {
     return this.responseMapper.toDTO({
       outputs: [
         {
-          carousel: this.carouselMapper.toDTO(ticketListCarouselResult.value),
+          carousel: this.carouselMapper.toDTO(ticketListCarouselOrError.value),
         },
       ],
     });
   }
 
-  @Post('category')
-  async getTicketsByCategory(
-    // TODO: raw data로 바꾸기
-    @Body(ParseTicketCategoryParamPipe) ticketCategory: string,
+  @Post('ticket-collection-by-type')
+  async getTicketCollectionByType(
+    @Body(ParseTicketTypeParamPipe) ticketType: TicketType,
   ): Promise<KakaoChatbotResponseDTO> {
-    const ticketsByCategoryOrError =
-      await this.getTicketsByCategoryUseCase.execute({
-        category: ticketCategory,
+    console.log('ticketType', ticketType);
+    const ticketCollectionByTypeOrError =
+      await this.getTicketsByTypeUseCase.execute({
+        type: ticketType,
       });
-    if (ticketsByCategoryOrError.isErr()) {
-      const error = ticketsByCategoryOrError.error;
+    if (ticketCollectionByTypeOrError.isErr()) {
+      const error = ticketCollectionByTypeOrError.error;
       console.debug(error);
 
       switch (error.constructor) {
-        case GetTicketsByCategoryErrors.TicketNotFoundError:
+        case GetTicketsByTypeErrors.TicketNotFoundError:
           return ErrorDTOCreator.toSimpleTextOutput(
-            `${ticketCategory} 이용권은 존재하지 않는 이용권이에요. 아래 이용권 중에 선택해주세요!`,
-            TicketTemplateDTOCreator.toTicketCategoriesQuickReplies(),
+            `${ticketType} 이용권은 존재하지 않는 이용권이에요. 아래 이용권 중에 선택해주세요!`,
+            TicketTemplateDTOCreator.toTicketTypesQuickReplies(),
           );
         default:
           return ErrorDTOCreator.toSimpleTextOutput(
@@ -133,7 +134,7 @@ export class KakaoChatbotTicketingController {
 
     const ticketCommerceCardsCarouselOrError =
       await this.renderTicketCommerceCardsCarouselUseCase.execute({
-        tickets: ticketsByCategoryOrError.value,
+        tickets: ticketCollectionByTypeOrError.value,
       });
 
     if (ticketCommerceCardsCarouselOrError.isErr()) {
@@ -271,8 +272,8 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('payment')
-  async selectSeat(
+  @Post('virtual-account')
+  async issueVirtualAccount(
     @Body(
       new ParseTicketingFromClientExtraPipe({
         required: {
