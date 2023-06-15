@@ -1,23 +1,23 @@
 import { combine, err, ok, Result, ValueObject } from 'src/core';
 import { Button, ButtonActionEnum } from '../base/button/button.value-object';
-import { TicketListCarouselError } from './ticket-list-carousel.error';
+import { TicketListCarouselError } from './ticket-collection-list-card-carousel.error';
 import {
   Carousel,
   CarouselTypeEnum,
 } from '../base/carousel/carousel.value-object';
 import { ListCardError } from '../base/list-card/list-card.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
-import { ListCardHeader } from '../base/list-card/list-card-header.value-object';
-import { ListItem } from '../base/list-card/list-item.value-object';
+import { ListCardHeader } from '../base/list-card/header.value-object';
+import { ListItem } from '../base/list-card/item.value-object';
 import { Ticket } from 'src/modules/ticketing';
 
-export interface TicketListCarouselProps {
+export interface TicketCollectionListCarouselProps {
   ticketCollections: Ticket[][];
 }
 
 export class TicketListCarousel extends ValueObject {
   public static create(
-    props: TicketListCarouselProps,
+    props: TicketCollectionListCarouselProps,
   ): Result<Carousel, TicketListCarouselError> {
     const ticketListCardCollectionsOrError = props.ticketCollections.map(
       this.createTicketListCard,

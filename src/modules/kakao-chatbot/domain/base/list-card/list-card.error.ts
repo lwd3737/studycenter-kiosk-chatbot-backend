@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { DomainError } from 'src/core';
-import { ListItemProps } from './list-item.value-object';
+import { ListItemProps } from './item.value-object';
 
 export type ListCardError =
   | ListCardErrors.ButtonMaxNumberExeededError

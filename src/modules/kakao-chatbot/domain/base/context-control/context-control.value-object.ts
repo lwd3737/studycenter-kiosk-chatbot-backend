@@ -1,5 +1,5 @@
 import { ValueObject } from 'src/core';
-import { ContextValue, ContextValueProps } from './context-value.value-object';
+import { ContextValue, ContextValueProps } from './value.value-object';
 
 export interface ContextControlProps {
   values: ContextValue[];

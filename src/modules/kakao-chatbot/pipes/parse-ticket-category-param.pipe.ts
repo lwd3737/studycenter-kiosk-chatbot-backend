@@ -17,7 +17,6 @@ export class ParseTicketTypeParamPipe
 {
   transform(value: KakaoChatbotRequestDTO) {
     const type = value.action.params['ticket_type'];
-    console.log('type', type);
     if (!type) {
       console.debug('ticket_ticket param is not included');
 

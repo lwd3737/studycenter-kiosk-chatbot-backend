@@ -110,7 +110,6 @@ export class KakaoChatbotTicketingController {
   async getTicketCollectionByType(
     @Body(ParseTicketTypeParamPipe) ticketType: TicketType,
   ): Promise<KakaoChatbotResponseDTO> {
-    console.log('ticketType', ticketType);
     const ticketCollectionByTypeOrError =
       await this.getTicketsByTypeUseCase.execute({
         type: ticketType,

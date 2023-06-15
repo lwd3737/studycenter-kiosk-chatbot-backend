@@ -1,8 +1,8 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button/button.value-object';
 import { ListCardError, ListCardErrors } from './list-card.error';
-import { ListCardHeader } from './list-card-header.value-object';
-import { ListItem } from './list-item.value-object';
+import { ListCardHeader } from './header.value-object';
+import { ListItem } from './item.value-object';
 
 export interface ListCardProps {
   header: ListCardHeader;

@@ -7,11 +7,11 @@ import {
 } from '../base/carousel/carousel.value-object';
 import { AvailableSeatsListCardsCarouselErrors } from './available-seats-list-cards-carousel.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
-import { ListCardHeader } from '../base/list-card/list-card-header.value-object';
+import { ListCardHeader } from '../base/list-card/header.value-object';
 import {
   ListItem,
   ListItemActionEnum,
-} from '../base/list-card/list-item.value-object';
+} from '../base/list-card/item.value-object';
 
 type CreateProps = {
   ticketId: string;

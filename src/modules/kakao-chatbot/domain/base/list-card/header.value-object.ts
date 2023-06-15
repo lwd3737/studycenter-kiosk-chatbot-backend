@@ -1,5 +1,5 @@
 import { ok, Result, ValueObject } from 'src/core';
-import { ListItemActionEnum, ListItemProps } from './list-item.value-object';
+import { ListItemActionEnum, ListItemProps } from './item.value-object';
 
 export type ListCardHeaderProps = Exclude<ListItemProps, 'description'>;
 
