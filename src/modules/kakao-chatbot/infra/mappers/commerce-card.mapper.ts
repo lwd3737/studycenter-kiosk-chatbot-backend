@@ -11,7 +11,6 @@ export class CommerceCardMapper implements IMapper<CommerceCard> {
   constructor(
     private thumbnailMapper: ThumbnailMapper,
     private profileMapper: ProfileMapper,
-    private buttonMapper: ButtonMapper,
   ) {}
 
   toDTO(commerceCard: CommerceCard): CommerceCardDTO {
@@ -34,7 +33,7 @@ export class CommerceCardMapper implements IMapper<CommerceCard> {
       currency,
       thumbnails: thumbnails.map(this.thumbnailMapper.toDTO),
       profile: profile ? this.profileMapper.toDTO(profile) : undefined,
-      buttons: buttons.map(this.buttonMapper.toDTO),
+      buttons: buttons.map(ButtonMapper.toDTO),
     };
   }
 }

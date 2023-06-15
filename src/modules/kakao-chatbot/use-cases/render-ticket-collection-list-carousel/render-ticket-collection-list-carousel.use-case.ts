@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { GetAllTicketCollectionsUseCase } from 'src/modules/ticketing';
-import { TicketListCarousel } from '../../domain/ticket-collection-list-card-carousel/ticket-collection-list-card-carousel.value-object';
 import { KakaoChatbotRequestDTO } from '../../dtos/request.dto';
 import { RenderTicketCollectionListCarouselError } from './render-ticket-collection-list-carousel.error';
-import { Carousel } from '../../domain/base/carousel/carousel.value-object';
+import { TicketCollectionListCardCarousel } from '../../domain/ticket-collection-list-card-carousel/ticket-collection-list-card-carousel.value-object';
 
 type TicketCollectionListCarouselResult = Promise<
-  Result<Carousel, RenderTicketCollectionListCarouselError>
+  Result<
+    TicketCollectionListCardCarousel,
+    RenderTicketCollectionListCarouselError
+  >
 >;
 
 @Injectable()
@@ -26,13 +28,14 @@ export class RenderTicketCollectionListCarouselUseCase
       return err(allTicketCollectionsOrError.error);
     }
 
-    const ticketListCarouselResult = TicketListCarousel.create({
-      ticketCollections: allTicketCollectionsOrError.value,
-    });
-    if (ticketListCarouselResult.isErr()) {
-      return err(ticketListCarouselResult.error);
+    const ticketCollectionListCardCarousel =
+      TicketCollectionListCardCarousel.createFrom({
+        ticketCollections: allTicketCollectionsOrError.value,
+      });
+    if (ticketCollectionListCardCarousel.isErr()) {
+      return err(ticketCollectionListCardCarousel.error);
     }
 
-    return ok(ticketListCarouselResult.value);
+    return ok(ticketCollectionListCardCarousel.value);
   }
 }

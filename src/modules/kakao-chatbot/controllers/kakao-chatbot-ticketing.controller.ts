@@ -32,6 +32,7 @@ import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-ca
 import { RenderAvailableSeatsListCardsCarouselUseCase } from '../use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
+import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
@@ -100,7 +101,9 @@ export class KakaoChatbotTicketingController {
     return this.responseMapper.toDTO({
       outputs: [
         {
-          carousel: this.carouselMapper.toDTO(ticketListCarouselOrError.value),
+          carousel: ListCardCarouselMapper.toDTO(
+            ticketListCarouselOrError.value,
+          ),
         },
       ],
     });

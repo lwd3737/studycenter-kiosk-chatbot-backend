@@ -5,13 +5,10 @@ import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-tic
 import { ParseTicketTypeParamPipe } from './pipes/parse-ticket-category-param.pipe';
 import { RenderTicketCommerceCardsCarouselUseCase } from './use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
 import { RenderTicketCollectionListCarouselUseCase } from './use-cases/render-ticket-collection-list-carousel/render-ticket-collection-list-carousel.use-case';
-import { ButtonMapper } from './infra/mappers/button.mapper';
 import { CarouselMapper } from './infra/mappers/carousel.mapper';
-
 import { CommerceCardMapper } from './infra/mappers/commerce-card.mapper';
 import { ContextControlMapper } from './infra/mappers/context-control.mapper';
 import { KaKaoChatbotResponseMapper } from './infra/mappers/kakao-chatbot-response.mapper';
-import { ListCardMapper } from './infra/mappers/list-card.mapper';
 import { ProfileMapper } from './infra/mappers/profile.mapper';
 import { SimpleTextMapper } from './infra/mappers/simple-text.mapper';
 import { ThumbnailMapper } from './infra/mappers/thumbnail.mapper';
@@ -30,13 +27,11 @@ import { RenderAvailableSeatsListCardsCarouselUseCase } from './use-cases/render
 
 const Mappers = [
   KaKaoChatbotResponseMapper,
-  ListCardMapper,
   ItemCardMapper,
   CarouselMapper,
   CommerceCardMapper,
   ThumbnailMapper,
   ProfileMapper,
-  ButtonMapper,
   SimpleTextMapper,
   ContextControlMapper,
 ];

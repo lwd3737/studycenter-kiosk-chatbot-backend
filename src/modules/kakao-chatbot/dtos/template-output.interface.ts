@@ -1,3 +1,5 @@
+import { type } from 'os';
+
 export interface SimpleTextDTO {
   text: string;
 }
@@ -60,24 +62,6 @@ export interface ItemCardDTO {
   description?: string;
   buttons?: ButtonDTO[];
   buttonLayout?: 'vertical' | 'horizontal';
-}
-
-export type CarouselDTO = {
-  type: 'basicCard' | 'commerceCard' | 'listCard' | 'itemCard';
-  items: CarouselItemDTO[];
-  header?: CarouselHeaderDTO;
-};
-
-export type CarouselItemDTO =
-  | BasicCardDTO
-  | CommerceCardDTO
-  | ListCardDTO
-  | ItemCardDTO;
-
-export interface CarouselHeaderDTO {
-  title: string;
-  description: string;
-  thumbnail: ThumbnailDTO;
 }
 
 export interface ThumbnailDTO {
@@ -145,4 +129,25 @@ export interface SkillQuickReply {
   extra?: any;
 }
 
-//export interface ISocialDTO {}
+export type CarouselDTO = {
+  type: 'basicCard' | 'commerceCard' | 'listCard' | 'itemCard';
+  items: CarouselItemDTO[];
+  header?: CarouselHeaderDTO;
+};
+
+export type CarouselItemDTO =
+  | BasicCardDTO
+  | CommerceCardDTO
+  | ListCardDTO
+  | ItemCardDTO;
+
+export interface CarouselHeaderDTO {
+  title: string;
+  description: string;
+  thumbnail: ThumbnailDTO;
+}
+
+export type ListCardCarouselDTO = {
+  type: 'listCard';
+  items: ListCardDTO[];
+};

@@ -1,29 +1,17 @@
-import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { Button } from '../../domain/base/button/button.value-object';
 import { ButtonDTO } from '../../dtos/template-output.interface';
 
-@Injectable()
 export class ButtonMapper implements IMapper<Button> {
-  toDTO(button: Button): ButtonDTO {
-    const {
-      label,
-      action,
-      webLinkUrl,
-      messageText,
-      phoneNumber,
-      blockId,
-      extra,
-    } = button;
-
+  static toDTO(domain: Button): ButtonDTO {
     return {
-      label,
-      action,
-      webLinkUrl,
-      messageText,
-      phoneNumber,
-      blockId,
-      extra,
+      label: domain.label,
+      action: domain.action,
+      webLinkUrl: domain.webLinkUrl,
+      messageText: domain.messageText,
+      phoneNumber: domain.phoneNumber,
+      blockId: domain.blockId,
+      extra: domain.extra,
     };
   }
 }

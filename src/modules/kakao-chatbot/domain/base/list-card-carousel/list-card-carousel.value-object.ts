@@ -26,7 +26,7 @@ export class ListCardCarousel extends Carousel<ListCardType, ListCard> {
     );
   }
 
-  private constructor(props: Props) {
+  protected constructor(props: Props) {
     super(props);
   }
 }

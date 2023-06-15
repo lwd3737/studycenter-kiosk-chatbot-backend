@@ -7,10 +7,7 @@ import { ItemCard } from '../../domain/base/item-card/item-card.value-object';
 
 @Injectable()
 export class ItemCardMapper implements IMapper<ItemCard> {
-  constructor(
-    private thumbnailMapper: ThumbnailMapper,
-    private buttonMapper: ButtonMapper,
-  ) {}
+  constructor(private thumbnailMapper: ThumbnailMapper) {}
 
   toDTO(domain: ItemCard): ItemCardDTO {
     return {
@@ -42,7 +39,7 @@ export class ItemCardMapper implements IMapper<ItemCard> {
         : undefined,
       title: domain.title,
       description: domain.description,
-      buttons: domain.buttons?.map((button) => this.buttonMapper.toDTO(button)),
+      buttons: domain.buttons?.map((button) => ButtonMapper.toDTO(button)),
       buttonLayout: domain.buttonLayout,
     };
   }
