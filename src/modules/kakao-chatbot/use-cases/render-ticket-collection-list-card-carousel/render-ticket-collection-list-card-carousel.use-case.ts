@@ -2,26 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { err, IUseCase, ok, Result } from 'src/core';
 import { GetAllTicketCollectionsUseCase } from 'src/modules/ticketing';
 import { KakaoChatbotRequestDTO } from '../../dtos/request.dto';
-import { RenderTicketCollectionListCarouselError } from './render-ticket-collection-list-carousel.error';
+import { RenderTicketCollectionListCardCarouselError } from './render-ticket-collection-list-card-carousel.error';
 import { TicketCollectionListCardCarousel } from '../../domain/ticket-collection-list-card-carousel/ticket-collection-list-card-carousel.value-object';
 
-type TicketCollectionListCarouselResult = Promise<
+type UseCaseResult = Promise<
   Result<
     TicketCollectionListCardCarousel,
-    RenderTicketCollectionListCarouselError
+    RenderTicketCollectionListCardCarouselError
   >
 >;
 
 @Injectable()
-export class RenderTicketCollectionListCarouselUseCase
-  implements
-    IUseCase<KakaoChatbotRequestDTO, TicketCollectionListCarouselResult>
+export class RenderTicketCollectionListCardCarouselUseCase
+  implements IUseCase<KakaoChatbotRequestDTO, UseCaseResult>
 {
   constructor(
     private getAllTicketCollectionsUseCase: GetAllTicketCollectionsUseCase,
   ) {}
 
-  async execute(): Promise<TicketCollectionListCarouselResult> {
+  async execute(): Promise<UseCaseResult> {
     const allTicketCollectionsOrError =
       await this.getAllTicketCollectionsUseCase.execute();
     if (allTicketCollectionsOrError.isErr()) {

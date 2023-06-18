@@ -12,11 +12,10 @@ import {
   TicketType,
 } from 'src/modules/ticketing';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
-import { CarouselMapper } from '../infra/mappers/carousel.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ParseTicketTypeParamPipe } from '../pipes/parse-ticket-category-param.pipe';
 import { RenderTicketCommerceCardsCarouselUseCase } from '../use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
-import { RenderTicketCollectionListCarouselUseCase } from '../use-cases/render-ticket-collection-list-carousel/render-ticket-collection-list-carousel.use-case';
+import { RenderTicketCollectionListCardCarouselUseCase } from '../use-cases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.use-case';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
@@ -33,18 +32,15 @@ import { RenderAvailableSeatsListCardsCarouselUseCase } from '../use-cases/rende
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
+import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
+import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
 export class KakaoChatbotTicketingController {
   constructor(
-    private responseMapper: KaKaoChatbotResponseMapper,
-    private carouselMapper: CarouselMapper,
-    private simpleTextMapper: SimpleTextMapper,
-    private contextControlMapper: ContextControlMapper,
-
     private initTicketUseCase: InitTicketsUseCase,
-    private renderTicketListCarouselUseCase: RenderTicketCollectionListCarouselUseCase,
+    private renderTicketListCarouselUseCase: RenderTicketCollectionListCardCarouselUseCase,
     private getTicketsByTypeUseCase: GetTicketsByTypeUseCase,
     private renderTicketCommerceCardsCarouselUseCase: RenderTicketCommerceCardsCarouselUseCase,
     private getRoomSeatsGroupUseCase: GetRoomSeatsGroupUseCase,
@@ -66,7 +62,7 @@ export class KakaoChatbotTicketingController {
       );
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
           simpleText: {
@@ -98,7 +94,7 @@ export class KakaoChatbotTicketingController {
       }
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
           carousel: ListCardCarouselMapper.toDTO(
@@ -151,10 +147,10 @@ export class KakaoChatbotTicketingController {
       }
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
-          carousel: this.carouselMapper.toDTO(
+          carousel: CommerceCardCarouselMapper.toDTO(
             ticketCommerceCardsCarouselOrError.value,
           ),
         },
@@ -193,10 +189,10 @@ export class KakaoChatbotTicketingController {
       );
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
-          carousel: this.carouselMapper.toDTO(
+          carousel: ItemCardCarouselMapper.toDTO(
             roomItemCardsCarouselOrError.value,
           ),
         },
@@ -252,13 +248,13 @@ export class KakaoChatbotTicketingController {
       }
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         ...carouselsOrError.value.map((carousel) => ({
-          carousel: this.carouselMapper.toDTO(carousel),
+          carousel: ListCardCarouselMapper.toDTO(carousel),
         })),
       ],
-      context: this.contextControlMapper.toDTO(
+      context: ContextControlMapper.toDTO(
         ContextControl.create({
           values: [
             {
@@ -288,7 +284,7 @@ export class KakaoChatbotTicketingController {
   ) {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
           simpleText: {

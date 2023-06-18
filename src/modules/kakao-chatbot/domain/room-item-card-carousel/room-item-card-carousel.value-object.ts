@@ -1,30 +1,27 @@
-import { combine, DomainError, err, ok, Result, ValueObject } from 'src/core';
+import { combine, DomainError, err, ok, Result } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
 import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-info.value-object';
 import { Button, ButtonActionEnum } from '../base/button/button.value-object';
-import {
-  Carousel,
-  CarouselTypeEnum,
-} from '../base/carousel/carousel.value-object';
 import { ItemCard } from '../base/item-card/item-card.value-object';
 import { ItemList } from '../base/item-card/item-list.value-object';
 import { ImageTitle } from '../base/item-card/image-title.value-object';
 import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
 import { ItemListSummary } from '../base/item-card/item-list-summary.value-object';
+import { ItemCardCarousel } from '../base/item-card-carousel/item-card-carousel.value-object';
 
 type CreateProps = {
   roomSeatsGroup: RoomSeatsGroup[];
   ticketing?: Ticketing;
 };
-
 type RoomSeatsGroup = { room: Room; seats: Seat[] };
-
 type Ticketing = {
   ticket_id: string;
 };
 
-export class RoomItemCardsCarousel extends ValueObject {
-  public static create(props: CreateProps): Result<Carousel, DomainError> {
+export class RoomItemCardCarousel extends ItemCardCarousel {
+  public static createFrom(
+    props: CreateProps,
+  ): Result<RoomItemCardCarousel, DomainError> {
     const roomItemCardsOrError = this.createRoomItemCards(
       props.roomSeatsGroup,
       props.ticketing,
@@ -33,10 +30,11 @@ export class RoomItemCardsCarousel extends ValueObject {
       return err(roomItemCardsOrError.error);
     }
 
-    return Carousel.create({
-      type: CarouselTypeEnum.ITEM_CARD,
-      items: roomItemCardsOrError.value,
-    });
+    return ok(
+      this.create({
+        items: roomItemCardsOrError.value,
+      }),
+    );
   }
 
   private static createRoomItemCards(

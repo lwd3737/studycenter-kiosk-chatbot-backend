@@ -1,18 +1,14 @@
-import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/core';
 import { ThumbnailDTO } from '../../dtos/template-output.interface';
 import { Thumbnail } from '../../domain/base/thumbnail/thumbnail.value-object';
 
-@Injectable()
 export class ThumbnailMapper implements IMapper<Thumbnail> {
-  toDTO(thumbnail: Thumbnail): ThumbnailDTO {
-    const { imageUrl, fixedRatio, width, height } = thumbnail;
-
+  static toDTO(domain: Thumbnail): ThumbnailDTO {
     return {
-      imageUrl,
-      fixedRatio,
-      width,
-      height,
+      imageUrl: domain.imageUrl,
+      fixedRatio: domain.fixedRatio,
+      width: domain.width,
+      height: domain.height,
     };
   }
 }

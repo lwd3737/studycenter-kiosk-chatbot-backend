@@ -2,11 +2,11 @@ import { err, ok, Result, ValueObject } from 'src/core';
 import { Button } from '../button/button.value-object';
 import { ListCardError, ListCardErrors } from './list-card.error';
 import { ListCardHeader } from './header.value-object';
-import { ListItem } from './item.value-object';
+import { ListCardItem } from './item.value-object';
 
 export interface ListCardProps {
   header: ListCardHeader;
-  items: ListItem[];
+  items: ListCardItem[];
   buttons?: Button[];
 }
 
@@ -17,7 +17,7 @@ export class ListCard extends ValueObject<ListCardProps> {
     return this.props.header;
   }
 
-  get items(): ListItem[] {
+  get items(): ListCardItem[] {
     return this.props.items;
   }
 

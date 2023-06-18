@@ -1,38 +1,35 @@
-import { combine, DomainError, err, ok, Result, ValueObject } from 'src/core';
+import { combine, DomainError, err, ok, Result } from 'src/core';
 import { Button, ButtonActionEnum } from '../base/button/button.value-object';
 import { ButtonError } from '../base/button/button.error';
-import { TicketCommerceCardsCarouselError } from './ticket-commerce-cards-carousel.error';
-import {
-  Carousel,
-  CarouselTypeEnum,
-} from '../base/carousel/carousel.value-object';
+import { TicketCommerceCardCarouselError } from './ticket-commerce-card-carousel.error';
 import { CommerceCard } from '../base/commerce-card/commerce-card.value-object';
 import { CommerceCardError } from '../base/commerce-card/commerce-card.error';
 import { Profile } from '../base/profile/profile.value-object';
 import { ThumbnailError } from '../base/thumbnail/thumbnail.error';
 import { Thumbnail } from '../base/thumbnail/thumbnail.value-object';
 import { Ticket, TicketType } from 'src/modules/ticketing';
+import { CommerceCardCarousel } from '../base/commerce-card-carousel/commerce-card-carousel.value-object';
 
-export interface TicketCommerceCardsCarouselProps {
+interface TicketCommerceCardCarouselProps {
   tickets: Ticket[];
 }
 
-export class TicketCommerceCardsCarousel extends ValueObject {
-  public static create(
-    props: TicketCommerceCardsCarouselProps,
-  ): Result<Carousel, TicketCommerceCardsCarouselError> {
-    const ticketCommerceCardOrErrors = props.tickets.map((ticket) =>
-      this.createTicketCommerceCard(ticket),
+export class TicketCommerceCardCarousel extends CommerceCardCarousel {
+  public static createFrom(
+    props: TicketCommerceCardCarouselProps,
+  ): Result<CommerceCardCarousel, TicketCommerceCardCarouselError> {
+    const ticketCommerceCardsOrError = combine(
+      ...props.tickets.map((ticket) => this.createTicketCommerceCard(ticket)),
     );
-    const ticketCommerceCardsOrError = combine(...ticketCommerceCardOrErrors);
     if (ticketCommerceCardsOrError.isErr()) {
       return err(ticketCommerceCardsOrError.error);
     }
 
-    return Carousel.create({
-      type: CarouselTypeEnum.COMMERCE_CARD,
-      items: ticketCommerceCardsOrError.value,
-    });
+    return ok(
+      this.create({
+        items: ticketCommerceCardsOrError.value,
+      }),
+    );
   }
 
   private static createTicketCommerceCard(

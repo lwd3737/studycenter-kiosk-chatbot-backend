@@ -1,18 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { IMapper } from 'src/core';
 import { ItemCardDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
 import { ItemCard } from '../../domain/base/item-card/item-card.value-object';
 
-@Injectable()
-export class ItemCardMapper implements IMapper<ItemCard> {
-  constructor(private thumbnailMapper: ThumbnailMapper) {}
-
-  toDTO(domain: ItemCard): ItemCardDTO {
+export class ItemCardMapper {
+  static toDTO(domain: ItemCard): ItemCardDTO {
     return {
       thumbnail: domain.thumbnail
-        ? this.thumbnailMapper.toDTO(domain.thumbnail)
+        ? ThumbnailMapper.toDTO(domain.thumbnail)
         : undefined,
       head: domain.head
         ? {

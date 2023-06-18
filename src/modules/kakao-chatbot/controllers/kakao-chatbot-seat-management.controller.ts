@@ -1,12 +1,12 @@
 import { Controller, Post } from '@nestjs/common';
 import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
-import { CarouselMapper } from '../infra/mappers/carousel.mapper';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { RenderRoomItemCardsCarouselUseCase } from '../use-cases/render-room-item-cards-carousel/render-room-item-cards-carousel.use-case';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
+import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/seat-management`)
@@ -14,8 +14,6 @@ export class KakaoChatbotSeatManagementController {
   constructor(
     private getRoomsStatusUseCase: GetRoomSeatsGroupUseCase,
     private getRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
-    private repoponseMapper: KaKaoChatbotResponseMapper,
-    private carouselMapper: CarouselMapper,
   ) {}
 
   @Post('rooms-status')
@@ -42,10 +40,10 @@ export class KakaoChatbotSeatManagementController {
       );
     }
 
-    return this.repoponseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
-          carousel: this.carouselMapper.toDTO(
+          carousel: ItemCardCarouselMapper.toDTO(
             roomItemCardsCarouselOrError.value,
           ),
         },

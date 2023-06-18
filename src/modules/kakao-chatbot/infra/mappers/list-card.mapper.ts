@@ -3,7 +3,7 @@ import { ListCardDTO, ListItemDTO } from '../../dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ListCard } from '../../domain/base/list-card/list-card.value-object';
 import { ListCardHeader } from '../../domain/base/list-card/header.value-object';
-import { ListItem } from '../../domain/base/list-card/item.value-object';
+import { ListCardItem } from '../../domain/base/list-card/item.value-object';
 
 export class ListCardMapper implements IMapper<ListCard> {
   static toDTO(domain: ListCard): ListCardDTO {
@@ -25,7 +25,7 @@ export class ListCardMapper implements IMapper<ListCard> {
     };
   }
 
-  static toItemDTO(domain: ListItem): ListItemDTO {
+  static toItemDTO(domain: ListCardItem): ListItemDTO {
     return {
       title: domain.title,
       description: domain.description,

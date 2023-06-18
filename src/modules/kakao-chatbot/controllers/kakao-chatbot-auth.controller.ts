@@ -9,16 +9,10 @@ import { UseAuthBlockErrors } from '../use-cases/use-auth-block/use-auth-block.e
 import { UseAuthBlockUseCase } from '../use-cases/use-auth-block/use-auth-block.use-case';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
-import { SignupUseCase } from 'src/modules/auth';
 
 @Controller('kakao-chatbot/auth')
 export class KakaoChatbotAuthController {
-  constructor(
-    private useAuthBlockUseCase: UseAuthBlockUseCase,
-    private signupUseCase: SignupUseCase,
-
-    private responseMapper: KaKaoChatbotResponseMapper,
-  ) {}
+  constructor(private useAuthBlockUseCase: UseAuthBlockUseCase) {}
 
   @Post('signup')
   @Public()
@@ -42,7 +36,7 @@ export class KakaoChatbotAuthController {
       }
     }
 
-    return this.responseMapper.toDTO({
+    return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
           simpleText: {

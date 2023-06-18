@@ -1,23 +1,23 @@
 import { err, ok, Result, ValueObject } from 'src/core';
 import { ListCardErrors } from './list-card.error';
 
-export interface ListItemProps {
+export interface ListCardItemProps {
   title: string;
   description?: string;
   imageUrl?: string;
   //link?: Link
-  action?: ListItemActionEnum;
+  action?: ListCardItemActionEnum;
   blockId?: string;
   messageText?: string;
   extra?: Record<string, any>;
 }
 
-export enum ListItemActionEnum {
+export enum ListCardItemActionEnum {
   BLOCK = 'block',
   MESSAGE = 'message',
 }
 
-export class ListItem extends ValueObject<ListItemProps> {
+export class ListCardItem extends ValueObject<ListCardItemProps> {
   get title(): string {
     return this.props.title;
   }
@@ -30,7 +30,7 @@ export class ListItem extends ValueObject<ListItemProps> {
     return this.props.imageUrl;
   }
 
-  get action(): ListItemActionEnum | undefined {
+  get action(): ListCardItemActionEnum | undefined {
     return this.props.action;
   }
 
@@ -46,24 +46,24 @@ export class ListItem extends ValueObject<ListItemProps> {
     return this.props.extra;
   }
 
-  protected constructor(props: ListItemProps) {
+  protected constructor(props: ListCardItemProps) {
     super(props);
   }
 
   public static create(
-    props: ListItemProps,
-  ): Result<ListItem, ListCardErrors.PropsMismatchingActionIncludedError> {
+    props: ListCardItemProps,
+  ): Result<ListCardItem, ListCardErrors.PropsMismatchingActionIncludedError> {
     const validationResult = this.validate(props);
 
     if (validationResult.isErr()) {
       return err(validationResult.error);
     }
 
-    return ok(new ListItem(props));
+    return ok(new ListCardItem(props));
   }
 
   protected static validate(
-    props: ListItemProps,
+    props: ListCardItemProps,
   ): Result<null, ListCardErrors.PropsMismatchingActionIncludedError> {
     if (this.isInvalidActionDataIncluded(props)) {
       return err(new ListCardErrors.PropsMismatchingActionIncludedError(props));
@@ -72,7 +72,9 @@ export class ListItem extends ValueObject<ListItemProps> {
     return ok(null);
   }
 
-  private static isInvalidActionDataIncluded(props: ListItemProps): boolean {
+  private static isInvalidActionDataIncluded(
+    props: ListCardItemProps,
+  ): boolean {
     const { action } = props;
 
     if (!action) {
@@ -81,13 +83,13 @@ export class ListItem extends ValueObject<ListItemProps> {
     }
 
     switch (action) {
-      case ListItemActionEnum.BLOCK: {
+      case ListCardItemActionEnum.BLOCK: {
         if (!props.blockId) return false;
         if (props.messageText) return false;
         return true;
       }
 
-      case ListItemActionEnum.MESSAGE: {
+      case ListCardItemActionEnum.MESSAGE: {
         if (props.blockId) return false;
         if (!props.messageText) return false;
         return true;

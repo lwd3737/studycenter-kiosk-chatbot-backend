@@ -1,13 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import {
   ContextControlDTO,
   KakaoChatbotResponseDTO,
   SkillOutputDTO,
 } from '../../dtos/response.dto.interface';
 
-@Injectable()
 export class KaKaoChatbotResponseMapper {
-  toDTO(domain: {
+  static toDTO(domain: {
     outputs: SkillOutputDTO[];
     context?: ContextControlDTO;
     data?: Record<string, any>;

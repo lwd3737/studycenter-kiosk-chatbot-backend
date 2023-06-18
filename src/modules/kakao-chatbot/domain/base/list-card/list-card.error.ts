@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { DomainError } from 'src/core';
-import { ListItemProps } from './item.value-object';
+import { ListCardItemProps } from './item.value-object';
 
 export type ListCardError =
   | ListCardErrors.ButtonMaxNumberExeededError
@@ -14,7 +14,7 @@ export namespace ListCardErrors {
   }
 
   export class PropsMismatchingActionIncludedError extends DomainError {
-    constructor(props: ListItemProps) {
+    constructor(props: ListCardItemProps) {
       const { action } = props;
       const extraProps = Object.keys(props).filter((key) => key !== 'action');
 

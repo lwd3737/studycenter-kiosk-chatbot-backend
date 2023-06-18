@@ -4,8 +4,7 @@ import { TicketModule } from 'src/modules/ticketing';
 import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-ticketing.controller';
 import { ParseTicketTypeParamPipe } from './pipes/parse-ticket-category-param.pipe';
 import { RenderTicketCommerceCardsCarouselUseCase } from './use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
-import { RenderTicketCollectionListCarouselUseCase } from './use-cases/render-ticket-collection-list-carousel/render-ticket-collection-list-carousel.use-case';
-import { CarouselMapper } from './infra/mappers/carousel.mapper';
+import { RenderTicketCollectionListCardCarouselUseCase } from './use-cases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.use-case';
 import { CommerceCardMapper } from './infra/mappers/commerce-card.mapper';
 import { ContextControlMapper } from './infra/mappers/context-control.mapper';
 import { KaKaoChatbotResponseMapper } from './infra/mappers/kakao-chatbot-response.mapper';
@@ -25,22 +24,11 @@ import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { RenderAvailableSeatsListCardsCarouselUseCase } from './use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
 
-const Mappers = [
-  KaKaoChatbotResponseMapper,
-  ItemCardMapper,
-  CarouselMapper,
-  CommerceCardMapper,
-  ThumbnailMapper,
-  ProfileMapper,
-  SimpleTextMapper,
-  ContextControlMapper,
-];
-
 const Repos = [PluginRepo];
 
 const UseCases = [
   UseAuthBlockUseCase,
-  RenderTicketCollectionListCarouselUseCase,
+  RenderTicketCollectionListCardCarouselUseCase,
   RenderTicketCommerceCardsCarouselUseCase,
   RenderRoomItemCardsCarouselUseCase,
   RenderAvailableSeatsListCardsCarouselUseCase,
@@ -61,7 +49,6 @@ const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
       useClass: AuthExceptionFilter,
     },
 
-    ...Mappers,
     ...Repos,
     ...UseCases,
     ...Pipes,

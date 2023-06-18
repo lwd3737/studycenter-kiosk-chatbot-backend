@@ -1,39 +1,36 @@
-import { DomainError, Result, ValueObject, combine, err, ok } from 'src/core';
+import { DomainError, Result, combine, err, ok } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
 import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
-import {
-  Carousel,
-  CarouselTypeEnum,
-} from '../base/carousel/carousel.value-object';
 import { AvailableSeatsListCardsCarouselErrors } from './available-seats-list-cards-carousel.error';
 import { ListCard } from '../base/list-card/list-card.value-object';
 import { ListCardHeader } from '../base/list-card/header.value-object';
 import {
-  ListItem,
-  ListItemActionEnum,
+  ListCardItem,
+  ListCardItemActionEnum,
 } from '../base/list-card/item.value-object';
+import { ListCardCarousel } from '../base/list-card-carousel/list-card-carousel.value-object';
 
 type CreateProps = {
   ticketId: string;
   room: Room;
   seats: Seat[];
 };
+type CarouselIndex = number;
 
-export class AvailableSeatsListCardsCarousel extends ValueObject<CreateProps> {
+export class AvailableSeatsListCardCarousel extends ListCardCarousel {
   public static SEATS_MAX_COUNT = 25;
   private static LIST_CARD_ITEMS_MAX_COUNT = 5;
 
-  public static create(props: CreateProps): Result<Carousel, DomainError> {
+  public static createFrom(
+    props: CreateProps,
+  ): Result<AvailableSeatsListCardCarousel, DomainError> {
     const validOrError = this.validate(props);
     if (validOrError.isErr()) return err(validOrError.error);
 
     const listCardsOrError = this.createListCards(props);
     if (listCardsOrError.isErr()) return err(listCardsOrError.error);
 
-    return Carousel.create({
-      type: CarouselTypeEnum.LIST_CARD,
-      items: listCardsOrError.value,
-    });
+    return this.create(listCardsOrError.value);
   }
 
   private static validate(props: CreateProps): Result<true, DomainError> {
@@ -77,39 +74,33 @@ export class AvailableSeatsListCardsCarousel extends ValueObject<CreateProps> {
 
   private static createListCard(
     seats: Seat[],
-    index: number,
-    info: {
+    index: CarouselIndex,
+    context: {
       ticketId: string;
       room: Room;
     },
   ) {
-    const listCardCount = this.countListCard(seats);
-    const startIndex = index * this.LIST_CARD_ITEMS_MAX_COUNT;
-    const isLastIndex = index === listCardCount - 1;
-    const endIndex = isLastIndex
-      ? listCardCount === 1
-        ? seats.length
-        : index * this.LIST_CARD_ITEMS_MAX_COUNT +
-          (seats.length % this.LIST_CARD_ITEMS_MAX_COUNT)
-      : (index + 1) * this.LIST_CARD_ITEMS_MAX_COUNT;
-
-    const curSeats = seats.slice(startIndex, endIndex);
+    const [startIndex, endIndex] = this.calculateCurrentListCardRange(
+      seats,
+      index,
+    );
+    const currentSeats = seats.slice(startIndex, endIndex);
 
     const listCardPropsOrError = combine(
       ListCardHeader.create({
-        title: `${info.room.title} 이용가능한 좌석`,
+        title: `${context.room.title} 이용가능한 좌석`,
       }),
-      ...curSeats.map((seat) =>
-        ListItem.create({
+      ...currentSeats.map((seat) =>
+        ListCardItem.create({
           title: `${seat.number.value}번 좌석`,
           description: '이용가능',
-          action: ListItemActionEnum.BLOCK,
+          action: ListCardItemActionEnum.BLOCK,
           blockId: process.env.PAYMENT_FOR_TICKET_BLOCK_ID,
           messageText: `${seat.number.value}번 좌석 선택`,
           extra: {
             ticketing: {
-              ticket_id: info.ticketId,
-              room_id: info.room.id.value,
+              ticket_id: context.ticketId,
+              room_id: context.room.id.value,
               seat_id: seat.id.value,
             },
           },
@@ -130,5 +121,30 @@ export class AvailableSeatsListCardsCarousel extends ValueObject<CreateProps> {
 
   private static countListCard(seats: Seat[]) {
     return Math.ceil(seats.length / this.LIST_CARD_ITEMS_MAX_COUNT);
+  }
+
+  private static calculateCurrentListCardRange(
+    seats: Seat[],
+    index: CarouselIndex,
+  ): [number, number] {
+    const listCardCount = this.countListCard(seats);
+    const startIndex = index * this.LIST_CARD_ITEMS_MAX_COUNT;
+    const isLastCarouselIndex = index === listCardCount - 1;
+
+    if (isLastCarouselIndex) {
+      if (listCardCount === 1) {
+        const itemLastIndex = seats.length;
+        return [startIndex, itemLastIndex];
+      } else {
+        const startIndexInLastListCard = index * this.LIST_CARD_ITEMS_MAX_COUNT;
+        const remainingSeatsCount =
+          seats.length % this.LIST_CARD_ITEMS_MAX_COUNT;
+        const endIndex = startIndexInLastListCard + remainingSeatsCount;
+        return [startIndex, endIndex];
+      }
+    } else {
+      const endIndex = (index + 1) * this.LIST_CARD_ITEMS_MAX_COUNT;
+      return [startIndex, endIndex];
+    }
   }
 }
