@@ -9,7 +9,7 @@ import {
 export type MockMember = {
   id: string;
   appUserId: string;
-  nickName?: string;
+  nickName: string;
   phoneNumber?: string;
   email?: string;
   profileImageUrl?: string;
@@ -22,13 +22,20 @@ export class MockMemberRepo implements IMemberRepo {
   constructor(
     @Inject(MemberMapperProvider) private memberMapper: IMemberMapper,
   ) {}
-  public async existByAppUserId(appUserId: string): Promise<boolean> {
-    return this.storage.some((raw) => raw.appUserId === appUserId);
-  }
 
   public async create(member: Member): Promise<void> {
     const raw = this.memberMapper.toPersistence(member) as MockMember;
     this.storage.push(raw);
+  }
+
+  public async existByAppUserId(appUserId: string): Promise<boolean> {
+    return this.storage.some((raw) => raw.appUserId === appUserId);
+  }
+
+  public async getById(id: string): Promise<Member | null> {
+    const found = this.storage.find((raw) => raw.id === id);
+    if (found === undefined) return null;
+    return this.memberMapper.toDomain(found);
   }
 
   public async getByAppUserId(appUserId: string): Promise<Member | null> {

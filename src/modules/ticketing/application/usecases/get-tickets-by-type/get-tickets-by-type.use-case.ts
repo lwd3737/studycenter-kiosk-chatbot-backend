@@ -26,7 +26,7 @@ export class GetTicketsByTypeUseCase
 
   async execute(input: UseCaseInput) {
     try {
-      const tickets = await this.ticketRepo.getTicketsByType(input.type);
+      const tickets = await this.ticketRepo.getByType(input.type);
       if (tickets.length === 0) {
         return err(new GetTicketsByTypeErrors.TicketNotFoundError());
       }

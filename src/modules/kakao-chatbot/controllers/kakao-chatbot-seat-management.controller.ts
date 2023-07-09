@@ -2,7 +2,7 @@ import { Controller, Post } from '@nestjs/common';
 import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { RenderRoomItemCardsCarouselUseCase } from '../use-cases/render-room-item-cards-carousel/render-room-item-cards-carousel.use-case';
+import { RenderRoomItemCardsCarouselUseCase } from '../usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';

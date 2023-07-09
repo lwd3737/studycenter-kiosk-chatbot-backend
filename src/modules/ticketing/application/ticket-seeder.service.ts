@@ -23,12 +23,9 @@ export class TicketSeederService implements OnApplicationBootstrap {
   public async seed(): Promise<Result<Ticket[], DomainError>> {
     const ticketsOrError = combine(
       ...ticketsData.map((ticketData) => {
-        const ticketOrError = TicketFactory.createNew({
-          type: ticketData.type,
-          props: {
-            ...ticketData,
-            price: { value: ticketData.price },
-          },
+        const ticketOrError = TicketFactory.new(ticketData.type, {
+          ...ticketData,
+          price: { value: ticketData.price },
         });
         if (ticketOrError.isErr()) return err(ticketOrError.error);
 

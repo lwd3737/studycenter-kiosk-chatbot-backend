@@ -1,50 +1,58 @@
-import { DomainError, Result, combine, err, ok } from 'src/core';
+import { DomainError, Result } from 'src/core';
+import { EXPIRATION_TYPES } from '../ticket/expiration-type.value-object';
 import {
-  DURATION_TYPE,
-  TicketExpiration,
-} from '../ticket/expiration.value-object';
-import {
-  CreateNewTicketProps,
+  CreateTicketProps,
   Ticket,
   TicketProps,
 } from '../ticket/ticket.aggregate-root';
-import { TicketTime } from '../ticket/time.value-object';
-import { TicketPrice } from '../ticket/price.value-object';
+import {
+  TICKET_TIME_UNITS,
+  TicketTimeProps,
+} from '../ticket/time.value-object';
 import { HoursRechargeTicketType } from './type.value-object';
 
-type Props = TicketProps<HoursRechargeTicketType>;
-
-export type CreateNewHoursRechargeTicketProps = CreateNewTicketProps;
+type HoursRechargeTicketProps = TicketProps<HoursRechargeTicketType>;
+export type CreateHoursRechargeTicketProps = Pick<
+  CreateTicketProps<HoursRechargeTicketType>,
+  'title' | 'price'
+> & {
+  time: Pick<TicketTimeProps, 'value'>;
+};
 
 export class HoursRechargeTicket extends Ticket<
   HoursRechargeTicketType,
-  Props
+  HoursRechargeTicketProps
 > {
-  public static createNew(
-    props: CreateNewHoursRechargeTicketProps,
-  ): Result<HoursRechargeTicket, DomainError> {
-    const propsOrError = combine(
-      TicketTime.create(props.time),
-      TicketPrice.create(props.price),
-    );
-    if (propsOrError.isErr()) return err(propsOrError.error);
-    const [time, price] = propsOrError.value;
+  public static new(props: CreateHoursRechargeTicketProps) {
+    return this.create(props);
+  }
 
-    return ok(
-      new HoursRechargeTicket({
+  public static from(props: CreateHoursRechargeTicketProps, id: string) {
+    return this.create(props, id);
+  }
+
+  protected static create(
+    props: CreateHoursRechargeTicketProps,
+    id?: string,
+  ): Result<HoursRechargeTicket, DomainError> {
+    return super.create(
+      {
         ...props,
         type: HoursRechargeTicketType.create(),
+        time: {
+          unit: TICKET_TIME_UNITS.hours,
+          value: props.time.value,
+        },
         isFixedSeat: false,
-        time,
-        price,
-        expiration: TicketExpiration.create({
-          type: DURATION_TYPE,
-        }),
-      }),
+        expirationType: {
+          value: EXPIRATION_TYPES.duration,
+        },
+      },
+      id,
     );
   }
 
-  private constructor(props: Props) {
+  private constructor(props: HoursRechargeTicketProps) {
     super(props);
   }
 }

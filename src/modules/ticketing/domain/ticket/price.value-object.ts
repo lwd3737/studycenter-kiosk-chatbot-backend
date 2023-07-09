@@ -1,11 +1,9 @@
 import { DomainError, Result, ValueObject, err, ok } from 'src/core';
 import { TicketErrors } from './ticket.error';
 
-interface TicketPriceProps {
+export interface TicketPriceProps {
   value: number;
 }
-
-export type CreateTicketPriceProps = TicketPriceProps;
 
 export class TicketPrice extends ValueObject<TicketPriceProps> {
   get value(): number {
@@ -13,7 +11,7 @@ export class TicketPrice extends ValueObject<TicketPriceProps> {
   }
 
   public static create(
-    props: CreateTicketPriceProps,
+    props: TicketPriceProps,
   ): Result<TicketPrice, DomainError> {
     if (this.isNotInteger(props))
       return err(new TicketErrors.PriceNotInteger());
@@ -23,11 +21,11 @@ export class TicketPrice extends ValueObject<TicketPriceProps> {
     return ok(new TicketPrice(props));
   }
 
-  private static isNotInteger(props: CreateTicketPriceProps): boolean {
+  private static isNotInteger(props: TicketPriceProps): boolean {
     return !Number.isInteger(props.value);
   }
 
-  private static isNotPositive(props: CreateTicketPriceProps): boolean {
+  private static isNotPositive(props: TicketPriceProps): boolean {
     return props.value < 0;
   }
 

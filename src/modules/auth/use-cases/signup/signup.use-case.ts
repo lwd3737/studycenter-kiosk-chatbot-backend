@@ -6,7 +6,7 @@ import { SignupError, SignupErrors } from './signup.erorr';
 
 type UseCaseInput = {
   profile: {
-    nickname?: string;
+    nickname: string;
     profile_image_url?: string;
     phone_number?: string;
     email?: string;

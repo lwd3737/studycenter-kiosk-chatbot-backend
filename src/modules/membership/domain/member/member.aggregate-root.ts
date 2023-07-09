@@ -5,7 +5,7 @@ import { MemberErrors } from './member.error';
 
 export interface MemberProps {
   appUserId: string;
-  nickName?: string;
+  nickName: string;
   phoneNumber?: string;
   email?: string;
   profileImageUrl?: string;
@@ -20,7 +20,7 @@ export class Member extends AggregateRoot<MemberProps> {
     return this.props.appUserId;
   }
 
-  get nickName(): string | undefined {
+  get nickName(): string {
     return this.props.nickName;
   }
 

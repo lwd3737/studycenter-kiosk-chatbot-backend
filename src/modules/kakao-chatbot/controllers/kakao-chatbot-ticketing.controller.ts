@@ -14,26 +14,31 @@ import {
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ParseTicketTypeParamPipe } from '../pipes/parse-ticket-category-param.pipe';
-import { RenderTicketCommerceCardsCarouselUseCase } from '../use-cases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.use-case';
-import { RenderTicketCollectionListCardCarouselUseCase } from '../use-cases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.use-case';
+import { RenderTicketCommerceCardsCarouselUseCase } from '../usecases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.usecase';
+import { RenderTicketCollectionListCardCarouselUseCase } from '../usecases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.usecase';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 import {
   ParseTicketingFromClientExtraPipe,
-  TicketingClientExtraResult,
+  TicketingInfoClientExtraResult,
 } from '../pipes/parse-ticketing-from-client-extra.pipe';
 import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
-import { RenderRoomItemCardsCarouselUseCase } from '../use-cases/render-room-item-cards-carousel/render-room-item-cards-carousel.use-case';
+import { RenderRoomItemCardsCarouselUseCase } from '../usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
 import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-cases/get-available-room-seats.use-case.ts/get-available-room-seats.use-case';
-import { RenderAvailableSeatsListCardsCarouselUseCase } from '../use-cases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.use-case';
+import { RenderAvailableSeatsListCardsCarouselUseCase } from '../usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
+import { IssueVirtualAccountUseCase } from 'src/modules/payment';
+import { ParseAppUserIdParamPipe } from '../pipes/parse-app-user-id-param.pipe';
+import { GetMemberUseCase } from 'src/modules/membership';
+import { TemplateVirtualAccountUseCase } from '../usecases/template-virtual-account-issuance-simple-text/template-virtual-account-issuance-simple-text.usecase';
+import { TemplateVirtualAccountIssuanceErrors } from '../usecases/template-virtual-account-issuance-simple-text/error';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
@@ -47,6 +52,7 @@ export class KakaoChatbotTicketingController {
     private renderRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
     private getAvailableSeatsUseCase: GetAvailableRoomSeatsUseCase,
     private renderAvailableSeatsListCardsCarouselUseCase: RenderAvailableSeatsListCardsCarouselUseCase,
+    private templateVirtualAccountUseCase: TemplateVirtualAccountUseCase,
   ) {}
 
   @Post('init')
@@ -161,7 +167,7 @@ export class KakaoChatbotTicketingController {
   @Post('rooms-status')
   async getRoomsStatus(
     @Body(new ParseTicketingFromClientExtraPipe())
-    ticketingOrError: TicketingClientExtraResult,
+    ticketingOrError: TicketingInfoClientExtraResult,
   ): Promise<KakaoChatbotResponseDTO> {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
 
@@ -209,14 +215,14 @@ export class KakaoChatbotTicketingController {
         },
       }),
     )
-    ticketingOrError: TicketingClientExtraResult,
+    ticketingOrError: TicketingInfoClientExtraResult,
   ) {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
     const ticketing = ticketingOrError.value;
 
     const availableSeatsOrError = await this.getAvailableSeatsUseCase.execute({
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      roomId: ticketing.room_id!,
+      roomId: ticketing.roomId!,
     });
     if (availableSeatsOrError.isErr()) {
       const error = availableSeatsOrError.error;
@@ -232,7 +238,7 @@ export class KakaoChatbotTicketingController {
 
     const carouselsOrError =
       this.renderAvailableSeatsListCardsCarouselUseCase.execute({
-        ticketId: ticketing.ticket_id,
+        ticketId: ticketing.ticketId,
         room,
         seats: seats,
       });
@@ -280,15 +286,46 @@ export class KakaoChatbotTicketingController {
         },
       }),
     )
-    ticketingOrError: TicketingClientExtraResult,
+    ticketingInfoOrError: TicketingInfoClientExtraResult,
+    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
   ) {
-    if (ticketingOrError.isErr()) return ticketingOrError.error;
+    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
+    const ticketingInfo = ticketingInfoOrError.value;
+    if (!ticketingInfo.roomId)
+      return ErrorDTOCreator.toSimpleTextOutput('룸을 선택해주세요!');
+    if (!ticketingInfo.ticketId)
+      return ErrorDTOCreator.toSimpleTextOutput('이용권을 선택해주세요!');
+    const simpleTextOrError = await this.templateVirtualAccountUseCase.execute({
+      appUserId,
+      ticketId: ticketingInfo.ticketId,
+      roomId: ticketingInfo.roomId,
+    });
+    if (simpleTextOrError.isErr()) {
+      const error = simpleTextOrError.error;
+      console.debug(error.message);
+
+      switch (error.constructor) {
+        case TemplateVirtualAccountIssuanceErrors.MemberNotFound:
+          return ErrorDTOCreator.toSimpleTextOutput(
+            '계정을 불러오는데 실패했어요!',
+          );
+        case TemplateVirtualAccountIssuanceErrors.TicketNotFound:
+          return ErrorDTOCreator.toSimpleTextOutput(
+            '이용권을 불러오는데 실패했어요!',
+          );
+        default:
+          return ErrorDTOCreator.toSimpleTextOutput(
+            '가상계좌 발급에 실패했어요!',
+          );
+      }
+    }
+    const simpleText = simpleTextOrError.value;
 
     return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
           simpleText: {
-            text: `test: ${JSON.stringify(ticketingOrError.value)}`,
+            text: simpleText.value,
           },
         },
       ],

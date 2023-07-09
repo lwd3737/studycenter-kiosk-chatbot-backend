@@ -1,10 +1,13 @@
 import { AggregateRoot } from 'src/core/domain/aggregate-root';
-import { TicketTime, CreateTicketTimeProps } from './time.value-object';
+import { TicketTime, TicketTimeProps } from './time.value-object';
 import { TicketId } from './ticket-id';
-import { CreateTicketPriceProps, TicketPrice } from './price.value-object';
-import { TicketExpiration } from './expiration.value-object';
-import { CreateTicketExpirationProps } from './expiration.value-object';
+import { TicketPriceProps, TicketPrice } from './price.value-object';
+import {
+  TicketExpirationTypeProps,
+  TicketExpirationType,
+} from './expiration-type.value-object';
 import { TicketType } from './type.value-object';
+import { DomainError, Result, combine, ok } from 'src/core';
 
 export interface TicketProps<T> {
   title: string;
@@ -12,23 +15,23 @@ export interface TicketProps<T> {
   isFixedSeat: boolean;
   time: TicketTime;
   price: TicketPrice;
-  expiration: TicketExpiration;
+  expirationType: TicketExpirationType;
 }
-export type CreateNewTicketProps = {
+export type OldNewTicketProps = {
   title: string;
-  time: CreateTicketTimeProps;
-  price: CreateTicketPriceProps;
+  time: TicketTimeProps;
+  price: TicketPriceProps;
 };
-export type CreateTicketFromExisting<T> = {
-  title: string;
-  type: T;
-  isFixedSeat: boolean;
-  time: CreateTicketTimeProps;
-  price: CreateTicketPriceProps;
-  expiration: CreateTicketExpirationProps;
+export type CreateTicketProps<T> = Pick<
+  TicketProps<T>,
+  'title' | 'type' | 'isFixedSeat'
+> & {
+  time: TicketTimeProps;
+  price: TicketPriceProps;
+  expirationType: TicketExpirationTypeProps;
 };
 
-export abstract class Ticket<
+export class Ticket<
   T extends TicketType = TicketType,
   P extends TicketProps<T> = TicketProps<T>,
 > extends AggregateRoot<P> {
@@ -56,11 +59,33 @@ export abstract class Ticket<
     return this.props.price;
   }
 
-  get expiration(): TicketExpiration {
-    return this.props.expiration;
+  get expirationType(): TicketExpirationType {
+    return this.props.expirationType;
   }
 
-  // abstract setExpiration():
+  protected static create<T extends TicketType>(
+    props: CreateTicketProps<T>,
+    id?: string,
+  ): Result<Ticket, DomainError> {
+    const propsOrError = combine(
+      TicketTime.create({ ...props.time }),
+      TicketPrice.create({ ...props.price }),
+    );
+    if (propsOrError.isErr()) return propsOrError;
+    const [time, price] = propsOrError.value;
+
+    return ok(
+      new Ticket(
+        {
+          ...props,
+          time,
+          expirationType: TicketExpirationType.create(props.expirationType),
+          price,
+        },
+        id,
+      ),
+    );
+  }
 
   protected constructor(props: P, id?: string) {
     super(props, id);

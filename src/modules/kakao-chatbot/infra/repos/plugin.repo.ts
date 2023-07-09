@@ -4,7 +4,7 @@ import { RepoError } from 'src/core';
 import { PluginRepoErrors } from './plugin-repo.error';
 
 type GetProfileResponse = {
-  nickname?: string;
+  nickname: string;
   profile_image_url?: string;
   phone_number?: string;
   email?: string;
@@ -16,6 +16,7 @@ export class PluginRepo {
   private readonly restApiKey: string;
 
   constructor() {
+    // TODO: config module에서 관리
     const { KAKAO_REST_API_KEY } = process.env;
     if (!KAKAO_REST_API_KEY)
       throw new RepoError('KAKAO_REST_API_KEY is not defined.');

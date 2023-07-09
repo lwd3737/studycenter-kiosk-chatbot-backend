@@ -5,25 +5,27 @@ import {
 } from '../../mappers/ITicket.mapper';
 import {
   ITicketRepo,
-  TTicketType,
+  TicketTypeKind,
   Ticket,
+  TicketId,
   TicketTime,
-  TicketTimeUnit,
+  TicketTimeUnitCategory,
   TicketType,
 } from 'src/modules/ticketing/domain';
-import { ExpirationType } from 'src/modules/ticketing/domain/ticket/expiration.value-object';
+import { ExpirationTypeCategory } from 'src/modules/ticketing/domain/ticket/expiration-type.value-object';
 
 export type MockTicket = {
+  id: string;
   title: string;
-  type: TTicketType;
+  type: TicketTypeKind;
   isFixedSeat: boolean;
   time: {
-    unit: TicketTimeUnit;
+    unit: TicketTimeUnitCategory;
     value: number;
   };
   price: number;
   expiration: {
-    type: ExpirationType;
+    type: ExpirationTypeCategory;
   };
 };
 
@@ -39,18 +41,25 @@ export class MockTicketRepo implements ITicketRepo {
     return this.storage.length === 0;
   }
 
-  async getAllTickets(): Promise<Ticket[]> {
+  async getAll(): Promise<Ticket[]> {
     return this.storage.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
-  async getTicketsByType(type: TicketType): Promise<Ticket[]> {
+  async getOneById(id: TicketId): Promise<Ticket | null> {
+    const found = this.storage.find((ticket) => ticket.id === id.value);
+    if (!found) return null;
+
+    return this.ticketMapper.toDomain(found);
+  }
+
+  async getByType(type: TicketType): Promise<Ticket[]> {
     const filtered = this.storage.filter(
       (ticket) => ticket.type === type.value,
     );
     return filtered.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
-  async getTicketByTime(time: TicketTime): Promise<Ticket | null> {
+  async getOneByTime(time: TicketTime): Promise<Ticket | null> {
     const found = this.storage.find(
       (ticket) =>
         ticket.time.unit === time.unit && ticket.time.value === time.value,

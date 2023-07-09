@@ -1,48 +1,55 @@
-import { Result, combine, err, ok } from 'src/core';
+import { DomainError, Result } from 'src/core';
 import {
-  CreateNewTicketProps,
+  CreateTicketProps,
   Ticket,
   TicketProps,
 } from '../ticket/ticket.aggregate-root';
-import { TicketTime } from '../ticket/time.value-object';
-import { TicketPrice } from '../ticket/price.value-object';
 import {
-  DUE_DATE_TYPE,
-  TicketExpiration,
-} from '../ticket/expiration.value-object';
-import { TicketError } from '../ticket/ticket.error';
+  TICKET_TIME_UNITS,
+  TicketTimeProps,
+} from '../ticket/time.value-object';
+import { EXPIRATION_TYPES } from '../ticket/expiration-type.value-object';
 import { PeriodTicketType } from './type.value-object';
 
-type Props = TicketProps<PeriodTicketType>;
+type PeriodTicketProps = TicketProps<PeriodTicketType>;
+export type CreatePeriodTicketProps = Pick<
+  CreateTicketProps<PeriodTicketType>,
+  'title' | 'price'
+> & {
+  time: Pick<TicketTimeProps, 'value'>;
+};
 
-export type CreateNewPeriodTicketProps = CreateNewTicketProps;
+export class PeriodTicket extends Ticket<PeriodTicketType, PeriodTicketProps> {
+  public static new(props: CreatePeriodTicketProps) {
+    return this.create(props);
+  }
 
-export class PeriodTicket extends Ticket<PeriodTicketType, Props> {
-  public static createNew(
-    props: CreateNewPeriodTicketProps,
-  ): Result<PeriodTicket, TicketError> {
-    const propsOrError = combine(
-      TicketTime.create(props.time),
-      TicketPrice.create(props.price),
-    );
-    if (propsOrError.isErr()) return err(propsOrError.error);
-    const [time, price] = propsOrError.value;
+  public static from(props: CreatePeriodTicketProps, id: string) {
+    return this.create(props, id);
+  }
 
-    return ok(
-      new PeriodTicket({
+  protected static create(
+    props: CreatePeriodTicketProps,
+    id?: string,
+  ): Result<PeriodTicket, DomainError> {
+    return super.create(
+      {
         ...props,
         type: PeriodTicketType.create(),
+        time: {
+          unit: TICKET_TIME_UNITS.days,
+          value: props.time.value,
+        },
         isFixedSeat: true,
-        time,
-        price,
-        expiration: TicketExpiration.create({
-          type: DUE_DATE_TYPE,
-        }),
-      }),
+        expirationType: {
+          value: EXPIRATION_TYPES.dueDate,
+        },
+      },
+      id,
     );
   }
 
-  private constructor(props: Props) {
+  private constructor(props: PeriodTicketProps) {
     super(props);
   }
 }

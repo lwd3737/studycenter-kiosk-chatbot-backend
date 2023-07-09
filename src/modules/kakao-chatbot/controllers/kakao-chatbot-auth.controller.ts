@@ -5,8 +5,8 @@ import {
   ParseSyncOtpParamPipe,
   SyncOtp,
 } from '../pipes/parse-sync-otp-param.pipe';
-import { UseAuthBlockErrors } from '../use-cases/use-auth-block/use-auth-block.error';
-import { UseAuthBlockUseCase } from '../use-cases/use-auth-block/use-auth-block.use-case';
+import { UseAuthBlockErrors } from '../usecases/use-auth-block/use-auth-block.error';
+import { UseAuthBlockUseCase } from '../usecases/use-auth-block/use-auth-block.usecase';
 import { ErrorDTOCreator } from '../dtos/error.dto';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 

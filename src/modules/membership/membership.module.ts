@@ -3,6 +3,7 @@ import { MemberRepoProvider } from './domain/member/member.repo.interface';
 import { MockMemberMapper } from './infra/mappers/impl/mocks/mock-member.mapper';
 import { MemberMapperProvider } from './infra/mappers/member.mapper.interface';
 import { MockMemberRepo } from './infra/repos/mocks/mock-member.repo';
+import { GetMemberUseCase } from './application/usecases/get-member.usecase';
 
 @Module({
   providers: [
@@ -14,7 +15,8 @@ import { MockMemberRepo } from './infra/repos/mocks/mock-member.repo';
       provide: MemberMapperProvider,
       useClass: MockMemberMapper,
     },
+    GetMemberUseCase,
   ],
-  exports: [MemberRepoProvider],
+  exports: [MemberRepoProvider, GetMemberUseCase],
 })
 export class MembershipModule {}

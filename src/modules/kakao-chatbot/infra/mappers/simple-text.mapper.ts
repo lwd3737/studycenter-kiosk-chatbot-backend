@@ -7,7 +7,7 @@ import { SimpleText } from '../../domain/base/simple-text/simple-text.value-obje
 export class SimpleTextMapper implements IMapper<SimpleText> {
   toDTO(simpleText: SimpleText): SimpleTextDTO {
     return {
-      text: simpleText.text,
+      text: simpleText.value,
     };
   }
 }

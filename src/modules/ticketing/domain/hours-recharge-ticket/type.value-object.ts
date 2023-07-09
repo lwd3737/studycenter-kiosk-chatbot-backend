@@ -2,7 +2,7 @@ import { TicketType, TicketTypeProps } from '../ticket/type.value-object';
 
 type Props = TicketTypeProps<HoursRechargeType>;
 
-export const HOURS_RECHARGE_TYPE = 'hours_recharge';
+export const HOURS_RECHARGE_TYPE = 'hoursRecharge';
 export type HoursRechargeType = typeof HOURS_RECHARGE_TYPE;
 
 export class HoursRechargeTicketType extends TicketType {

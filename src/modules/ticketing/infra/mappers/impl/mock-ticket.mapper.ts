@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ITicketMapper } from '../ITicket.mapper';
-import { TicketDTO } from '../../../application/dtos/ticket.dto';
+import { TicketDTO, TicketTypeDTO } from '../../../application/dtos/ticket.dto';
 import { MockTicket } from '../../persistence';
 import {
-  TTicketType,
+  TicketTypeKind,
   Ticket,
   TicketFactory,
-  TicketType,
 } from 'src/modules/ticketing/domain';
 
 @Injectable()
 export class MockTicketMapper implements ITicketMapper {
   toPersistence(domain: Ticket): MockTicket {
     return {
+      id: domain.id.value,
       title: domain.title,
-      type: domain.type.value as TTicketType,
+      type: domain.type.value as TicketTypeKind,
       isFixedSeat: domain.isFixedSeat,
       time: {
         unit: domain.time.unit,
@@ -22,19 +22,20 @@ export class MockTicketMapper implements ITicketMapper {
       },
       price: domain.price.value,
       expiration: {
-        type: domain.expiration.type,
+        type: domain.expirationType.value,
       },
     };
   }
 
   toDomain(raw: MockTicket): Ticket {
-    const ticketOrError = TicketFactory.createNew({
-      type: raw.type,
-      props: {
+    const ticketOrError = TicketFactory.from(
+      raw.type,
+      {
         ...raw,
         price: { value: raw.price },
       },
-    });
+      raw.id,
+    );
     if (ticketOrError.isErr()) {
       throw ticketOrError.error;
     }
@@ -45,16 +46,14 @@ export class MockTicketMapper implements ITicketMapper {
   toDTO(domain: Ticket): TicketDTO {
     return {
       id: domain.id.value,
-      type: domain.type as TicketType,
+      type: domain.type.value as TicketTypeDTO,
       isFixedSeat: domain.isFixedSeat,
       time: {
         unit: domain.time.unit,
         value: domain.time.value,
       },
       price: domain.price.value,
-      expiration: {
-        type: domain.expiration.type,
-      },
+      expirationType: domain.expirationType.value,
     };
   }
 }

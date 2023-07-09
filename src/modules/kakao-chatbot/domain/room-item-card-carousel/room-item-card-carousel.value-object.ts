@@ -15,7 +15,7 @@ type CreateProps = {
 };
 type RoomSeatsGroup = { room: Room; seats: Seat[] };
 type Ticketing = {
-  ticket_id: string;
+  ticketId: string;
 };
 
 export class RoomItemCardCarousel extends ItemCardCarousel {
@@ -129,7 +129,7 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
         messageText: `${room.title} 선택`,
         extra: {
           ticketing: {
-            ticket_id: ticketing.ticket_id,
+            ticket_id: ticketing.ticketId,
             room_id: room.id.value,
           },
         },

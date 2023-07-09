@@ -1,46 +1,58 @@
-import { DomainError, Result, combine, err, ok } from 'src/core';
-import { TicketPrice } from '../ticket/price.value-object';
+import { DomainError, Result } from 'src/core';
 import {
-  CreateNewTicketProps,
+  CreateTicketProps,
   Ticket,
   TicketProps,
 } from '../ticket/ticket.aggregate-root';
+import { EXPIRATION_TYPES } from '../ticket/expiration-type.value-object';
 import {
-  DUE_DATE_TYPE,
-  TicketExpiration,
-} from '../ticket/expiration.value-object';
-import { TicketTime } from '../ticket/time.value-object';
+  TICKET_TIME_UNITS,
+  TicketTimeProps,
+} from '../ticket/time.value-object';
 import { SameDayTicketType } from './type.value-object';
 
-type Props = TicketProps<SameDayTicketType>;
-export type CreateNewSameDayProps = CreateNewTicketProps;
+type SameDayTicketProps = TicketProps<SameDayTicketType>;
+export type CreateSameDayTicketProps = Pick<
+  CreateTicketProps<SameDayTicketType>,
+  'title' | 'price'
+> & {
+  time: Pick<TicketTimeProps, 'value'>;
+};
 
-export class SameDayTicket extends Ticket<SameDayTicketType, Props> {
-  static createNew(
-    props: CreateNewSameDayProps,
+export class SameDayTicket extends Ticket<
+  SameDayTicketType,
+  SameDayTicketProps
+> {
+  public static new(props: CreateSameDayTicketProps) {
+    return this.create(props);
+  }
+
+  public static from(props: CreateSameDayTicketProps, id: string) {
+    return this.create(props, id);
+  }
+
+  protected static create(
+    props: CreateSameDayTicketProps,
+    id?: string,
   ): Result<SameDayTicket, DomainError> {
-    const propsOrError = combine(
-      TicketTime.create(props.time),
-      TicketPrice.create(props.price),
-    );
-    if (propsOrError.isErr()) return err(propsOrError.error);
-    const [time, price] = propsOrError.value;
-
-    return ok(
-      new SameDayTicket({
+    return super.create(
+      {
         ...props,
         type: SameDayTicketType.create(),
+        time: {
+          unit: TICKET_TIME_UNITS.hours,
+          value: props.time.value,
+        },
         isFixedSeat: true,
-        time,
-        price,
-        expiration: TicketExpiration.create({
-          type: DUE_DATE_TYPE,
-        }),
-      }),
+        expirationType: {
+          value: EXPIRATION_TYPES.dueDate,
+        },
+      },
+      id,
     );
   }
 
-  private constructor(props: Props) {
+  private constructor(props: SameDayTicketProps) {
     super(props);
   }
 }

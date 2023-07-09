@@ -2,14 +2,14 @@ import { err, ok, Result, ValueObject } from 'src/core';
 import { SimpleTextError, SimpleTextErrors } from './simple-text.error';
 
 export interface SimpleTextProps {
-  text: string;
+  value: string;
 }
 
 export class SimpleText extends ValueObject<SimpleTextProps> {
   static MAX_TEXT_LENGTH = 1000;
 
-  get text(): string {
-    return this.props.text;
+  get value(): string {
+    return this.props.value;
   }
 
   public static create(
@@ -26,7 +26,7 @@ export class SimpleText extends ValueObject<SimpleTextProps> {
   private static validate(
     props: SimpleTextProps,
   ): Result<null, SimpleTextError> {
-    if (props.text.length > this.MAX_TEXT_LENGTH) {
+    if (props.value.length > this.MAX_TEXT_LENGTH) {
       return err(new SimpleTextErrors.TextMaxLengthExceededError());
     }
 

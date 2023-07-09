@@ -4,18 +4,19 @@ import { TicketingErrorDTOCreator } from '../dtos/error.dto';
 import { Result, err, ok } from 'src/core';
 import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
 
-export type TicketingClientExtraResult = Result<
+export type TicketingInfoClientExtraResult = Result<
   {
-    ticket_id: string;
-    room_id?: string;
-    seat_id?: string;
+    ticketId: string;
+    roomId?: string;
+    seatId?: string;
   },
   KakaoChatbotResponseDTO
 >;
 
 @Injectable()
 export class ParseTicketingFromClientExtraPipe
-  implements PipeTransform<KakaoChatbotRequestDTO, TicketingClientExtraResult>
+  implements
+    PipeTransform<KakaoChatbotRequestDTO, TicketingInfoClientExtraResult>
 {
   private required = {
     room_id: false,
@@ -28,7 +29,7 @@ export class ParseTicketingFromClientExtraPipe
       this.required = { ...this.required, ...options.required };
   }
 
-  transform(value: KakaoChatbotRequestDTO): TicketingClientExtraResult {
+  transform(value: KakaoChatbotRequestDTO): TicketingInfoClientExtraResult {
     const { ticket_id, room_id, seat_id } =
       value.action.clientExtra?.ticketing ?? {};
 
@@ -58,9 +59,9 @@ export class ParseTicketingFromClientExtraPipe
     }
 
     return ok({
-      ticket_id,
-      room_id,
-      seat_id,
+      ticketId: ticket_id,
+      roomId: room_id,
+      seatId: seat_id,
     });
   }
 }

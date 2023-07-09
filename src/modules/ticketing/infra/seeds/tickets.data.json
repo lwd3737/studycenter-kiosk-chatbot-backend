@@ -19,7 +19,7 @@
   },
   {
     "title": "50시간권",
-    "type": "hours_recharge",
+    "type": "hoursRecharge",
     "time": {
       "unit": "hours",
       "value": 50
@@ -29,7 +29,7 @@
   },
   {
     "title": "100시간권",
-    "type": "hours_recharge",
+    "type": "hoursRecharge",
     "time": {
       "unit": "hours",
       "value": 100
@@ -38,7 +38,7 @@
   },
   {
     "title": "1시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 1
@@ -47,7 +47,7 @@
   },
   {
     "title": "2시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 2
@@ -56,7 +56,7 @@
   },
   {
     "title": "4시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 4
@@ -65,7 +65,7 @@
   },
   {
     "title": "6시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 6
@@ -74,7 +74,7 @@
   },
   {
     "title": "9시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 9
@@ -83,7 +83,7 @@
   },
   {
     "title": "12시간권",
-    "type": "same_day",
+    "type": "sameDay",
     "time": {
       "unit": "hours",
       "value": 12
