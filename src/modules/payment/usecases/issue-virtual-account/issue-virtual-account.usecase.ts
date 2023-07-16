@@ -11,13 +11,14 @@ import { GetTicketUseCase } from 'src/modules/ticketing/application/usecases/get
 import { GetTicketErrors, Ticket } from 'src/modules/ticketing';
 import { VirtualAccountPayment } from '../../domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
 import { MemberId } from 'src/modules/membership/domain/member/member-id';
+import { ProductType } from '../../domain/payment/base/order/product.value-object';
 
 type UseCaseInput = {
   appUserId: string;
   ticketId: string;
   roomId: string;
 };
-type UseCaseResult = Result<any, IssueVirtualAccountError>;
+type UseCaseResult = Result<VirtualAccountPayment, IssueVirtualAccountError>;
 
 @Injectable()
 export class IssueVirtualAccountUseCase
@@ -25,22 +26,18 @@ export class IssueVirtualAccountUseCase
 {
   private readonly bank: string;
   private readonly bankCode: string;
-  private readonly virtualAccountNumber: string;
 
   constructor(
     @Inject(PGRepoProvider) private pgRepo: PGRepo,
     private getMemberUseCase: GetMemberUseCase,
     private getTicketUseCase: GetTicketUseCase,
   ) {
-    const { BANK, BANK_CODE, VIRTUAL_ACCOUNT_NUMBER } = process.env;
+    const { BANK, BANK_CODE } = process.env;
     if (!BANK) throw new Error('BANK env viriable is not defined.');
     if (!BANK_CODE) throw new Error('BANK_CODE env viriable is not defined.');
-    if (!VIRTUAL_ACCOUNT_NUMBER)
-      throw new Error('VIRTUAL_ACCOUNT_NUMBER env viriable is not defined.');
 
     this.bank = BANK;
     this.bankCode = BANK_CODE;
-    this.virtualAccountNumber = VIRTUAL_ACCOUNT_NUMBER;
   }
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
@@ -48,31 +45,23 @@ export class IssueVirtualAccountUseCase
       // const memberOrError = await this.getMember(input.appUserId);
       // if (memberOrError.isErr()) return err(memberOrError.error);
       // const member = memberOrError.value;
-
       const ticketOrError = await this.getTicket(input.ticketId);
       if (ticketOrError.isErr()) return err(ticketOrError.error);
       const ticket = ticketOrError.value;
 
-      const virtualAccountPaymentOrError = VirtualAccountPayment.create({
-        // memberId: member.memberId,
-        memberId: new MemberId(input.appUserId),
-        bank: this.bank,
-        bankCode: this.bankCode,
-        // customerName: member.nickName,
-        customerName: 'test',
-        accountNumber: this.virtualAccountNumber,
-        order: {
-          ticketId: ticket.ticketId,
-          name: ticket.title,
-        },
-        amount: ticket.price.value,
-        dueDate: new Date(),
-      });
-      if (virtualAccountPaymentOrError.isErr())
-        return err(virtualAccountPaymentOrError.error);
-
       const virtualAccount = await this.pgRepo.issueVirtualAccount(
-        virtualAccountPaymentOrError.value,
+        new MemberId(input.appUserId),
+        {
+          customerName: 'test',
+        },
+        {
+          name: ticket.title,
+          product: {
+            type: ProductType.ticket,
+            name: ticket.title,
+            price: ticket.price.value,
+          },
+        },
       );
 
       return ok(virtualAccount);

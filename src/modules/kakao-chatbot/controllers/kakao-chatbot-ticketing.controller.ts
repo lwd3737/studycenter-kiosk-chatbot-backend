@@ -302,7 +302,7 @@ export class KakaoChatbotTicketingController {
     });
     if (simpleTextOrError.isErr()) {
       const error = simpleTextOrError.error;
-      console.debug(error.message);
+      console.debug(error);
 
       switch (error.constructor) {
         case TemplateVirtualAccountIssuanceErrors.MemberNotFound:

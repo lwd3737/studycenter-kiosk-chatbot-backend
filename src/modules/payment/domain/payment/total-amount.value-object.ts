@@ -7,18 +7,20 @@ interface Props {
 
 export type CreateAmountProps = number;
 
-export class Amount extends ValueObject {
+export class PaymentTotalAmount extends ValueObject<Props> {
   get value(): number {
-    return this.value;
+    return this.props.value;
   }
 
-  public static create(amount: number): Result<Amount, DomainError> {
+  public static create(
+    amount: number,
+  ): Result<PaymentTotalAmount, DomainError> {
     if (this.isNegative(amount))
       return err(new PaymentErrors.AmountIsNegativeError());
     if (this.isNotInteger(amount))
       return err(new PaymentErrors.AmountIsNotIntegerError());
 
-    return ok(new Amount({ value: amount }));
+    return ok(new PaymentTotalAmount({ value: amount }));
   }
 
   private static isNegative(amount: number): boolean {

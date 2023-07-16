@@ -69,7 +69,7 @@ export interface PaymentCancel {
 }
 export interface VirtualAccount {
   accountType: VirtualAccountType;
-  accountNumber: number;
+  accountNumber: string;
   bankCode: string;
   customerName: string;
   dueDate: string;

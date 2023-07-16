@@ -1,6 +1,7 @@
 import { err, ok } from 'src/core';
 import {
   CreateVirtualAccountPaymentProps,
+  VIRTUAL_ACCOUNT_METHOD,
   VirtualAccountMethod,
   VirtualAccountPayment,
 } from './virtual-account-payment/virtual-account-payment.aggregate-root';
@@ -17,8 +18,8 @@ export class PaymentFactory {
     const { method, ...payment } = props;
 
     switch (method) {
-      case 'VIRTUAL_ACCOUNT':
-        return ok(VirtualAccountPayment.create(payment.props));
+      case VIRTUAL_ACCOUNT_METHOD:
+        return ok(VirtualAccountPayment.new(payment.props));
       default:
         return err(new PaymentErrors.InvalidPaymentMethodTypeError());
     }

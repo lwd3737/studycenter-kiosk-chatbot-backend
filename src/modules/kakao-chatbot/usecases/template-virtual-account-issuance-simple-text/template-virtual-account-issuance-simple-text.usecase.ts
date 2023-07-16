@@ -43,19 +43,22 @@ export class TemplateVirtualAccountUseCase
                 input.ticketId,
               ),
             );
+          case AppErrors.UnexpectedError:
+            return err(error);
           default:
             throw error;
         }
       }
 
+      const virtualAccountPayment = paymentOrError.value;
       const simpleTextOrError = SimpleText.create({
-        value: `가상계좌 발급이 완료되었습니다.\n\n은행명: ${paymentOrError.value.bank}\n계좌번호: ${paymentOrError.value.accountNumber}\n예금주: ${paymentOrError.value.customerName}\n입금기한: ${paymentOrError.value.dueDate}`,
+        value: `가상계좌 발급이 완료되었습니다.\n\n은행명: ${virtualAccountPayment.bankCode}\n계좌번호: ${paymentOrError.value.accountNumber}\n예금주: ${paymentOrError.value.customerName}\n입금기한: ${paymentOrError.value.dueDate?.formatted}`,
       });
       if (simpleTextOrError.isErr()) return err(simpleTextOrError.error);
 
       return ok(simpleTextOrError.value);
     } catch (error) {
-      return err(new AppErrors.UnexpectedError(error));
+      return err(new AppErrors.UnexpectedError(error.message));
     }
   }
 }

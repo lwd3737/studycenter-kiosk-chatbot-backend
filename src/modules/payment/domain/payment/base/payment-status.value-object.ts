@@ -4,7 +4,6 @@ interface Props {
   value: PaymentStatusType;
 }
 export type PaymentStatusType =
-  | null
   | 'READY'
   | 'IN_PROGRESS'
   | 'WAITING_FOR_DEPOSIT'
@@ -13,8 +12,7 @@ export type PaymentStatusType =
   | 'PARTIAL_CANCELED'
   | 'ABORTED'
   | 'EXPIRED';
-
-export type CreatePaymentStatusProps = Props;
+export type CreatePaymentStatusProps = PaymentStatusType;
 
 export class PaymentStatus extends ValueObject<Props> {
   get value(): PaymentStatusType {

@@ -1,32 +1,67 @@
-import { AggregateRoot, EntityId } from 'src/core';
+import {
+  AggregateRoot,
+  DomainError,
+  EntityId,
+  Result,
+  err,
+  ok,
+} from 'src/core';
 import { MemberId } from 'src/modules/membership/domain/member/member-id';
 import {
+  CreatePaymentStatusProps,
   PaymentStatus,
   PaymentStatusType,
 } from './payment-status.value-object';
 import { PaymentId } from './payment-id';
 import { CreateOrderProps, Order } from './order/order.entity';
-import { Amount, CreateAmountProps } from '../amount.value-object';
+import {
+  PaymentTotalAmount,
+  CreateAmountProps,
+} from '../total-amount.value-object';
 
-export interface PaymentProps<T> {
-  method: T;
+export interface PaymentProps<Method> {
+  method: Method;
   memberId: MemberId;
   order: Order;
-  amount: Amount;
+  totalAmount: PaymentTotalAmount;
   status: PaymentStatus;
-  updatedAt: Date;
+  secret: string | null;
   createdAt: Date;
+  updatedAt: Date;
 }
-export type CreatePaymentProps = {
+export type CreatePaymentProps<Method> = {
+  method: Method;
   memberId: MemberId;
   order: CreateOrderProps;
-  amount: CreateAmountProps;
+  totalAmount: CreateAmountProps;
+  status: CreatePaymentStatusProps;
+  secret: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export abstract class Payment<
-  T extends string = string,
-  P extends PaymentProps<T> = PaymentProps<T>,
-> extends AggregateRoot<P> {
+  Method,
+  Props extends PaymentProps<Method>,
+> extends AggregateRoot<Props> {
+  public static createProps<Method>(
+    props: CreatePaymentProps<Method>,
+  ): Result<PaymentProps<Method>, DomainError> {
+    const totalAmountOrError = PaymentTotalAmount.create(props.totalAmount);
+    if (totalAmountOrError.isErr()) return err(totalAmountOrError.error);
+
+    return ok({
+      ...props,
+      order: Order.create(props.order),
+      totalAmount: totalAmountOrError.value,
+      status: PaymentStatus.create({ value: props.status }),
+    });
+  }
+
+  protected constructor(props: Props, id?: string) {
+    super(props, id);
+  }
+
   get id(): EntityId {
     return this._id;
   }
@@ -35,7 +70,7 @@ export abstract class Payment<
     return new PaymentId(this.id.value);
   }
 
-  get method(): T {
+  get method(): Method {
     return this.props.method;
   }
 
@@ -47,12 +82,24 @@ export abstract class Payment<
     return this.props.order;
   }
 
-  get amount(): Amount {
-    return this.props.amount;
+  get totalAmount(): PaymentTotalAmount {
+    return this.props.totalAmount;
   }
 
   get status(): PaymentStatus {
     return this.props.status;
+  }
+
+  public updateStatus(status: PaymentStatusType): void {
+    this.props.status = PaymentStatus.create({ value: status });
+  }
+
+  get secret(): string | null {
+    return this.props.secret;
+  }
+
+  public setSecet(key: string): void {
+    this.props.secret = key;
   }
 
   get updatedAt(): Date {
@@ -61,13 +108,5 @@ export abstract class Payment<
 
   get createdAt(): Date {
     return this.props.createdAt;
-  }
-
-  public updateStatus(status: PaymentStatusType): void {
-    this.props.status = PaymentStatus.create({ value: status });
-  }
-
-  protected constructor(props: P, id?: string) {
-    super(props, id);
   }
 }

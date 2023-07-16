@@ -1,12 +1,11 @@
-import { err, ok } from 'src/core';
-import { PaymentStatus } from '../base/payment-status.value-object';
+import { DomainError, Result, err, ok } from 'src/core';
+
 import {
   CreatePaymentProps,
   Payment,
   PaymentProps,
 } from '../base/payment.aggregate-root';
-import { Order } from '../base/order/order.entity';
-import { Amount } from '../amount.value-object';
+import { DueDate } from './due-date.value-object';
 
 interface VirtualAccountPaymentProps
   extends PaymentProps<VirtualAccountMethod> {
@@ -14,11 +13,14 @@ interface VirtualAccountPaymentProps
   bankCode: string;
   customerName: string;
   accountNumber: string;
-  dueDate: Date;
+  dueDate: DueDate;
 }
-export const VIRTUAL_ACCOUNT_METHOD = 'VIRTUAL_ACCOUNT';
+export const VIRTUAL_ACCOUNT_METHOD = 'virtualAccount';
 export type VirtualAccountMethod = typeof VIRTUAL_ACCOUNT_METHOD;
-export type CreateVirtualAccountPaymentProps = CreatePaymentProps & {
+export type CreateVirtualAccountPaymentProps = Pick<
+  CreatePaymentProps<VirtualAccountMethod>,
+  'memberId' | 'order' | 'secret' | 'totalAmount' | 'status'
+> & {
   bank: string;
   bankCode: string;
   customerName: string;
@@ -30,8 +32,31 @@ export class VirtualAccountPayment extends Payment<
   VirtualAccountMethod,
   VirtualAccountPaymentProps
 > {
-  get bank(): string {
-    return this.props.bank;
+  public static new(
+    props: CreateVirtualAccountPaymentProps,
+  ): Result<VirtualAccountPayment, DomainError> {
+    const paymentPropsOrError = super.createProps<VirtualAccountMethod>({
+      ...props,
+      method: VIRTUAL_ACCOUNT_METHOD,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    if (paymentPropsOrError.isErr()) return err(paymentPropsOrError.error);
+
+    return ok(
+      new VirtualAccountPayment({
+        ...paymentPropsOrError.value,
+        bank: props.bank,
+        bankCode: props.bankCode,
+        customerName: props.customerName,
+        accountNumber: props.accountNumber,
+        dueDate: DueDate.create({ value: props.dueDate }),
+      }),
+    );
+  }
+
+  private constructor(props: VirtualAccountPaymentProps) {
+    super(props);
   }
 
   get bankCode(): string {
@@ -46,32 +71,12 @@ export class VirtualAccountPayment extends Payment<
     return this.props.customerName;
   }
 
-  get dueDate(): Date {
+  get dueDate(): DueDate {
     return this.props.dueDate;
   }
 
   get isExpired(): boolean {
-    return this.props.dueDate.getTime() < Date.now();
-  }
-
-  public static create(props: CreateVirtualAccountPaymentProps) {
-    const amountOrError = Amount.create(props.amount);
-    if (amountOrError.isErr()) return err(amountOrError.error);
-
-    return ok(
-      new VirtualAccountPayment({
-        ...props,
-        method: 'VIRTUAL_ACCOUNT',
-        amount: amountOrError.value,
-        order: Order.create(props.order),
-        status: PaymentStatus.create({ value: null }),
-        updatedAt: new Date(),
-        createdAt: new Date(),
-      }),
-    );
-  }
-
-  private constructor(props: VirtualAccountPaymentProps) {
-    super(props);
+    if (!this.props.dueDate) return false;
+    return this.props.dueDate.value.getTime() < Date.now();
   }
 }

@@ -1,15 +1,25 @@
 import { Entity, EntityId } from 'src/core';
 import { OrderId } from './order-id';
-import { TicketId } from 'src/modules/ticketing';
+import { CreateProductProps, Product } from './product.value-object';
 
 interface Props {
-  ticketId: TicketId;
   name: string;
+  product: Product;
 }
 
-export type CreateOrderProps = Props;
+export type CreateOrderProps = Pick<Props, 'name'> & {
+  product: CreateProductProps;
+};
 
 export class Order extends Entity<Props> {
+  public static create(props: CreateOrderProps, id?: string) {
+    return new Order({ ...props, product: Product.create(props.product) }, id);
+  }
+
+  private constructor(props: Props, id?: string) {
+    super(props, id);
+  }
+
   get id(): EntityId {
     return this._id;
   }
@@ -18,19 +28,11 @@ export class Order extends Entity<Props> {
     return new OrderId(this.id.value);
   }
 
-  get ticketId(): TicketId {
-    return this.props.ticketId;
-  }
-
   get name(): string {
     return this.props.name;
   }
 
-  public static create(props: CreateOrderProps, id?: string) {
-    return new Order(props, id);
-  }
-
-  private constructor(props: Props, id?: string) {
-    super(props, id);
+  get product(): Product {
+    return this.props.product;
   }
 }
