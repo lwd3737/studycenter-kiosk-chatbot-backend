@@ -54,14 +54,6 @@ export class PGRepo implements IPGRepo {
     },
   ): Promise<VirtualAccountPayment> {
     const newOrder = Order.create(order);
-    console.log('pg rrepo', {
-      amount: newOrder.product.price,
-      bank: this.config.bankCode,
-      customerName: virtualAccount.customerName,
-      orderId: newOrder.id.value,
-      orderName: newOrder.name,
-      validHours: 1,
-    });
 
     let pgSchema: PGSchema;
     try {
@@ -83,7 +75,6 @@ export class PGRepo implements IPGRepo {
       );
       pgSchema = found.data;
     } catch (error) {
-      console.log(error);
       throw new RepoError(error.response.data.message);
     }
 

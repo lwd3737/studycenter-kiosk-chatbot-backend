@@ -26,6 +26,7 @@ export class TemplateVirtualAccountUseCase
     try {
       const paymentOrError = await this.issueVirtualAccountUseCase.execute({
         ...input,
+        appUserId: 'testAppUserId',
       });
       if (paymentOrError.isErr()) {
         const error = paymentOrError.error;
@@ -52,7 +53,7 @@ export class TemplateVirtualAccountUseCase
 
       const virtualAccountPayment = paymentOrError.value;
       const simpleTextOrError = SimpleText.create({
-        value: `가상계좌 발급이 완료되었습니다.\n\n은행명: ${virtualAccountPayment.bankCode}\n계좌번호: ${paymentOrError.value.accountNumber}\n예금주: ${paymentOrError.value.customerName}\n입금기한: ${paymentOrError.value.dueDate?.formatted}`,
+        value: `가상계좌 발급이 완료되었습니다.\n\n은행명: ${virtualAccountPayment.bank}\n계좌번호: ${paymentOrError.value.accountNumber}\n예금주: ${paymentOrError.value.customerName}\n입금기한: ${paymentOrError.value.dueDate?.formatted}`,
       });
       if (simpleTextOrError.isErr()) return err(simpleTextOrError.error);
 

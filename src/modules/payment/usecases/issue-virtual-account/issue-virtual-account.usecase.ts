@@ -10,7 +10,6 @@ import { IssueVirtualAccountError, IssueVirtualAccountErrors } from './errors';
 import { GetTicketUseCase } from 'src/modules/ticketing/application/usecases/get-ticket/get-ticket.usecase';
 import { GetTicketErrors, Ticket } from 'src/modules/ticketing';
 import { VirtualAccountPayment } from '../../domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
-import { MemberId } from 'src/modules/membership/domain/member/member-id';
 import { ProductType } from '../../domain/payment/base/order/product.value-object';
 
 type UseCaseInput = {
@@ -42,17 +41,18 @@ export class IssueVirtualAccountUseCase
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     try {
-      // const memberOrError = await this.getMember(input.appUserId);
-      // if (memberOrError.isErr()) return err(memberOrError.error);
-      // const member = memberOrError.value;
+      const memberOrError = await this.getMember(input.appUserId);
+      if (memberOrError.isErr()) return err(memberOrError.error);
+      const member = memberOrError.value;
+
       const ticketOrError = await this.getTicket(input.ticketId);
       if (ticketOrError.isErr()) return err(ticketOrError.error);
       const ticket = ticketOrError.value;
 
       const virtualAccount = await this.pgRepo.issueVirtualAccount(
-        new MemberId(input.appUserId),
+        member.memberId,
         {
-          customerName: 'test',
+          customerName: member.nickName,
         },
         {
           name: ticket.title,

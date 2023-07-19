@@ -59,6 +59,10 @@ export class VirtualAccountPayment extends Payment<
     super(props);
   }
 
+  get bank(): string {
+    return this.props.bank;
+  }
+
   get bankCode(): string {
     return this.props.bankCode;
   }

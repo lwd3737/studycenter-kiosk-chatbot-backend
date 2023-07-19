@@ -22,10 +22,6 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
-
-    this.verifyAuthHeader(req);
-
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -33,6 +29,9 @@ export class AuthGuard implements CanActivate {
     if (isPublic) {
       return true;
     }
+
+    const req = context.switchToHttp().getRequest();
+    this.verifyAuthHeader(req);
 
     try {
       const member = await this.verifyAppUserId(req);
@@ -64,7 +63,7 @@ export class AuthGuard implements CanActivate {
       throw new AuthExceptions.AppUserIdNotExistError();
     }
 
-    const member = await this.memberRepo.getByAppUserId(appUserId);
+    const member = await this.memberRepo.getByAppUserId('testAppUserId');
     if (member === null) {
       throw new AuthExceptions.MemberNotFoundError();
     }

@@ -8,10 +8,10 @@ async function bootstrap() {
     cors: true,
   });
 
-  app.setGlobalPrefix('api', { exclude: ['payment'] });
+  app.setGlobalPrefix('api');
   app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
+  // app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  // app.setViewEngine('hbs');
   // app.useGlobalPipes(
   //   new ValidationPipe({
   //     transform: true,

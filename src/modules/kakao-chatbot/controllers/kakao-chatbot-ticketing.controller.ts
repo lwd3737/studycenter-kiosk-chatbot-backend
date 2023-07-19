@@ -29,14 +29,11 @@ import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-cases/get-available-room-seats.use-case.ts/get-available-room-seats.use-case';
 import { RenderAvailableSeatsListCardsCarouselUseCase } from '../usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
-import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
 import { ContextControl } from '../domain/base/context-control/context-control.value-object';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
-import { IssueVirtualAccountUseCase } from 'src/modules/payment';
 import { ParseAppUserIdParamPipe } from '../pipes/parse-app-user-id-param.pipe';
-import { GetMemberUseCase } from 'src/modules/membership';
 import { TemplateVirtualAccountUseCase } from '../usecases/template-virtual-account-issuance-simple-text/template-virtual-account-issuance-simple-text.usecase';
 import { TemplateVirtualAccountIssuanceErrors } from '../usecases/template-virtual-account-issuance-simple-text/error';
 

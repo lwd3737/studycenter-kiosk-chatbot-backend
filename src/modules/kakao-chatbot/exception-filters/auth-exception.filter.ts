@@ -24,7 +24,8 @@ export class AuthExceptionFilter
     switch (exception.constructor) {
       case AuthExceptions.InvalidAuthorizationTypeError:
       case AuthExceptions.InvalidAuthorizationTokenError:
-      case AuthExceptions.AppUserIdNotExistError: {
+      case AuthExceptions.AppUserIdNotExistError:
+        console.debug(exception);
         httpAdapter.reply(
           ctx.getResponse(),
           ErrorDTOCreator.toSimpleTextOutput(
@@ -32,8 +33,8 @@ export class AuthExceptionFilter
           ),
         );
         break;
-      }
-      case AuthExceptions.MemberNotFoundError: {
+      case AuthExceptions.MemberNotFoundError:
+        console.debug(exception);
         httpAdapter.reply(
           ctx.getResponse(),
           ErrorDTOCreator.toSimpleTextOutput('회원가입이 필요해요!', [
@@ -46,7 +47,6 @@ export class AuthExceptionFilter
           ]),
         );
         break;
-      }
     }
   }
 }
