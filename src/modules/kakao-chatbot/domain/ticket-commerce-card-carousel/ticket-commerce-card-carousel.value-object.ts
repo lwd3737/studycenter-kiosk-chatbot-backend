@@ -1,14 +1,17 @@
 import { combine, DomainError, err, ok, Result } from 'src/core';
-import { Button, ButtonActionEnum } from '../base/button/button.value-object';
-import { ButtonError } from '../base/button/button.error';
+import {
+  Button,
+  ButtonActionEnum,
+} from '../basic-template-outputs/button/button.value-object';
+import { ButtonError } from '../basic-template-outputs/button/button.error';
 import { TicketCommerceCardCarouselError } from './ticket-commerce-card-carousel.error';
-import { CommerceCard } from '../base/commerce-card/commerce-card.value-object';
-import { CommerceCardError } from '../base/commerce-card/commerce-card.error';
-import { Profile } from '../base/profile/profile.value-object';
-import { ThumbnailError } from '../base/thumbnail/thumbnail.error';
-import { Thumbnail } from '../base/thumbnail/thumbnail.value-object';
+import { CommerceCard } from '../basic-template-outputs/commerce-card/commerce-card.value-object';
+import { CommerceCardError } from '../basic-template-outputs/commerce-card/commerce-card.error';
+import { Profile } from '../basic-template-outputs/profile/profile.value-object';
+import { ThumbnailError } from '../basic-template-outputs/thumbnail/thumbnail.error';
+import { Thumbnail } from '../basic-template-outputs/thumbnail/thumbnail.value-object';
 import { Ticket, TicketType } from 'src/modules/ticketing';
-import { CommerceCardCarousel } from '../base/commerce-card-carousel/commerce-card-carousel.value-object';
+import { CommerceCardCarousel } from '../basic-template-outputs/commerce-card-carousel/commerce-card-carousel.value-object';
 
 interface TicketCommerceCardCarouselProps {
   tickets: Ticket[];

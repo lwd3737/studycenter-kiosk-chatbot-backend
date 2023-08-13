@@ -1,7 +1,7 @@
-import { ItemCardDTO } from '../../dtos/template-output.interface';
+import { ItemCardDTO } from '../../application/dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
-import { ItemCard } from '../../domain/base/item-card/item-card.value-object';
+import { ItemCard } from '../../domain/basic-template-outputs/item-card/item-card.value-object';
 
 export class ItemCardMapper {
   static toDTO(domain: ItemCard): ItemCardDTO {

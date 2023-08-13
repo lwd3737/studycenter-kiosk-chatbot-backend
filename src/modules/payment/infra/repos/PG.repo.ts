@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { IPGRepo } from 'src/modules/payment/domain/payment/base/IPG.repo';
+import { IPGRepo } from 'src/modules/payment/domain/IPG.repo';
 import { PGSchema } from './schema/PG.schema';
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
 import { RepoError } from 'src/core';
-import { MemberId } from 'src/modules/membership/domain/member/member-id';
+import { MemberId } from 'src/modules/member/domain/member/member-id';
 import { Order } from '../../domain/payment/base/order/order.entity';
 import { ProductType } from '../../domain/payment/base/order/product.value-object';
 import { VirtualAccountPGMapper } from '../mappers/impl/virtual-account-PG.mapper';
@@ -73,6 +73,7 @@ export class PGRepo implements IPGRepo {
           },
         },
       );
+
       pgSchema = found.data;
     } catch (error) {
       throw new RepoError(error.response.data.message);

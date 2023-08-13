@@ -2,7 +2,7 @@ import {
   ContextControlDTO,
   KakaoChatbotResponseDTO,
   SkillOutputDTO,
-} from '../../dtos/response.dto.interface';
+} from '../../application/dtos/response.dto.interface';
 
 export class KaKaoChatbotResponseMapper {
   static toDTO(domain: {

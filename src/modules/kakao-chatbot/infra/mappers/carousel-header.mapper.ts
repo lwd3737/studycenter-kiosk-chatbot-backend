@@ -1,6 +1,6 @@
 import { IMapper } from 'src/core';
-import { CarouselHeader } from '../../domain/base/carousel/header.value-object';
-import { CarouselHeaderDTO } from '../../dtos/template-output.interface';
+import { CarouselHeader } from '../../domain/basic-template-outputs/carousel/header.value-object';
+import { CarouselHeaderDTO } from '../../application/dtos/template-output.interface';
 import { ThumbnailMapper } from './thumbnail.mapper';
 
 export class CarouselHeaderMapper implements IMapper<CarouselHeader> {

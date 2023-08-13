@@ -12,14 +12,15 @@ type FactoryProps = {
   props: CreateVirtualAccountPaymentProps;
 };
 export type PaymentFactoryResult = ReturnType<typeof PaymentFactory.create>;
+export type Payment = VirtualAccountPayment;
 
 export class PaymentFactory {
-  public static create(props: FactoryProps) {
+  public static create(props: FactoryProps, id?: string) {
     const { method, ...payment } = props;
 
     switch (method) {
       case VIRTUAL_ACCOUNT_METHOD:
-        return ok(VirtualAccountPayment.new(payment.props));
+        return VirtualAccountPayment.create(payment.props, id);
       default:
         return err(new PaymentErrors.InvalidPaymentMethodTypeError());
     }

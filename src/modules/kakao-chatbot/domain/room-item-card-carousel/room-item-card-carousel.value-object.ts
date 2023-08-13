@@ -1,13 +1,16 @@
 import { combine, DomainError, err, ok, Result } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
 import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-info.value-object';
-import { Button, ButtonActionEnum } from '../base/button/button.value-object';
-import { ItemCard } from '../base/item-card/item-card.value-object';
-import { ItemList } from '../base/item-card/item-list.value-object';
-import { ImageTitle } from '../base/item-card/image-title.value-object';
+import {
+  Button,
+  ButtonActionEnum,
+} from '../basic-template-outputs/button/button.value-object';
+import { ItemCard } from '../basic-template-outputs/item-card/item-card.value-object';
+import { ItemList } from '../basic-template-outputs/item-card/item-list.value-object';
+import { ImageTitle } from '../basic-template-outputs/item-card/image-title.value-object';
 import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
-import { ItemListSummary } from '../base/item-card/item-list-summary.value-object';
-import { ItemCardCarousel } from '../base/item-card-carousel/item-card-carousel.value-object';
+import { ItemListSummary } from '../basic-template-outputs/item-card/item-list-summary.value-object';
+import { ItemCardCarousel } from '../basic-template-outputs/item-card-carousel/item-card-carousel.value-object';
 
 type CreateProps = {
   roomSeatsGroup: RoomSeatsGroup[];

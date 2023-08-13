@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { AppError, DomainError, UseCaseError } from 'src/core';
+import { AppErrors, DomainError, UseCaseError } from 'src/core';
 
 export type GetAllTicketCollectionsError =
-  | AppError
+  | AppErrors.UnexpectedError
   | GetAllTicketCollectionsErrors.TicketNotExistError
   | DomainError;
 

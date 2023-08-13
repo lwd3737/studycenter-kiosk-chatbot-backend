@@ -1,12 +1,12 @@
 import { Controller, Post } from '@nestjs/common';
 import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
-import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../application/dtos/response.dto.interface';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
-import { RenderRoomItemCardsCarouselUseCase } from '../usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
-import { ErrorDTOCreator } from '../dtos/error.dto';
+import { ErrorDTOCreator } from '../application/dtos/error.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
+import { RenderRoomItemCardsCarouselUseCase } from '../application/usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/seat-management`)

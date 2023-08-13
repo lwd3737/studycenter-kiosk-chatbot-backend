@@ -2,8 +2,8 @@ import { IMapper } from 'src/core';
 import {
   COMMERCE_CARD_TYPE,
   CommerceCardCarousel,
-} from '../../domain/base/commerce-card-carousel/commerce-card-carousel.value-object';
-import { CommerceCardCarouselDTO } from '../../dtos/template-output.interface';
+} from '../../domain/basic-template-outputs/commerce-card-carousel/commerce-card-carousel.value-object';
+import { CommerceCardCarouselDTO } from '../../application/dtos/template-output.interface';
 import { CarouselHeaderMapper } from './carousel-header.mapper';
 import { CommerceCardMapper } from './commerce-card.mapper';
 

@@ -1,6 +1,6 @@
 import { IMapper } from 'src/core';
-import { ProfileDTO } from '../../dtos/template-output.interface';
-import { Profile } from '../../domain/base/profile/profile.value-object';
+import { ProfileDTO } from '../../application/dtos/template-output.interface';
+import { Profile } from '../../domain/basic-template-outputs/profile/profile.value-object';
 
 export class ProfileMapper implements IMapper<Profile> {
   static toDTO(profile: Profile): ProfileDTO {

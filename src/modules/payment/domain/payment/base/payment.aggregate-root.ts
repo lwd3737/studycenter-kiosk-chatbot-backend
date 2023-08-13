@@ -6,7 +6,7 @@ import {
   err,
   ok,
 } from 'src/core';
-import { MemberId } from 'src/modules/membership/domain/member/member-id';
+import { MemberId } from 'src/modules/member/domain/member/member-id';
 import {
   CreatePaymentStatusProps,
   PaymentStatus,
@@ -18,6 +18,7 @@ import {
   PaymentTotalAmount,
   CreateAmountProps,
 } from '../total-amount.value-object';
+import { OrderId } from './order/order-id';
 
 export interface PaymentProps<Method> {
   method: Method;
@@ -32,7 +33,7 @@ export interface PaymentProps<Method> {
 export type CreatePaymentProps<Method> = {
   method: Method;
   memberId: MemberId;
-  order: CreateOrderProps;
+  order: CreateOrderProps & { id: OrderId };
   totalAmount: CreateAmountProps;
   status: CreatePaymentStatusProps;
   secret: string | null;
@@ -40,7 +41,7 @@ export type CreatePaymentProps<Method> = {
   updatedAt: Date;
 };
 
-export abstract class Payment<
+export abstract class BasePayment<
   Method,
   Props extends PaymentProps<Method>,
 > extends AggregateRoot<Props> {
@@ -52,7 +53,7 @@ export abstract class Payment<
 
     return ok({
       ...props,
-      order: Order.create(props.order),
+      order: Order.create(props.order, props.order.id.value),
       totalAmount: totalAmountOrError.value,
       status: PaymentStatus.create({ value: props.status }),
     });
@@ -96,10 +97,6 @@ export abstract class Payment<
 
   get secret(): string | null {
     return this.props.secret;
-  }
-
-  public setSecet(key: string): void {
-    this.props.secret = key;
   }
 
   get updatedAt(): Date {

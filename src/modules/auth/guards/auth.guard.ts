@@ -6,11 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import {
-  IMemberRepo,
-  Member,
-  MemberRepoProvider,
-} from 'src/modules/membership';
+import { IMemberRepo, Member, MemberRepoProvider } from 'src/modules/member';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { AuthExceptions } from '../auth-exceptions';
 
@@ -51,7 +47,6 @@ export class AuthGuard implements CanActivate {
     if (type !== 'Bearer') {
       throw new AuthExceptions.InvalidAuthorizationTypeError();
     }
-
     if (token !== authorizationKey) {
       throw new AuthExceptions.InvalidAuthorizationTokenError();
     }
@@ -63,7 +58,9 @@ export class AuthGuard implements CanActivate {
       throw new AuthExceptions.AppUserIdNotExistError();
     }
 
-    const member = await this.memberRepo.getByAppUserId('testAppUserId');
+    const member = await this.memberRepo.getByAppUserId(
+      process.env.APP_USER_ID_FOR_TEST!,
+    );
     if (member === null) {
       throw new AuthExceptions.MemberNotFoundError();
     }

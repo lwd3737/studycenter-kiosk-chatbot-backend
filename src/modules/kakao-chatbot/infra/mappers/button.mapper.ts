@@ -1,6 +1,6 @@
 import { IMapper } from 'src/core';
-import { Button } from '../../domain/base/button/button.value-object';
-import { ButtonDTO } from '../../dtos/template-output.interface';
+import { Button } from '../../domain/basic-template-outputs/button/button.value-object';
+import { ButtonDTO } from '../../application/dtos/template-output.interface';
 
 export class ButtonMapper implements IMapper<Button> {
   static toDTO(domain: Button): ButtonDTO {

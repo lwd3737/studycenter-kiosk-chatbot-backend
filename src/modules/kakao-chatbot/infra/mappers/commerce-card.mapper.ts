@@ -1,9 +1,9 @@
 import { IMapper } from 'src/core';
-import { CommerceCardDTO } from '../../dtos/template-output.interface';
+import { CommerceCardDTO } from '../../application/dtos/template-output.interface';
 import { ButtonMapper } from './button.mapper';
 import { ProfileMapper } from './profile.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
-import { CommerceCard } from '../../domain/base/commerce-card/commerce-card.value-object';
+import { CommerceCard } from '../../domain/basic-template-outputs/commerce-card/commerce-card.value-object';
 
 export class CommerceCardMapper implements IMapper<CommerceCard> {
   static toDTO(commerceCard: CommerceCard): CommerceCardDTO {

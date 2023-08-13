@@ -1,35 +1,36 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SeatManagementModule } from 'src/modules/seat-management';
 import { TicketModule } from 'src/modules/ticketing';
 import { KakaoChatbotTicketingController } from './controllers/kakao-chatbot-ticketing.controller';
-import { ParseTicketTypeParamPipe } from './pipes/parse-ticket-category-param.pipe';
-import { RenderTicketCommerceCardsCarouselUseCase } from './usecases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.usecase';
-import { RenderTicketCollectionListCardCarouselUseCase } from './usecases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.usecase';
-import { RenderRoomItemCardsCarouselUseCase } from './usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
-import { UseAuthBlockUseCase } from './usecases/use-auth-block/use-auth-block.usecase';
-import { PluginRepo } from './infra/repos/plugin.repo';
-import { KakaoChatbotAuthController } from './controllers/kakao-chatbot-auth.controller';
-import { ParseSyncOtpParamPipe } from './pipes/parse-sync-otp-param.pipe';
-import { AuthModule } from '../auth';
-import { MembershipModule } from '../membership';
-import { AuthExceptionFilter } from './exception-filters/auth-exception.filter';
-import { APP_FILTER } from '@nestjs/core';
-import { RenderAvailableSeatsListCardsCarouselUseCase } from './usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
-import { PaymentModule } from '../payment/payment.module';
-import { TemplateVirtualAccountUseCase } from './usecases/template-virtual-account-issuance-simple-text/template-virtual-account-issuance-simple-text.usecase';
 import { KakaoChatbotSeatManagementController } from './controllers/kakao-chatbot-seat-management.controller';
+import { PluginRepo } from './infra/repos/plugin.repo';
+import { UseAuthBlockUseCase } from './application/usecases/use-auth-block/use-auth-block.usecase';
+import { RenderTicketCollectionListCardCarouselUseCase } from './application/usecases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.usecase';
+import { RenderRoomItemCardsCarouselUseCase } from './application/usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
+import { RenderTicketCommerceCardsCarouselUseCase } from './application/usecases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.usecase';
+import { RenderAvailableSeatsListCardsCarouselUseCase } from './application/usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
+import { IssueVirtualAccountUseCase } from './application/usecases/issue-virtual-account/issue-virtual-account.usecase';
+import { ParseTicketTypeParamPipe } from './application/pipes/parse-ticket-category-param.pipe';
+import { ParseSyncOtpParamPipe } from './application/pipes/parse-sync-otp-param.pipe';
+import { MembershipModule } from '../member';
+import { AuthModule } from '../auth';
+import { PaymentModule } from '../payment/payment.module';
+import { KakaoChatbotAuthController } from './controllers/kakao-chatbot-auth.controller';
+import { APP_FILTER } from '@nestjs/core';
+import { AuthExceptionFilter } from './application/exception-filters/auth-exception.filter';
+import { EventApiService } from './application/services/event-api.service';
+import { EventApiRepo } from './infra/repos/event-api.repo';
 
-const Repos = [PluginRepo];
-
+const Repos = [PluginRepo, EventApiRepo];
+const Services = [EventApiService];
 const UseCases = [
   UseAuthBlockUseCase,
   RenderTicketCollectionListCardCarouselUseCase,
   RenderTicketCommerceCardsCarouselUseCase,
   RenderRoomItemCardsCarouselUseCase,
   RenderAvailableSeatsListCardsCarouselUseCase,
-  TemplateVirtualAccountUseCase,
+  IssueVirtualAccountUseCase,
 ];
-
 const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
 
 @Module({
@@ -38,7 +39,7 @@ const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
     SeatManagementModule,
     AuthModule,
     MembershipModule,
-    PaymentModule,
+    forwardRef(() => PaymentModule),
   ],
   controllers: [
     KakaoChatbotTicketingController,
@@ -50,11 +51,11 @@ const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
       provide: APP_FILTER,
       useClass: AuthExceptionFilter,
     },
-
     ...Repos,
+    ...Services,
     ...UseCases,
     ...Pipes,
   ],
-  exports: [],
+  exports: [...Services],
 })
 export class KakaoChatbotModule {}

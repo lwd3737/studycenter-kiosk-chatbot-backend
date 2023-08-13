@@ -7,7 +7,7 @@ import {
 } from 'src/core/application';
 import { err, ok, Result } from 'src/core/result';
 
-import { TicketSeederService } from '../../ticket-seeder.service';
+import { TicketSeederService } from '../../services/ticket-seeder.service';
 import {
   ITicketRepo,
   Ticket,

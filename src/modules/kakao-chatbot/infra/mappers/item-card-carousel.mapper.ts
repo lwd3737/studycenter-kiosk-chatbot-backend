@@ -1,5 +1,5 @@
-import { ItemCardCarousel } from '../../domain/base/item-card-carousel/item-card-carousel.value-object';
-import { ItemCardCarouselDTO } from '../../dtos/template-output.interface';
+import { ItemCardCarousel } from '../../domain/basic-template-outputs/item-card-carousel/item-card-carousel.value-object';
+import { ItemCardCarouselDTO } from '../../application/dtos/template-output.interface';
 import { CarouselHeaderMapper } from './carousel-header.mapper';
 import { ItemCardMapper } from './item-card.mapper';
 

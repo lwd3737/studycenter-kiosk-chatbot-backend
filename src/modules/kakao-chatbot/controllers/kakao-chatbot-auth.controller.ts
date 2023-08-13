@@ -1,14 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../application/dtos/response.dto.interface';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
+import { ErrorDTOCreator } from '../application/dtos/error.dto';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { UseAuthBlockUseCase } from '../application/usecases/use-auth-block/use-auth-block.usecase';
 import {
   ParseSyncOtpParamPipe,
   SyncOtp,
-} from '../pipes/parse-sync-otp-param.pipe';
-import { UseAuthBlockErrors } from '../usecases/use-auth-block/use-auth-block.error';
-import { UseAuthBlockUseCase } from '../usecases/use-auth-block/use-auth-block.usecase';
-import { ErrorDTOCreator } from '../dtos/error.dto';
-import { Public } from 'src/modules/auth/decorators/public.decorator';
+} from '../application/pipes/parse-sync-otp-param.pipe';
+import { UseAuthBlockErrors } from '../application/usecases/use-auth-block/use-auth-block.error';
 
 @Controller('kakao-chatbot/auth')
 export class KakaoChatbotAuthController {

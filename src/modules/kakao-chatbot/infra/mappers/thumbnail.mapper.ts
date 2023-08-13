@@ -1,6 +1,6 @@
 import { IMapper } from 'src/core';
-import { ThumbnailDTO } from '../../dtos/template-output.interface';
-import { Thumbnail } from '../../domain/base/thumbnail/thumbnail.value-object';
+import { ThumbnailDTO } from '../../application/dtos/template-output.interface';
+import { Thumbnail } from '../../domain/basic-template-outputs/thumbnail/thumbnail.value-object';
 
 export class ThumbnailMapper implements IMapper<Thumbnail> {
   static toDTO(domain: Thumbnail): ThumbnailDTO {

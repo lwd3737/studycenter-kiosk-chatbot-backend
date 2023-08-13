@@ -1,10 +1,13 @@
 import { DomainError, Result, combine, err } from 'src/core';
-import { Button, ButtonActionEnum } from '../base/button/button.value-object';
-import { ListCard } from '../base/list-card/list-card.value-object';
+import {
+  Button,
+  ButtonActionEnum,
+} from '../basic-template-outputs/button/button.value-object';
+import { ListCard } from '../basic-template-outputs/list-card/list-card.value-object';
 import { Ticket } from 'src/modules/ticketing';
-import { ListCardCarousel } from '../base/list-card-carousel/list-card-carousel.value-object';
-import { ListCardHeader } from '../base/list-card/header.value-object';
-import { ListCardItem } from '../base/list-card/item.value-object';
+import { ListCardCarousel } from '../basic-template-outputs/list-card-carousel/list-card-carousel.value-object';
+import { ListCardHeader } from '../basic-template-outputs/list-card/header.value-object';
+import { ListCardItem } from '../basic-template-outputs/list-card/item.value-object';
 
 interface TicketCollectionListCarouselProps {
   ticketCollections: Ticket[][];

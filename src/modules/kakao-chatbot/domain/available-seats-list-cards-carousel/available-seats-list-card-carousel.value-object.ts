@@ -2,13 +2,13 @@ import { DomainError, Result, combine, err, ok } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
 import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
 import { AvailableSeatsListCardsCarouselErrors } from './available-seats-list-cards-carousel.error';
-import { ListCard } from '../base/list-card/list-card.value-object';
-import { ListCardHeader } from '../base/list-card/header.value-object';
+import { ListCard } from '../basic-template-outputs/list-card/list-card.value-object';
+import { ListCardHeader } from '../basic-template-outputs/list-card/header.value-object';
 import {
   ListCardItem,
   ListCardItemActionEnum,
-} from '../base/list-card/item.value-object';
-import { ListCardCarousel } from '../base/list-card-carousel/list-card-carousel.value-object';
+} from '../basic-template-outputs/list-card/item.value-object';
+import { ListCardCarousel } from '../basic-template-outputs/list-card-carousel/list-card-carousel.value-object';
 
 type CreateProps = {
   ticketId: string;

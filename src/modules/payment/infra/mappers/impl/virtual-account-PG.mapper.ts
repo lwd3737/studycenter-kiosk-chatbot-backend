@@ -1,4 +1,4 @@
-import { MemberId } from 'src/modules/membership/domain/member/member-id';
+import { MemberId } from 'src/modules/member/domain/member/member-id';
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
 import { PGSchema } from '../../repos/schema/PG.schema';
 import { Order } from 'src/modules/payment/domain/payment/base/order/order.entity';
@@ -12,10 +12,10 @@ export class VirtualAccountPGMapper {
   }): VirtualAccountPayment {
     if (!raw.pg.virtualAccount)
       throw new RepoError('virtualAccount is not defined.');
-
-    const domainOrError = VirtualAccountPayment.new({
+    const domainOrError = VirtualAccountPayment.create({
       memberId: raw.memberId,
       order: {
+        id: raw.order.id,
         name: raw.pg.orderName,
         product: {
           type: raw.order.product.type,

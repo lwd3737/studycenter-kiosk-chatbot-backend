@@ -1,4 +1,4 @@
 export * from './domain/payment/base/payment-id';
 
-export * from './usecases/issue-virtual-account/issue-virtual-account.usecase';
-export * from './usecases/issue-virtual-account/errors';
+export * from './application/services/payment.service';
+export * from './application/services/payment.error';
