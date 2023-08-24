@@ -15,5 +15,5 @@ export abstract class TicketType<T = string> extends ValueObject<
     return this.props.value;
   }
 
-  abstract get label(): string;
+  abstract get display(): string;
 }

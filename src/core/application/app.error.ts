@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { UseCaseError } from './use-case-error';
 
+// Deprecated
 export namespace AppErrors {
   export class UnexpectedError extends UseCaseError {
     constructor(error?: Error) {
@@ -10,19 +11,7 @@ export namespace AppErrors {
   }
 }
 
-export class AppError {
-  constructor(private _code: string, private _message: string) {}
-
-  get code(): string {
-    return this._code;
-  }
-
-  get message(): string {
-    return this._message;
-  }
-}
-
-export class ApplicationError<
+export class AppError<
   Metadata extends Record<string, any> = Record<string, any>,
 > extends Error {
   private _metadata: Metadata;
@@ -38,7 +27,7 @@ export class ApplicationError<
   }
 }
 
-export class UnknownError extends ApplicationError {
+export class UnknownError extends AppError {
   constructor(message: string) {
     super(`An unknown error occurred: ${message}`);
   }

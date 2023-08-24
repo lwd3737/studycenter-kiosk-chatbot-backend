@@ -20,6 +20,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AuthExceptionFilter } from './application/exception-filters/auth-exception.filter';
 import { EventApiService } from './application/services/event-api.service';
 import { EventApiRepo } from './infra/repos/event-api.repo';
+import { ConfirmTicketPurchaseInfoUseCase } from './application/usecases/confirm-ticket-purchase-info/confirm-ticket-purchase-info.usecase';
 
 const Repos = [PluginRepo, EventApiRepo];
 const Services = [EventApiService];
@@ -29,9 +30,9 @@ const UseCases = [
   RenderTicketCommerceCardsCarouselUseCase,
   RenderRoomItemCardsCarouselUseCase,
   RenderAvailableSeatsListCardsCarouselUseCase,
+  ConfirmTicketPurchaseInfoUseCase,
   IssueVirtualAccountUseCase,
 ];
-const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
 
 @Module({
   imports: [
@@ -54,7 +55,6 @@ const Pipes = [ParseTicketTypeParamPipe, ParseSyncOtpParamPipe];
     ...Repos,
     ...Services,
     ...UseCases,
-    ...Pipes,
   ],
   exports: [...Services],
 })

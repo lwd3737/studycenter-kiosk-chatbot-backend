@@ -3,7 +3,7 @@ import {
   COMMERCE_CARD_TYPE,
   CommerceCardCarousel,
 } from '../../domain/basic-template-outputs/commerce-card-carousel/commerce-card-carousel.value-object';
-import { CommerceCardCarouselDTO } from '../../application/dtos/template-output.interface';
+import { CommerceCardCarouselDTO } from '../../application/dtos/ITemplate-output';
 import { CarouselHeaderMapper } from './carousel-header.mapper';
 import { CommerceCardMapper } from './commerce-card.mapper';
 

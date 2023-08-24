@@ -1,5 +1,5 @@
 import { IMapper } from 'src/core';
-import { ProfileDTO } from '../../application/dtos/template-output.interface';
+import { ProfileDTO } from '../../application/dtos/ITemplate-output';
 import { Profile } from '../../domain/basic-template-outputs/profile/profile.value-object';
 
 export class ProfileMapper implements IMapper<Profile> {

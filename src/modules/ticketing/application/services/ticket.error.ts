@@ -1,6 +1,6 @@
-import { ApplicationError } from 'src/core';
+import { AppError } from 'src/core';
 
-export class TicketNotFoundError extends ApplicationError<{
+export class TicketNotFoundError extends AppError<{
   ticketId: string;
 }> {
   constructor(id: string) {

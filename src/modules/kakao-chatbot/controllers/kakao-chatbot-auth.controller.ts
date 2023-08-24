@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { KakaoChatbotResponseDTO } from '../application/dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';
 import { Public } from 'src/modules/auth/decorators/public.decorator';

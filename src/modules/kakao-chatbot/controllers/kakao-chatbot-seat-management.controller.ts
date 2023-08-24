@@ -1,6 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
-import { KakaoChatbotResponseDTO } from '../application/dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';

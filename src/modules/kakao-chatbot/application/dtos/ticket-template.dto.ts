@@ -1,4 +1,4 @@
-import { SkillQuickReply } from './template-output.interface';
+import { SkillQuickReply } from './ITemplate-output';
 
 export class TicketTemplateDTOCreator {
   public static toTicketTypesQuickReplies(): SkillQuickReply[] {

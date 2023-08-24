@@ -1,4 +1,4 @@
-import { ContextControlDTO } from '../../application/dtos/response.dto.interface';
+import { ContextControlDTO } from '../../application/dtos/IResponse.dto';
 import { ContextControl } from '../../domain/basic-template-outputs/context-control/context-control.value-object';
 
 export class ContextControlMapper {

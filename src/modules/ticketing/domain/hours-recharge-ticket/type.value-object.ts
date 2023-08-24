@@ -6,7 +6,7 @@ export const HOURS_RECHARGE_TYPE = 'hoursRecharge';
 export type HoursRechargeType = typeof HOURS_RECHARGE_TYPE;
 
 export class HoursRechargeTicketType extends TicketType {
-  get label() {
+  get display() {
     return '시간권';
   }
 

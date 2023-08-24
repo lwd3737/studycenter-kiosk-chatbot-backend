@@ -1,7 +1,7 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { KakaoChatbotRequestDTO } from '../dtos/request.dto';
 import { ErrorDTOCreator } from '../dtos/error.dto';
-import { KakaoChatbotResponseDTO } from '../dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../dtos/IResponse.dto';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
 import {
   HoursRechargeTicketType,

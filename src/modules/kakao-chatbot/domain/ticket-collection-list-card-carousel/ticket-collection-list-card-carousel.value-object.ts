@@ -1,7 +1,7 @@
 import { DomainError, Result, combine, err } from 'src/core';
 import {
   Button,
-  ButtonActionEnum,
+  ButtonActionType,
 } from '../basic-template-outputs/button/button.value-object';
 import { ListCard } from '../basic-template-outputs/list-card/list-card.value-object';
 import { Ticket } from 'src/modules/ticketing';
@@ -31,12 +31,12 @@ export class TicketCollectionListCardCarousel extends ListCardCarousel {
 
     const listCardPropsOrError = combine(
       ListCardHeader.create({
-        title: type.label,
+        title: type.display,
       }),
       Button.create({
-        label: `${type.label} 선택`,
-        action: ButtonActionEnum.MESSAGE,
-        messageText: `${type.label} 선택`,
+        label: `${type.display} 선택`,
+        action: ButtonActionType.MESSAGE,
+        messageText: `${type.display} 선택`,
       }),
       ...tickets.map((ticket) =>
         ListCardItem.create({

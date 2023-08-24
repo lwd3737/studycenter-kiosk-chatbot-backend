@@ -5,6 +5,10 @@ export interface SimpleImageDTO {
   imageUrl: string;
   altText: string;
 }
+export interface TextCardDTO {
+  text: string;
+  buttons?: ButtonDTO[];
+}
 export interface BasicCardDTO {
   title?: string;
   description?: string;

@@ -1,5 +1,5 @@
-import { KakaoChatbotResponseDTO } from './response.dto.interface';
-import { SkillQuickReply } from './template-output.interface';
+import { KakaoChatbotResponseDTO } from './IResponse.dto';
+import { SkillQuickReply } from './ITemplate-output';
 
 export class ErrorDTOCreator {
   private static createResponseDTO(): KakaoChatbotResponseDTO {
@@ -28,21 +28,5 @@ export class ErrorDTOCreator {
     }
 
     return responseDTO;
-  }
-}
-
-export class TicketingErrorDTOCreator {
-  public static onTicketNotSelected(): KakaoChatbotResponseDTO {
-    return ErrorDTOCreator.toSimpleTextOutput('이용권을 먼저 선택해주세요!');
-  }
-
-  public static onRoomNotSelected(): KakaoChatbotResponseDTO {
-    return ErrorDTOCreator.toSimpleTextOutput('이용할 룸을 먼저 선택해주세요!');
-  }
-
-  public static onSeatNotSelected(): KakaoChatbotResponseDTO {
-    return ErrorDTOCreator.toSimpleTextOutput(
-      '이용할 좌석을 먼저 선택해주세요!',
-    );
   }
 }

@@ -1,7 +1,7 @@
 import { combine, DomainError, err, ok, Result } from 'src/core';
 import {
   Button,
-  ButtonActionEnum,
+  ButtonActionType,
 } from '../basic-template-outputs/button/button.value-object';
 import { ButtonError } from '../basic-template-outputs/button/button.error';
 import { TicketCommerceCardCarouselError } from './ticket-commerce-card-carousel.error';
@@ -40,7 +40,7 @@ export class TicketCommerceCardCarousel extends CommerceCardCarousel {
   ): Result<CommerceCard, CommerceCardError | ButtonError> {
     const selectButtonOrError = Button.create({
       label: `${ticket.title} 선택하기`,
-      action: ButtonActionEnum.BLOCK,
+      action: ButtonActionType.BLOCK,
       // TODO: config module에서 validation
       blockId: process.env.GET_ROOMS_STATUS_FOR_TICKETING_BLOCK_ID,
       messageText: `${ticket.title} 선택`,

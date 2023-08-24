@@ -16,7 +16,7 @@ export class SameDayTicketType extends TicketType {
     super(props);
   }
 
-  get label() {
+  get display() {
     return '당일권';
   }
 }

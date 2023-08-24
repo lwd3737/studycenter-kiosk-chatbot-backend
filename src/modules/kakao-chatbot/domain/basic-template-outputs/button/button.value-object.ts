@@ -2,15 +2,14 @@ import { err, ok, Result, ValueObject } from 'src/core';
 import { ButtonError, ButtonErrors } from './button.error';
 export interface ButtonProps {
   label: string;
-  action: ButtonActionEnum;
+  action: ButtonActionType;
   webLinkUrl?: string;
   messageText?: string;
   phoneNumber?: string;
   blockId?: string;
   extra?: Record<string, any>;
 }
-
-export enum ButtonActionEnum {
+export enum ButtonActionType {
   WEB_LINK = 'webLink',
   MESSAGE = 'message',
   BLOCK = 'block',
@@ -24,7 +23,7 @@ export class Button extends ValueObject<ButtonProps> {
     return this.props.label;
   }
 
-  get action(): ButtonActionEnum {
+  get action(): ButtonActionType {
     return this.props.action;
   }
 
@@ -86,14 +85,14 @@ export class Button extends ValueObject<ButtonProps> {
     const isBlockIdIncluded = !!blockId;
 
     switch (action) {
-      case ButtonActionEnum.BLOCK: {
+      case ButtonActionType.BLOCK: {
         if (isWebLinkIncluded) return false;
         if (isPhoneNumberIncluded) return false;
         if (!isBlockIdIncluded) return false;
 
         return true;
       }
-      case ButtonActionEnum.MESSAGE: {
+      case ButtonActionType.MESSAGE: {
         if (isWebLinkIncluded) return false;
         if (isPhoneNumberIncluded) return false;
         if (isBlockIdIncluded) return false;
@@ -101,7 +100,7 @@ export class Button extends ValueObject<ButtonProps> {
 
         return true;
       }
-      case ButtonActionEnum.PHONE: {
+      case ButtonActionType.PHONE: {
         if (isWebLinkIncluded) return false;
         if (isBlockIdIncluded) return false;
         if (isMessageTextIncluded) return false;
@@ -110,7 +109,7 @@ export class Button extends ValueObject<ButtonProps> {
         return true;
       }
 
-      case ButtonActionEnum.WEB_LINK: {
+      case ButtonActionType.WEB_LINK: {
         if (isPhoneNumberIncluded) return false;
         if (isBlockIdIncluded) return false;
         if (isMessageTextIncluded) return false;

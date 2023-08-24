@@ -1,10 +1,10 @@
-import { ApplicationError } from 'src/core';
+import { AppError } from 'src/core';
 
 export type IssueVirtualAccountError =
   | MemberNotFoundError
   | TicketNotFoundError;
 
-export class MemberNotFoundError extends ApplicationError<{
+export class MemberNotFoundError extends AppError<{
   appUserId: string;
 }> {
   constructor(appUserId: string) {
@@ -12,7 +12,7 @@ export class MemberNotFoundError extends ApplicationError<{
   }
 }
 
-export class TicketNotFoundError extends ApplicationError<{
+export class TicketNotFoundError extends AppError<{
   ticketId: string;
 }> {
   constructor(ticketId: string) {

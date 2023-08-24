@@ -6,7 +6,8 @@ import {
   SimpleImageDTO,
   SimpleTextDTO,
   SkillQuickReply,
-} from './template-output.interface';
+  TextCardDTO,
+} from './ITemplate-output';
 
 export interface KakaoChatbotResponseDTO {
   version: '2.0';
@@ -24,6 +25,7 @@ export type SkillOutputDTO =
   | { simpleText: SimpleTextDTO }
   | { simpleImage: SimpleImageDTO }
   | { basicCard: BasicCardDTO }
+  | { textCard: TextCardDTO }
   | { commerceCard: CommerceCardDTO }
   | { listCard: ListCardDTO }
   | { carousel: CarouselDTO };

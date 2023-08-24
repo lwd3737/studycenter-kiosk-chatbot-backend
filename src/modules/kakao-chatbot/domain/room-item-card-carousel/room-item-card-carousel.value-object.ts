@@ -3,7 +3,7 @@ import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-roo
 import { SeatsInfo } from 'src/modules/seat-management/domain/room/seats-info.value-object';
 import {
   Button,
-  ButtonActionEnum,
+  ButtonActionType,
 } from '../basic-template-outputs/button/button.value-object';
 import { ItemCard } from '../basic-template-outputs/item-card/item-card.value-object';
 import { ItemList } from '../basic-template-outputs/item-card/item-list.value-object';
@@ -127,7 +127,7 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
     if (ticketing) {
       return Button.create({
         label: `${room.title} 선택하기`,
-        action: ButtonActionEnum.BLOCK,
+        action: ButtonActionType.BLOCK,
         blockId: process.env.GET_AVAILABLE_SEATS_FOR_TICKETING_BLOCK_ID,
         messageText: `${room.title} 선택`,
         extra: {
@@ -140,7 +140,7 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
     } else {
       return Button.create({
         label: `이용가능한 좌석보기`,
-        action: ButtonActionEnum.MESSAGE,
+        action: ButtonActionType.MESSAGE,
         messageText: `이용가능한 좌석보기`,
       });
     }

@@ -1,5 +1,5 @@
 import { IMapper } from 'src/core';
-import { CommerceCardDTO } from '../../application/dtos/template-output.interface';
+import { CommerceCardDTO } from '../../application/dtos/ITemplate-output';
 import { ButtonMapper } from './button.mapper';
 import { ProfileMapper } from './profile.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';

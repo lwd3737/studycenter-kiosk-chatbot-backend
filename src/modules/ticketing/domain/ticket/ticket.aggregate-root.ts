@@ -47,6 +47,10 @@ export class Ticket<
     return this.props.title;
   }
 
+  get fullTitle(): string {
+    return `(${this.type.display})${this.title}`;
+  }
+
   get isFixedSeat(): boolean {
     return this.props.isFixedSeat;
   }

@@ -39,6 +39,11 @@ export class TicketTime extends ValueObject<TicketTimeProps> {
     return this.props.value;
   }
 
+  public get display(): string {
+    const formattedUnit = this.unit === TICKET_TIME_UNITS.days ? '일' : '시간';
+    return `${this.value}${formattedUnit}`;
+  }
+
   private static isUnitValid(unit: string): boolean {
     return Object.values(TICKET_TIME_UNITS).includes(unit as any);
   }

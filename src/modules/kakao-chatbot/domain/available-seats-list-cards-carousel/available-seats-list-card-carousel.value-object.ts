@@ -95,7 +95,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
           title: `${seat.number.value}번 좌석`,
           description: '이용가능',
           action: ListCardItemActionEnum.BLOCK,
-          blockId: process.env.PAYMENT_FOR_TICKET_BLOCK_ID,
+          blockId: process.env.CONFIRM_TICKET_BLOCK_ID,
           messageText: `${seat.number.value}번 좌석 선택`,
           extra: {
             ticketing: {

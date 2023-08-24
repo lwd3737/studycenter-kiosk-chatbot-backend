@@ -1,4 +1,4 @@
-import { ItemCardDTO } from '../../application/dtos/template-output.interface';
+import { ItemCardDTO } from '../../application/dtos/ITemplate-output';
 import { ButtonMapper } from './button.mapper';
 import { ThumbnailMapper } from './thumbnail.mapper';
 import { ItemCard } from '../../domain/basic-template-outputs/item-card/item-card.value-object';

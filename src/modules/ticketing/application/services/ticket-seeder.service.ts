@@ -16,7 +16,7 @@ export class TicketSeederService implements OnApplicationBootstrap {
         throw seedOrError.error;
       }
 
-      console.log('ticket seeding successfully');
+      console.info('ticket seeding successfully');
     }
   }
 

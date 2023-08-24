@@ -9,9 +9,10 @@ import {
   GetTicketsByTypeErrors,
   GetTicketsByTypeUseCase,
   InitTicketsUseCase,
+  TicketNotFoundError,
   TicketType,
 } from 'src/modules/ticketing';
-import { KakaoChatbotResponseDTO } from '../application/dtos/response.dto.interface';
+import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';
 import { TicketTemplateDTOCreator } from '../application/dtos/ticket-template.dto';
@@ -30,12 +31,13 @@ import { RenderRoomItemCardsCarouselUseCase } from '../application/usecases/rend
 import { RenderAvailableSeatsListCardsCarouselUseCase } from '../application/usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
 import { IssueVirtualAccountUseCase } from '../application/usecases/issue-virtual-account/issue-virtual-account.usecase';
 import { ParseTicketTypeParamPipe } from '../application/pipes/parse-ticket-category-param.pipe';
-import {
-  ParseTicketingFromClientExtraPipe,
-  TicketingInfoClientExtraResult,
-} from '../application/pipes/parse-ticketing-from-client-extra.pipe';
 import { ParseAppUserIdParamPipe } from '../application/pipes/parse-app-user-id-param.pipe';
-import * as issueVirtualAccountError from '../application/usecases/issue-virtual-account/issue-virtual-account.error';
+import {
+  ParseTicketingInfoFromClientExtraPipe,
+  TicketingInfoClientExtraResult,
+} from '../application/pipes/parse-ticketing-info-from-client-extra.pipe';
+import { ConfirmTicketPurchaseInfoUseCase } from '../application/usecases/confirm-ticket-purchase-info/confirm-ticket-purchase-info.usecase';
+import { TextCardMapper } from '../infra/mappers/text-card.mapper';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
@@ -49,6 +51,7 @@ export class KakaoChatbotTicketingController {
     private renderRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
     private getAvailableSeatsUseCase: GetAvailableRoomSeatsUseCase,
     private renderAvailableSeatsListCardsCarouselUseCase: RenderAvailableSeatsListCardsCarouselUseCase,
+    private confirmTicketPurchaseInfoUseCase: ConfirmTicketPurchaseInfoUseCase,
     private issueVirtualAccountUseCase: IssueVirtualAccountUseCase,
   ) {}
 
@@ -163,7 +166,7 @@ export class KakaoChatbotTicketingController {
 
   @Post('rooms-status')
   async getRoomsStatus(
-    @Body(new ParseTicketingFromClientExtraPipe())
+    @Body(new ParseTicketingInfoFromClientExtraPipe())
     ticketingOrError: TicketingInfoClientExtraResult,
   ): Promise<KakaoChatbotResponseDTO> {
     if (ticketingOrError.isErr()) return ticketingOrError.error;
@@ -205,21 +208,14 @@ export class KakaoChatbotTicketingController {
 
   @Post('available-seats')
   async availableSeats(
-    @Body(
-      new ParseTicketingFromClientExtraPipe({
-        required: {
-          room_id: true,
-        },
-      }),
-    )
-    ticketingOrError: TicketingInfoClientExtraResult,
+    @Body(new ParseTicketingInfoFromClientExtraPipe({ roomId: true }))
+    ticketingInfoOrError: TicketingInfoClientExtraResult<{ roomId: true }>,
   ) {
-    if (ticketingOrError.isErr()) return ticketingOrError.error;
-    const ticketing = ticketingOrError.value;
+    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
+    const ticketingInfo = ticketingInfoOrError.value;
 
     const availableSeatsOrError = await this.getAvailableSeatsUseCase.execute({
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      roomId: ticketing.roomId!,
+      roomId: ticketingInfo.roomId,
     });
     if (availableSeatsOrError.isErr()) {
       const error = availableSeatsOrError.error;
@@ -235,7 +231,7 @@ export class KakaoChatbotTicketingController {
 
     const carouselsOrError =
       this.renderAvailableSeatsListCardsCarouselUseCase.execute({
-        ticketId: ticketing.ticketId,
+        ticketId: ticketingInfo.ticketId,
         room,
         seats: seats,
       });
@@ -264,7 +260,8 @@ export class KakaoChatbotTicketingController {
               name: 'ticketing',
               lifeSpan: 10,
               params: {
-                ...ticketing,
+                ticketId: ticketingInfo.ticketId,
+                roomId: ticketingInfo.roomId,
               },
             },
           ],
@@ -273,15 +270,52 @@ export class KakaoChatbotTicketingController {
     });
   }
 
+  @Post('confirm-purchase-info')
+  async confirmPurchaseInfo(
+    @Body(
+      new ParseTicketingInfoFromClientExtraPipe<{ roomId: true; seatId: true }>(
+        {
+          roomId: true,
+          seatId: true,
+        },
+      ),
+    )
+    ticketingInfoOrError: TicketingInfoClientExtraResult<{
+      roomId: true;
+      seatId: true;
+    }>,
+  ) {
+    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
+    const ticketingInfo = ticketingInfoOrError.value;
+
+    const textCardOrError = await this.confirmTicketPurchaseInfoUseCase.execute(
+      ticketingInfo,
+    );
+    if (textCardOrError.isErr()) {
+      const error = textCardOrError.error;
+      console.debug(error);
+
+      if (error instanceof TicketNotFoundError)
+        return ErrorDTOCreator.toSimpleTextOutput('이용권을 찾을 수 없어요!');
+      return ErrorDTOCreator.toSimpleTextOutput(
+        `구매정보를 불러오는데 실패했어요!`,
+      );
+    }
+    const textCard = textCardOrError.value;
+
+    return KaKaoChatbotResponseMapper.toDTO({
+      outputs: [
+        {
+          textCard: TextCardMapper.toDTO(textCard),
+        },
+      ],
+    });
+  }
+
   @Post('virtual-account')
   async issueVirtualAccount(
     @Body(
-      new ParseTicketingFromClientExtraPipe({
-        required: {
-          room_id: true,
-          seat_id: true,
-        },
-      }),
+      new ParseTicketingInfoFromClientExtraPipe({ roomId: true, seatId: true }),
     )
     ticketingInfoOrError: TicketingInfoClientExtraResult,
     @Body(new ParseAppUserIdParamPipe()) appUserId: string,

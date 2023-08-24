@@ -5,7 +5,7 @@ export const PERIOD_TYPE = 'period';
 export type PeriodType = typeof PERIOD_TYPE;
 
 export class PeriodTicketType extends TicketType {
-  get label() {
+  get display() {
     return '정기권';
   }
 

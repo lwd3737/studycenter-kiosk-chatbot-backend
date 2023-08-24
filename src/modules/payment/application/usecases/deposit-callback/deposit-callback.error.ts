@@ -1,4 +1,4 @@
-import { ApplicationError, UnknownError, UseCaseError } from 'src/core';
+import { AppError, UnknownError, UseCaseError } from 'src/core';
 
 export type DepositCallbackError =
   | DepositFailed
@@ -13,7 +13,7 @@ export class DepositFailed extends UseCaseError {
   }
 }
 
-export class PaymentNotFoundError extends ApplicationError<{
+export class PaymentNotFoundError extends AppError<{
   orderId: string;
 }> {
   constructor(orderId: string) {
@@ -21,7 +21,7 @@ export class PaymentNotFoundError extends ApplicationError<{
   }
 }
 
-export class MemberNotFoundError extends ApplicationError<{
+export class MemberNotFoundError extends AppError<{
   memberId: string;
 }> {
   constructor(memberId: string) {

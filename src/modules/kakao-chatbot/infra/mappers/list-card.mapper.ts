@@ -2,7 +2,7 @@ import { IMapper } from 'src/core';
 import {
   ListCardDTO,
   ListItemDTO,
-} from '../../application/dtos/template-output.interface';
+} from '../../application/dtos/ITemplate-output';
 import { ButtonMapper } from './button.mapper';
 import { ListCard } from '../../domain/basic-template-outputs/list-card/list-card.value-object';
 import { ListCardHeader } from '../../domain/basic-template-outputs/list-card/header.value-object';
