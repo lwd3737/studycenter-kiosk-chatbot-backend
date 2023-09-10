@@ -18,7 +18,7 @@ interface TicketCommerceCardCarouselProps {
 }
 
 export class TicketCommerceCardCarousel extends CommerceCardCarousel {
-  public static createFrom(
+  public static from(
     props: TicketCommerceCardCarouselProps,
   ): Result<CommerceCardCarousel, TicketCommerceCardCarouselError> {
     const ticketCommerceCardsOrError = combine(
@@ -42,12 +42,10 @@ export class TicketCommerceCardCarousel extends CommerceCardCarousel {
       label: `${ticket.title} 선택하기`,
       action: ButtonActionType.BLOCK,
       // TODO: config module에서 validation
-      blockId: process.env.GET_ROOMS_STATUS_FOR_TICKETING_BLOCK_ID,
+      blockId: process.env.SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID,
       messageText: `${ticket.title} 선택`,
       extra: {
-        ticketing: {
-          ticket_id: ticket.id.value,
-        },
+        ticketId: ticket.id.value,
       },
     });
     const thumbnailOrError = this.createTicketThumbnail(ticket.type);

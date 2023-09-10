@@ -9,16 +9,16 @@ import { ListCardCarousel } from '../basic-template-outputs/list-card-carousel/l
 import { ListCardHeader } from '../basic-template-outputs/list-card/header.value-object';
 import { ListCardItem } from '../basic-template-outputs/list-card/item.value-object';
 
-interface TicketCollectionListCarouselProps {
-  ticketCollections: Ticket[][];
+interface TicketGroupListCarouselProps {
+  ticketGroups: Ticket[][];
 }
 
-export class TicketCollectionListCardCarousel extends ListCardCarousel {
-  public static createFrom(
-    props: TicketCollectionListCarouselProps,
-  ): Result<TicketCollectionListCardCarousel, DomainError> {
+export class TicketGroupListCardCarousel extends ListCardCarousel {
+  public static from(
+    props: TicketGroupListCarouselProps,
+  ): Result<TicketGroupListCardCarousel, DomainError> {
     const listCardsOrError = combine(
-      ...props.ticketCollections.map(this.createListCard),
+      ...props.ticketGroups.map(this.createListCard),
     );
 
     if (listCardsOrError.isErr()) return err(listCardsOrError.error);

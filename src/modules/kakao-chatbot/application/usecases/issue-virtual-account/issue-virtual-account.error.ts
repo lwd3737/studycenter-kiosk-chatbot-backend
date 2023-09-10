@@ -1,9 +1,16 @@
 import { AppError } from 'src/core';
 
 export type IssueVirtualAccountError =
+  | TicketNotSelectedError
   | MemberNotFoundError
   | TicketNotFoundError
   | SimpleTextCreationFailedError;
+
+export class TicketNotSelectedError extends AppError {
+  constructor(appUserId: string) {
+    super(`Ticket not selected for appUserId(${appUserId})`);
+  }
+}
 
 export class MemberNotFoundError extends AppError {
   constructor(appUserId: string) {

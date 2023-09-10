@@ -42,12 +42,11 @@ export class DepositCallbackUseCase
       if (!foundPayment)
         return err(new PaymentNotFoundError(input.event.orderId));
 
-      const memberOrError = await this.memberService.findById(
+      const foundMember = await this.memberService.findById(
         foundPayment.memberId.value,
       );
-      if (memberOrError.isErr())
+      if (foundMember === null)
         return err(new MemberNotFoundError(foundPayment.memberId.value));
-      const member = memberOrError.value;
 
       const resOrError = await this.eventApiService.publish({
         event: {
@@ -58,7 +57,7 @@ export class DepositCallbackUseCase
         },
         user: {
           type: 'appUserId',
-          id: member.appUserId,
+          id: foundMember.appUserId,
         },
       });
       if (resOrError.status !== 'SUCCESS')

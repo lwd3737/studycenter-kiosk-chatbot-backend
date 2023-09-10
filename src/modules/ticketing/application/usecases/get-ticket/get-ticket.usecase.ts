@@ -17,7 +17,7 @@ export class GetTicketUseCase implements IUseCase<UseCaseInput, UseCaseResult> {
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     try {
-      const foundTicket = await this.ticketRepo.getOneById(
+      const foundTicket = await this.ticketRepo.findOneById(
         new TicketId(input.ticketId),
       );
       if (!foundTicket)

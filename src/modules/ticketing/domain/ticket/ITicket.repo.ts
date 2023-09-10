@@ -8,10 +8,10 @@ export const TicketRepoProvider = Symbol('TicketRepoProvider');
 
 export interface ITicketRepo extends IRepo<Ticket> {
   isEmpty(): Promise<boolean>;
-  getAll(): Promise<Ticket[]>;
-  getByType(type: TicketType): Promise<Ticket[]>;
-  getOneById(id: TicketId): Promise<Ticket | null>;
-  getOneByTime(time: TicketTime): Promise<Ticket | null>;
+  findAll(): Promise<Ticket[]>;
+  findByType(type: TicketType): Promise<Ticket[]>;
+  findOneById(id: TicketId): Promise<Ticket | null>;
+  findOneByTime(time: TicketTime): Promise<Ticket | null>;
   bulkCreate(tickets: Ticket[]): Promise<void>;
   clear(): Promise<void>;
 }

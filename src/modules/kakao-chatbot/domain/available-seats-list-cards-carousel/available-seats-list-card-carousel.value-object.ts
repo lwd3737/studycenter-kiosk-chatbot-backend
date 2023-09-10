@@ -11,7 +11,6 @@ import {
 import { ListCardCarousel } from '../basic-template-outputs/list-card-carousel/list-card-carousel.value-object';
 
 type CreateProps = {
-  ticketId: string;
   room: Room;
   seats: Seat[];
 };
@@ -21,7 +20,30 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
   public static SEATS_MAX_COUNT = 25;
   private static LIST_CARD_ITEMS_MAX_COUNT = 5;
 
-  public static createFrom(
+  public static createCarousels(
+    props: CreateProps,
+  ): Result<AvailableSeatsListCardCarousel[], DomainError> {
+    const carouselCount = Math.ceil(props.seats.length / this.SEATS_MAX_COUNT);
+
+    return combine(
+      ...Array(carouselCount)
+        .fill(null)
+        .map((_, index) => {
+          const [startIndex, endIndex] = [
+            index * this.SEATS_MAX_COUNT,
+            (index + 1) * this.SEATS_MAX_COUNT,
+          ];
+          const curSeats = props.seats.slice(startIndex, endIndex);
+
+          return this.from({
+            room: props.room,
+            seats: curSeats,
+          });
+        }),
+    );
+  }
+
+  public static from(
     props: CreateProps,
   ): Result<AvailableSeatsListCardCarousel, DomainError> {
     const validOrError = this.validate(props);
@@ -60,12 +82,8 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
     const listCardCount = this.countListCard(props.seats);
     const listCardsOrError = combine(
       ...Array(listCardCount)
-        .fill(true)
-        .map((_, index) =>
-          this.createListCard(props.seats, index, {
-            ...props,
-          }),
-        ),
+        .fill(null)
+        .map((_, index) => this.createListCard(props.room, props.seats, index)),
     );
     if (listCardsOrError.isErr()) return err(listCardsOrError.error);
 
@@ -73,22 +91,16 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
   }
 
   private static createListCard(
+    room: Room,
     seats: Seat[],
     index: CarouselIndex,
-    context: {
-      ticketId: string;
-      room: Room;
-    },
   ) {
-    const [startIndex, endIndex] = this.calculateCurrentListCardRange(
-      seats,
-      index,
-    );
+    const [startIndex, endIndex] = this.calcListCardRange(seats, index);
     const currentSeats = seats.slice(startIndex, endIndex);
 
     const listCardPropsOrError = combine(
       ListCardHeader.create({
-        title: `${context.room.title} 이용가능한 좌석`,
+        title: `${room.title} 이용가능한 좌석`,
       }),
       ...currentSeats.map((seat) =>
         ListCardItem.create({
@@ -98,11 +110,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
           blockId: process.env.CONFIRM_TICKET_BLOCK_ID,
           messageText: `${seat.number.value}번 좌석 선택`,
           extra: {
-            ticketing: {
-              ticket_id: context.ticketId,
-              room_id: context.room.id.value,
-              seat_id: seat.id.value,
-            },
+            seatId: seat.id.value,
           },
         }),
       ),
@@ -123,7 +131,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
     return Math.ceil(seats.length / this.LIST_CARD_ITEMS_MAX_COUNT);
   }
 
-  private static calculateCurrentListCardRange(
+  private static calcListCardRange(
     seats: Seat[],
     index: CarouselIndex,
   ): [number, number] {

@@ -4,29 +4,20 @@ import {
   MemberRepoProvider,
 } from '../../domain/member/member.repo.interface';
 import { Member } from '../../domain/member/member.aggregate-root';
-import { Result, err, ok } from 'src/core';
-import {
-  MemberNotFoundByAppUserIdError,
-  MemberNotFoundByIdError,
-} from './member.error';
 
 @Injectable()
 export class MemberService {
   constructor(@Inject(MemberRepoProvider) private memberRepo: IMemberRepo) {}
 
-  public async findById(
-    id: string,
-  ): Promise<Result<Member, MemberNotFoundByIdError>> {
+  public async findById(id: string): Promise<Member | null> {
     const found = await this.memberRepo.getById(id);
-    if (!found) return err(new MemberNotFoundByIdError(id));
-    return ok(found);
+    if (!found) return null;
+    return found;
   }
 
-  public async findByAppUserId(
-    appUserId: string,
-  ): Promise<Result<Member, MemberNotFoundByAppUserIdError>> {
+  public async findByAppUserId(appUserId: string): Promise<Member | null> {
     const found = await this.memberRepo.getByAppUserId(appUserId);
-    if (!found) return err(new MemberNotFoundByAppUserIdError(appUserId));
-    return ok(found);
+    if (!found) return null;
+    return found;
   }
 }

@@ -2,19 +2,20 @@ import { IUseCase, Result, UnknownError, err, ok } from 'src/core';
 import { Injectable } from '@nestjs/common';
 import { SimpleText } from 'src/modules/kakao-chatbot/domain/basic-template-outputs/simple-text/simple-text.value-object';
 import { PaymentService } from 'src/modules/payment/application/services/payment.service';
-import * as paymentErrors from 'src/modules/payment';
 import * as ticketErrors from 'src/modules/ticketing';
 import {
   IssueVirtualAccountError,
   MemberNotFoundError,
   SimpleTextCreationFailedError,
   TicketNotFoundError,
+  TicketNotSelectedError,
 } from './issue-virtual-account.error';
+import { TicketingContextService } from 'src/modules/ticketing/application/services/ticketing-context.service';
+import { TicketService } from 'src/modules/ticketing';
+import { MemberService } from 'src/modules/member';
 
 type UseCaseInput = {
   appUserId: string;
-  ticketId: string;
-  roomId: string;
 };
 type UseCaseResult = Result<SimpleText, IssueVirtualAccountError>;
 
@@ -22,28 +23,37 @@ type UseCaseResult = Result<SimpleText, IssueVirtualAccountError>;
 export class IssueVirtualAccountUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
-  constructor(private paymentService: PaymentService) {}
+  constructor(
+    private memberService: MemberService,
+    private ticketingContextService: TicketingContextService,
+    private ticketService: TicketService,
+    private paymentService: PaymentService,
+  ) {}
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     try {
-      const paymentOrError = await this.paymentService.issueVirtualAccount(
-        input,
+      const foundMember = await this.memberService.findByAppUserId(
+        input.appUserId,
       );
-      if (paymentOrError.isErr()) {
-        const error = paymentOrError.error;
+      if (!foundMember) return err(new MemberNotFoundError(input.appUserId));
 
-        if (error instanceof paymentErrors.MemberNotFoundError)
-          return err(new MemberNotFoundError(error.metadata.appUserId));
-        if (error instanceof ticketErrors.TicketNotFoundError)
-          return err(new TicketNotFoundError(error.metadata.ticketId));
+      const { ticketId } =
+        this.ticketingContextService.get(input.appUserId) ?? {};
+      if (!ticketId) return err(new TicketNotSelectedError(input.appUserId));
 
-        throw error;
-      }
+      const foundTicket = await this.ticketService.findOneById(
+        new ticketErrors.TicketId(ticketId),
+      );
+      if (!foundTicket) return err(new TicketNotFoundError(ticketId));
 
-      const virtualAccountPayment = paymentOrError.value;
+      const virtualAccountPayment =
+        await this.paymentService.issueVirtualAccount({
+          member: foundMember,
+          ticket: foundTicket,
+        });
+
       const simpleTextOrError = SimpleText.create({
-        value: `가상계좌 발급이 완료되었습니다.\n\n은행명: ${virtualAccountPayment.bank}\n계좌번호: ${paymentOrError.value.accountNumber}\n예금주: ${paymentOrError.value.customerName}\n입금기한: ${paymentOrError.value.dueDate?.formatted}
-        `,
+        value: `가상계좌 발급이 완료되었습니다.\n한 번만 입금 가능한 일회용 계좌번호입니다.\n정확한 금액을 한 번에 입금해주세요.\n\n은행명: ${virtualAccountPayment.bank}\n계좌번호: ${virtualAccountPayment.accountNumber}\n금액: ${virtualAccountPayment.totalAmount.value}원\n예금주: ${virtualAccountPayment.customerName}\n입금기한: ${virtualAccountPayment.dueDate?.formatted}`,
       });
       if (simpleTextOrError.isErr())
         return err(

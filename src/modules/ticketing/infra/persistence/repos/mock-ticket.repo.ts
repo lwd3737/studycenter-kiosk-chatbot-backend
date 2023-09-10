@@ -41,25 +41,25 @@ export class MockTicketRepo implements ITicketRepo {
     return this.storage.length === 0;
   }
 
-  async getAll(): Promise<Ticket[]> {
+  async findAll(): Promise<Ticket[]> {
     return this.storage.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
-  async getOneById(id: TicketId): Promise<Ticket | null> {
+  async findOneById(id: TicketId): Promise<Ticket | null> {
     const found = this.storage.find((ticket) => ticket.id === id.value);
     if (!found) return null;
 
     return this.ticketMapper.toDomain(found);
   }
 
-  async getByType(type: TicketType): Promise<Ticket[]> {
+  async findByType(type: TicketType): Promise<Ticket[]> {
     const filtered = this.storage.filter(
       (ticket) => ticket.type === type.value,
     );
     return filtered.map((ticket) => this.ticketMapper.toDomain(ticket));
   }
 
-  async getOneByTime(time: TicketTime): Promise<Ticket | null> {
+  async findOneByTime(time: TicketTime): Promise<Ticket | null> {
     const found = this.storage.find(
       (ticket) =>
         ticket.time.unit === time.unit && ticket.time.value === time.value,

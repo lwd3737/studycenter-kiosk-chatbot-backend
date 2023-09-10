@@ -5,9 +5,6 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  GetAllTicketCollectionsErrors,
-  GetTicketsByTypeErrors,
-  GetTicketsByTypeUseCase,
   InitTicketsUseCase,
   TicketNotFoundError,
   TicketType,
@@ -15,43 +12,35 @@ import {
 import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';
-import { TicketTemplateDTOCreator } from '../application/dtos/ticket-template.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
-import { GetRoomSeatsGroupUseCase } from 'src/modules/seat-management';
-import { ContextControlMapper } from '../infra/mappers/context-control.mapper';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
-import { GetAvailableRoomSeatsUseCase } from 'src/modules/seat-management/use-cases/get-available-room-seats.use-case.ts/get-available-room-seats.use-case';
-import { ContextControl } from '../domain/basic-template-outputs/context-control/context-control.value-object';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
-import { RenderTicketCollectionListCardCarouselUseCase } from '../application/usecases/render-ticket-collection-list-card-carousel/render-ticket-collection-list-card-carousel.usecase';
-import { RenderTicketCommerceCardsCarouselUseCase } from '../application/usecases/render-ticket-commerce-cards-carousel/render-ticket-commerce-cards-carousel.usecase';
-import { RenderRoomItemCardsCarouselUseCase } from '../application/usecases/render-room-item-cards-carousel/render-room-item-cards-carousel.usecase';
-import { RenderAvailableSeatsListCardsCarouselUseCase } from '../application/usecases/render-available-seats-list-cards-carousel/render-available-seats-list-cards-carousel.usecase';
+import { GetTicketGroupsUseCase } from '../application/usecases/get-ticket-groups/get-ticket-groups.usecase';
+import { GetTicketGroupUseCase } from '../application/usecases/get-ticket-group/get-ticket-group.usecase';
+import { SelectTicketAndGetAllRoomsUseCase } from '../application/usecases/select-ticket-and-get-all-rooms/select-ticket-and-get-all-rooms.usecase';
+import { GetAvailableSeatsUseCase } from '../application/usecases/get-available-seats/get-available-seats.usecase';
 import { IssueVirtualAccountUseCase } from '../application/usecases/issue-virtual-account/issue-virtual-account.usecase';
 import { ParseTicketTypeParamPipe } from '../application/pipes/parse-ticket-category-param.pipe';
 import { ParseAppUserIdParamPipe } from '../application/pipes/parse-app-user-id-param.pipe';
-import {
-  ParseTicketingInfoFromClientExtraPipe,
-  TicketingInfoClientExtraResult,
-} from '../application/pipes/parse-ticketing-info-from-client-extra.pipe';
-import { ConfirmTicketPurchaseInfoUseCase } from '../application/usecases/confirm-ticket-purchase-info/confirm-ticket-purchase-info.usecase';
+import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { TextCardMapper } from '../infra/mappers/text-card.mapper';
+import {
+  ParseClientExtraPipe,
+  ParseClientExtraResult,
+} from '../application/pipes/parse-client-extra.pipe';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
 export class KakaoChatbotTicketingController {
   constructor(
     private initTicketUseCase: InitTicketsUseCase,
-    private renderTicketListCarouselUseCase: RenderTicketCollectionListCardCarouselUseCase,
-    private getTicketsByTypeUseCase: GetTicketsByTypeUseCase,
-    private renderTicketCommerceCardsCarouselUseCase: RenderTicketCommerceCardsCarouselUseCase,
-    private getRoomSeatsGroupUseCase: GetRoomSeatsGroupUseCase,
-    private renderRoomItemCardsCarousel: RenderRoomItemCardsCarouselUseCase,
-    private getAvailableSeatsUseCase: GetAvailableRoomSeatsUseCase,
-    private renderAvailableSeatsListCardsCarouselUseCase: RenderAvailableSeatsListCardsCarouselUseCase,
-    private confirmTicketPurchaseInfoUseCase: ConfirmTicketPurchaseInfoUseCase,
+    private getTicketGroupsUseCase: GetTicketGroupsUseCase,
+    private getTicketGroupUseCase: GetTicketGroupUseCase,
+    private selectTicketAndGetAllRoomsUseCase: SelectTicketAndGetAllRoomsUseCase,
+    private getAvailableSeats: GetAvailableSeatsUseCase,
+    private confirmTicketPurchaseInfoUseCase: SelectSeatAndConfirmTicketPurchaseInfoUseCase,
     private issueVirtualAccountUseCase: IssueVirtualAccountUseCase,
   ) {}
 
@@ -79,20 +68,16 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('ticket-all-collections')
-  async getAllTicketCollections(): Promise<KakaoChatbotResponseDTO> {
-    const ticketListCarouselOrError =
-      await this.renderTicketListCarouselUseCase.execute();
-    if (ticketListCarouselOrError.isErr()) {
-      const error = ticketListCarouselOrError.error;
+  @Post('ticket-groups')
+  async getTicketGroups(): Promise<KakaoChatbotResponseDTO> {
+    const ticketGroupListCarouselOrError =
+      await this.getTicketGroupsUseCase.execute();
+    if (ticketGroupListCarouselOrError.isErr()) {
+      const error = ticketGroupListCarouselOrError.error;
 
       console.debug(error);
 
       switch (error.constructor) {
-        case GetAllTicketCollectionsErrors.TicketNotExistError:
-          return ErrorDTOCreator.toSimpleTextOutput(
-            '이용권이 존재하지 않아요. 상담연결 해주세요!',
-          );
         default:
           return ErrorDTOCreator.toSimpleTextOutput(
             '이용권을 불러오는데 실패했습니다. 다시 시도해주세요!',
@@ -104,45 +89,24 @@ export class KakaoChatbotTicketingController {
       outputs: [
         {
           carousel: ListCardCarouselMapper.toDTO(
-            ticketListCarouselOrError.value,
+            ticketGroupListCarouselOrError.value,
           ),
         },
       ],
     });
   }
 
-  @Post('ticket-collection-by-type')
-  async getTicketCollectionByType(
+  @Post('ticket-group')
+  async getTicketGroup(
     @Body(ParseTicketTypeParamPipe) ticketType: TicketType,
   ): Promise<KakaoChatbotResponseDTO> {
-    const ticketCollectionByTypeOrError =
-      await this.getTicketsByTypeUseCase.execute({
-        type: ticketType,
-      });
-    if (ticketCollectionByTypeOrError.isErr()) {
-      const error = ticketCollectionByTypeOrError.error;
-      console.debug(error);
-
-      switch (error.constructor) {
-        case GetTicketsByTypeErrors.TicketNotFoundError:
-          return ErrorDTOCreator.toSimpleTextOutput(
-            `${ticketType} 이용권은 존재하지 않는 이용권이에요. 아래 이용권 중에 선택해주세요!`,
-            TicketTemplateDTOCreator.toTicketTypesQuickReplies(),
-          );
-        default:
-          return ErrorDTOCreator.toSimpleTextOutput(
-            '이용권 목록을 불러오는데 실패했어요. 다시 시도해주세요!',
-          );
-      }
-    }
-
-    const ticketCommerceCardsCarouselOrError =
-      await this.renderTicketCommerceCardsCarouselUseCase.execute({
-        tickets: ticketCollectionByTypeOrError.value,
+    const ticketCommerceCardCarouselOrError =
+      await this.getTicketGroupUseCase.execute({
+        ticketType,
       });
 
-    if (ticketCommerceCardsCarouselOrError.isErr()) {
-      const error = ticketCommerceCardsCarouselOrError.error;
+    if (ticketCommerceCardCarouselOrError.isErr()) {
+      const error = ticketCommerceCardCarouselOrError.error;
       console.debug(error);
 
       switch (error.constructor) {
@@ -157,37 +121,28 @@ export class KakaoChatbotTicketingController {
       outputs: [
         {
           carousel: CommerceCardCarouselMapper.toDTO(
-            ticketCommerceCardsCarouselOrError.value,
+            ticketCommerceCardCarouselOrError.value,
           ),
         },
       ],
     });
   }
 
-  @Post('rooms-status')
-  async getRoomsStatus(
-    @Body(new ParseTicketingInfoFromClientExtraPipe())
-    ticketingOrError: TicketingInfoClientExtraResult,
+  @Post('select-ticket-and-get-all-rooms')
+  async selectTicketAndGetAllRooms(
+    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
+    @Body(new ParseClientExtraPipe<{ ticketId: string }>(['ticketId']))
+    clientExtraOrError: ParseClientExtraResult<{ ticketId: string }>,
   ): Promise<KakaoChatbotResponseDTO> {
-    if (ticketingOrError.isErr()) return ticketingOrError.error;
+    if (clientExtraOrError.isErr()) return clientExtraOrError.error;
 
-    const roomsOrError = await this.getRoomSeatsGroupUseCase.execute();
-    if (roomsOrError.isErr()) {
-      const error = roomsOrError.error;
-      console.debug(new InternalServerErrorException(error));
-
-      return ErrorDTOCreator.toSimpleTextOutput(
-        '룸에 대한 정보를 가져오지 못했어요!',
-      );
-    }
-
-    const roomItemCardsCarouselOrError =
-      this.renderRoomItemCardsCarousel.execute({
-        roomSeatsGroup: roomsOrError.value,
-        ticketing: ticketingOrError.value,
+    const roomItemCardCarouselOrError =
+      await this.selectTicketAndGetAllRoomsUseCase.execute({
+        appUserId,
+        ticketId: clientExtraOrError.value.ticketId,
       });
-    if (roomItemCardsCarouselOrError.isErr()) {
-      const error = roomItemCardsCarouselOrError.error;
+    if (roomItemCardCarouselOrError.isErr()) {
+      const error = roomItemCardCarouselOrError.error;
       console.debug(new InternalServerErrorException(error));
 
       return ErrorDTOCreator.toSimpleTextOutput(
@@ -199,7 +154,7 @@ export class KakaoChatbotTicketingController {
       outputs: [
         {
           carousel: ItemCardCarouselMapper.toDTO(
-            roomItemCardsCarouselOrError.value,
+            roomItemCardCarouselOrError.value,
           ),
         },
       ],
@@ -208,33 +163,14 @@ export class KakaoChatbotTicketingController {
 
   @Post('available-seats')
   async availableSeats(
-    @Body(new ParseTicketingInfoFromClientExtraPipe({ roomId: true }))
-    ticketingInfoOrError: TicketingInfoClientExtraResult<{ roomId: true }>,
+    @Body(new ParseClientExtraPipe<{ roomId: string }>(['roomId']))
+    clientExtraOrError: ParseClientExtraResult<{ roomId: string }>,
   ) {
-    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
-    const ticketingInfo = ticketingInfoOrError.value;
+    if (clientExtraOrError.isErr()) return clientExtraOrError.error;
 
-    const availableSeatsOrError = await this.getAvailableSeatsUseCase.execute({
-      roomId: ticketingInfo.roomId,
+    const carouselsOrError = await this.getAvailableSeats.execute({
+      roomId: clientExtraOrError.value.roomId,
     });
-    if (availableSeatsOrError.isErr()) {
-      const error = availableSeatsOrError.error;
-
-      switch (error.constructor) {
-        default:
-          return ErrorDTOCreator.toSimpleTextOutput(
-            `좌석을 불러오는데 실패했어요!`,
-          );
-      }
-    }
-    const { room, seats } = availableSeatsOrError.value;
-
-    const carouselsOrError =
-      this.renderAvailableSeatsListCardsCarouselUseCase.execute({
-        ticketId: ticketingInfo.ticketId,
-        room,
-        seats: seats,
-      });
     if (carouselsOrError.isErr()) {
       const error = carouselsOrError.error;
       console.debug(error);
@@ -253,43 +189,22 @@ export class KakaoChatbotTicketingController {
           carousel: ListCardCarouselMapper.toDTO(carousel),
         })),
       ],
-      context: ContextControlMapper.toDTO(
-        ContextControl.create({
-          values: [
-            {
-              name: 'ticketing',
-              lifeSpan: 10,
-              params: {
-                ticketId: ticketingInfo.ticketId,
-                roomId: ticketingInfo.roomId,
-              },
-            },
-          ],
-        }),
-      ),
     });
   }
 
-  @Post('confirm-purchase-info')
+  @Post('select-seat-and-confirm-purchase-info')
   async confirmPurchaseInfo(
-    @Body(
-      new ParseTicketingInfoFromClientExtraPipe<{ roomId: true; seatId: true }>(
-        {
-          roomId: true,
-          seatId: true,
-        },
-      ),
-    )
-    ticketingInfoOrError: TicketingInfoClientExtraResult<{
-      roomId: true;
-      seatId: true;
-    }>,
+    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
+    @Body(new ParseClientExtraPipe<{ seatId: string }>(['seatId']))
+    clientExtraOrError: ParseClientExtraResult<{ seatId: string }>,
   ) {
-    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
-    const ticketingInfo = ticketingInfoOrError.value;
+    if (clientExtraOrError.isErr()) return clientExtraOrError.error;
 
     const textCardOrError = await this.confirmTicketPurchaseInfoUseCase.execute(
-      ticketingInfo,
+      {
+        appUserId,
+        seatId: clientExtraOrError.value.seatId,
+      },
     );
     if (textCardOrError.isErr()) {
       const error = textCardOrError.error;
@@ -314,24 +229,10 @@ export class KakaoChatbotTicketingController {
 
   @Post('virtual-account')
   async issueVirtualAccount(
-    @Body(
-      new ParseTicketingInfoFromClientExtraPipe({ roomId: true, seatId: true }),
-    )
-    ticketingInfoOrError: TicketingInfoClientExtraResult,
     @Body(new ParseAppUserIdParamPipe()) appUserId: string,
   ) {
-    if (ticketingInfoOrError.isErr()) return ticketingInfoOrError.error;
-
-    const ticketingInfo = ticketingInfoOrError.value;
-    if (!ticketingInfo.roomId)
-      return ErrorDTOCreator.toSimpleTextOutput('룸을 선택해주세요!');
-    if (!ticketingInfo.ticketId)
-      return ErrorDTOCreator.toSimpleTextOutput('이용권을 선택해주세요!');
-
     const simpleTextOrError = await this.issueVirtualAccountUseCase.execute({
       appUserId,
-      ticketId: ticketingInfo.ticketId,
-      roomId: ticketingInfo.roomId,
     });
     if (simpleTextOrError.isErr()) {
       const error = simpleTextOrError.error;
