@@ -3,6 +3,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { DepositCallbackEventDTO } from './application/dtos/event.dto';
 import { DepositCallbackUseCase } from './application/usecases/deposit-callback/deposit-callback.usecase';
 
+// TODO: public 제거
 @Public()
 @Controller('payment')
 export class PaymentController {

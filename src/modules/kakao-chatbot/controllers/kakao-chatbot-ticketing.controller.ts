@@ -17,19 +17,19 @@ import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
-import { GetTicketGroupsUseCase } from '../application/usecases/get-ticket-groups/get-ticket-groups.usecase';
-import { GetTicketGroupUseCase } from '../application/usecases/get-ticket-group/get-ticket-group.usecase';
-import { SelectTicketAndGetAllRoomsUseCase } from '../application/usecases/select-ticket-and-get-all-rooms/select-ticket-and-get-all-rooms.usecase';
-import { GetAvailableSeatsUseCase } from '../application/usecases/get-available-seats/get-available-seats.usecase';
-import { IssueVirtualAccountUseCase } from '../application/usecases/issue-virtual-account/issue-virtual-account.usecase';
+import { SelectTicketAndGetAllRoomsUseCase } from '../application/usecases/ticketing/select-ticket-and-get-all-rooms/select-ticket-and-get-all-rooms.usecase';
+import { GetAvailableSeatsUseCase } from '../application/usecases/ticketing/get-available-seats/get-available-seats.usecase';
 import { ParseTicketTypeParamPipe } from '../application/pipes/parse-ticket-category-param.pipe';
 import { ParseAppUserIdParamPipe } from '../application/pipes/parse-app-user-id-param.pipe';
-import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { TextCardMapper } from '../infra/mappers/text-card.mapper';
 import {
   ParseClientExtraPipe,
   ParseClientExtraResult,
 } from '../application/pipes/parse-client-extra.pipe';
+import { GetTicketGroupsUseCase } from '../application/usecases/ticketing/get-ticket-groups/get-ticket-groups.usecase';
+import { GetTicketGroupUseCase } from '../application/usecases/ticketing/get-ticket-group/get-ticket-group.usecase';
+import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
+import { IssueVirtualAccountUseCase } from '../application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
 
 @Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)

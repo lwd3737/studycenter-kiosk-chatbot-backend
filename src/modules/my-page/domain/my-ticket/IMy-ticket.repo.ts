@@ -7,4 +7,5 @@ export interface IMyTicketRepo extends IRepo<MyTicket> {
   create(myTicket: MyTicket): Promise<void>;
   update(myTicket: MyTicket): Promise<void>;
   findOneById(myTicketId: string): Promise<MyTicket | null>;
+  findOneByMemberId(memberId: string): Promise<MyTicket | null>;
 }

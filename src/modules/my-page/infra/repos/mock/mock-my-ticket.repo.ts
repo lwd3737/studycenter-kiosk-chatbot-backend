@@ -46,4 +46,10 @@ export class MockMyTicketRepo implements IMyTicketRepo {
     if (!raw) return null;
     return MockMyTicketMapper.toDomain(raw);
   }
+
+  public async findOneByMemberId(memberId: string): Promise<MyTicket | null> {
+    const raw = this.storage.find((myTicket) => myTicket.memberId === memberId);
+    if (!raw) return null;
+    return MockMyTicketMapper.toDomain(raw);
+  }
 }

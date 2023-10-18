@@ -3,7 +3,6 @@ import { TicketId, TicketType } from 'src/modules/ticketing';
 import { FixedExpiryUsageDurationType } from './usage-duration/fixed-expiry-usage-duration.vo';
 import { RechargableUsageDurationType } from './usage-duration/rechargable-usage-duration.vo';
 import {
-  UsageDurationHandler,
   MyTicketUsageDuration,
   OnStartTicketUsage,
 } from './usage-duration/usage-duration.vo';

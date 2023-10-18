@@ -4,11 +4,13 @@ import {
   MyTicketRepoProvider,
 } from '../../domain/my-ticket/IMy-ticket.repo';
 import { MyTicket } from '../../domain/my-ticket/my-ticket.ar';
+import { MemberService } from 'src/modules/member';
 
 @Injectable()
 export class MyTicketService {
   constructor(
     @Inject(MyTicketRepoProvider) private myTicketRepo: IMyTicketRepo,
+    private memberService: MemberService,
   ) {}
 
   public async create(myTicket: MyTicket): Promise<void> {
@@ -27,5 +29,12 @@ export class MyTicketService {
 
   public async findOneById(myTicketId: string): Promise<MyTicket | null> {
     return await this.myTicketRepo.findOneById(myTicketId);
+  }
+
+  public async findOneByAppUserId(appUserId: string): Promise<MyTicket | null> {
+    const foundMember = await this.memberService.findByAppUserId(appUserId);
+    if (!foundMember) return null;
+
+    return await this.myTicketRepo.findOneByMemberId(foundMember.id.value);
   }
 }

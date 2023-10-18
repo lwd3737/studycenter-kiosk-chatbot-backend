@@ -4,9 +4,10 @@ import { MockMyTicketRepo } from './infra/repos/mock/mock-my-ticket.repo';
 import { CheckInOutService } from './application/services/check-in-out.service';
 import { MyTicketService } from './application/services/my-ticket.service';
 import { KakaoChatbotModule } from '../kakao-chatbot/kakao-chatbot.module';
+import { MemberModule } from '../member';
 
 @Module({
-  imports: [forwardRef(() => KakaoChatbotModule)],
+  imports: [forwardRef(() => KakaoChatbotModule), MemberModule],
   providers: [
     {
       provide: MyTicketRepoProvider,
