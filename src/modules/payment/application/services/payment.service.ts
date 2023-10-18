@@ -28,7 +28,8 @@ export class PaymentService {
       {
         name: input.ticket.title,
         product: {
-          type: ProductType.ticket,
+          id: input.ticket.ticketId.value,
+          type: ProductType.TICKET,
           name: input.ticket.title,
           price: input.ticket.price.value,
         },

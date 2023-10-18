@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Member } from 'src/modules/member/domain/member/member.aggregate-root';
+import { Member } from 'src/modules/member/domain/member/member.ar';
 import { MockMember } from '../../../repos/mocks/mock-member.repo';
 import { IMemberMapper } from '../../member.mapper.interface';
 

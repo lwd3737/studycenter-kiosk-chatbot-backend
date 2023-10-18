@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { MembershipModule } from '../member';
+import { MemberModule } from '../member';
 import { AuthenticateUseCase } from './use-cases/authenticate/authenticate.use-case';
 import { SignupUseCase } from './use-cases/signup/signup.use-case';
 import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({
-  imports: [MembershipModule],
+  imports: [MemberModule],
   providers: [
     AuthenticateUseCase,
     SignupUseCase,

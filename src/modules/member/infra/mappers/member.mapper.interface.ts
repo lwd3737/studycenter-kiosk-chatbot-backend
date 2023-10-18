@@ -1,5 +1,5 @@
 import { IMapper } from 'src/core';
-import { Member } from '../../domain/member/member.aggregate-root';
+import { Member } from '../../domain/member/member.ar';
 
 export const MemberMapperProvider = Symbol('MemberMapperProvider');
 

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
 import { IMemberRepo, MemberRepoProvider } from 'src/modules/member';
 import { AuthenticateError, AuthenticateErrors } from './authenticate.error';
-import { Member } from 'src/modules/member/domain/member/member.aggregate-root';
+import { Member } from 'src/modules/member/domain/member/member.ar';
 
 type UseCaseInput = {
   appUserId: string;

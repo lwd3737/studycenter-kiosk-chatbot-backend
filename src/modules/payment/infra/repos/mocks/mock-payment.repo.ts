@@ -13,7 +13,8 @@ export type MockPaymentSchema = {
     id: string;
     name: string;
     product: {
-      type: 'ticket';
+      id: string;
+      type: 'TICKET';
       name: string;
       price: number;
     };

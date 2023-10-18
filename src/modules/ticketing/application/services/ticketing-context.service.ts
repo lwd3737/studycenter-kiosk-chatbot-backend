@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-type TicketingContext = {
+export type TicketingContext = {
   ticketId: string;
   seatId: string;
 };

@@ -1,5 +1,5 @@
 import { IRepo } from 'src/core/domain/repo.interface';
-import { Member } from './member.aggregate-root';
+import { Member } from './member.ar';
 
 export const MemberRepoProvider = Symbol('MemberRepoProvider');
 

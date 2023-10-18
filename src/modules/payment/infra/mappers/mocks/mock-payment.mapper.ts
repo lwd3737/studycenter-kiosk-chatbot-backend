@@ -4,7 +4,6 @@ import {
   PaymentFactory,
 } from 'src/modules/payment/domain/payment/payment.factory';
 import { MockPaymentSchema } from '../../repos/mocks/mock-payment.repo';
-import { MemberId } from 'src/modules/member/domain/member/member-id';
 import { ProductType } from 'src/modules/payment/domain/payment/base/order/product.value-object';
 import { OrderId } from 'src/modules/payment/domain/payment/base/order/order-id';
 
@@ -14,11 +13,12 @@ export class MockPaymentMapper implements IMapper<Payment> {
       {
         method: raw.method,
         props: {
-          memberId: new MemberId(raw.memberId),
+          memberId: raw.memberId,
           order: {
             id: new OrderId(raw.order.id),
             name: raw.order.name,
             product: {
+              id: raw.order.product.id,
               type: ProductType[raw.order.product.type],
               name: raw.order.product.name,
               price: raw.order.product.price,
@@ -52,6 +52,7 @@ export class MockPaymentMapper implements IMapper<Payment> {
         id: domain.order.id.value,
         name: domain.order.name,
         product: {
+          id: domain.order.product.id,
           type: domain.order.product.type,
           name: domain.order.product.name,
           price: domain.order.product.price,

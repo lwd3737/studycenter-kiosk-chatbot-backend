@@ -1,8 +1,8 @@
 import { IRepo } from 'src/core/domain/repo.interface';
-import { Ticket } from './ticket.aggregate-root';
-import { TicketTime } from './time.value-object';
-import { TicketType } from './type.value-object';
+import { Ticket } from './ticket.ar';
 import { TicketId } from './ticket-id';
+import { TicketType } from '../ticket-factory';
+import { TicketUsageDuration } from './usage-duration.vo';
 
 export const TicketRepoProvider = Symbol('TicketRepoProvider');
 
@@ -11,7 +11,7 @@ export interface ITicketRepo extends IRepo<Ticket> {
   findAll(): Promise<Ticket[]>;
   findByType(type: TicketType): Promise<Ticket[]>;
   findOneById(id: TicketId): Promise<Ticket | null>;
-  findOneByTime(time: TicketTime): Promise<Ticket | null>;
+  findOneByUsageTime(time: TicketUsageDuration): Promise<Ticket | null>;
   bulkCreate(tickets: Ticket[]): Promise<void>;
   clear(): Promise<void>;
 }

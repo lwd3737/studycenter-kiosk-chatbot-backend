@@ -1,7 +1,7 @@
-export * from './membership.module';
+export * from './member.module';
 
-export * from './domain/member/member.repo.interface';
-export * from './domain/member/member.aggregate-root';
+export * from './domain/member/IMember.repo';
+export * from './domain/member/member.ar';
 
 export * from './application/usecases/get-member.usecase';
 export * from './application/usecases/get-member.error';

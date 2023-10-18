@@ -10,7 +10,7 @@ export class TicketSeederService implements OnApplicationBootstrap {
   constructor(@Inject(TicketRepoProvider) private ticketRepo: ITicketRepo) {}
 
   async onApplicationBootstrap() {
-    if ((await this.ticketRepo.isEmpty()) === true) {
+    if (await this.ticketRepo.isEmpty()) {
       const seedOrError = await this.seed();
       if (seedOrError.isErr()) {
         throw seedOrError.error;
@@ -25,7 +25,8 @@ export class TicketSeederService implements OnApplicationBootstrap {
       ...ticketsData.map((ticketData) => {
         const ticketOrError = TicketFactory.new(ticketData.type, {
           ...ticketData,
-          price: { value: ticketData.price },
+          price: ticketData.price,
+          usageDuration: ticketData.usageTime.value,
         });
         if (ticketOrError.isErr()) return err(ticketOrError.error);
 

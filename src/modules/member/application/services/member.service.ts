@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   IMemberRepo,
   MemberRepoProvider,
-} from '../../domain/member/member.repo.interface';
-import { Member } from '../../domain/member/member.aggregate-root';
+} from '../../domain/member/IMember.repo';
+import { Member } from '../../domain/member/member.ar';
 
 @Injectable()
 export class MemberService {

@@ -32,7 +32,7 @@ export interface PaymentProps<Method> {
 }
 export type CreatePaymentProps<Method> = {
   method: Method;
-  memberId: MemberId;
+  memberId: string;
   order: CreateOrderProps & { id: OrderId };
   totalAmount: CreateAmountProps;
   status: CreatePaymentStatusProps;
@@ -41,7 +41,7 @@ export type CreatePaymentProps<Method> = {
   updatedAt: Date;
 };
 
-export abstract class BasePayment<
+export abstract class Payment<
   Method,
   Props extends PaymentProps<Method>,
 > extends AggregateRoot<Props> {
@@ -53,6 +53,7 @@ export abstract class BasePayment<
 
     return ok({
       ...props,
+      memberId: new MemberId(props.memberId),
       order: Order.create(props.order, props.order.id.value),
       totalAmount: totalAmountOrError.value,
       status: PaymentStatus.create({ value: props.status }),

@@ -16,7 +16,7 @@ export class PaymentController {
       console.debug(error);
 
       return {
-        message: error.message,
+        error: error.message,
       };
     }
 

@@ -1,10 +1,11 @@
 type ProductProps = {
+  id: string;
   type: ProductType;
   name: string;
   price: number;
 };
 export enum ProductType {
-  ticket = 'ticket',
+  TICKET = 'TICKET',
 }
 export type CreateProductProps = ProductProps;
 
@@ -16,6 +17,10 @@ export class Product {
   }
 
   private constructor(private props: ProductProps) {}
+
+  get id(): string {
+    return this.props.id;
+  }
 
   get type(): ProductType {
     return this.props.type;

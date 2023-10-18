@@ -4,9 +4,9 @@ import { ErrorDTOCreator } from '../dtos/error.dto';
 import { KakaoChatbotResponseDTO } from '../dtos/IResponse.dto';
 import { TicketTemplateDTOCreator } from '../dtos/ticket-template.dto';
 import {
-  HoursRechargeTicketType,
-  PeriodTicketType,
-  SameDayTicketType,
+  HOURS_RECHARGE_TICKET_TYPE,
+  PERIOD_TICKET_TYPE,
+  SAME_DAY_TICKET_TYPE,
   TicketType,
 } from 'src/modules/ticketing';
 
@@ -29,13 +29,13 @@ export class ParseTicketTypeParamPipe
     switch (type) {
       case '정기권':
       case '기간권':
-        return PeriodTicketType.create();
+        return PERIOD_TICKET_TYPE;
       case '시간권':
       case '시간충전권':
-        return HoursRechargeTicketType.create();
+        return HOURS_RECHARGE_TICKET_TYPE;
       case '당일권':
       case '1일권':
-        return SameDayTicketType.create();
+        return SAME_DAY_TICKET_TYPE;
       default:
         console.debug(`Value of ticket_category '${type}' is invalid`);
 

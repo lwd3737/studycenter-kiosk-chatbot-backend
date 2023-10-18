@@ -10,7 +10,7 @@ import { CommerceCardError } from '../basic-template-outputs/commerce-card/comme
 import { Profile } from '../basic-template-outputs/profile/profile.value-object';
 import { ThumbnailError } from '../basic-template-outputs/thumbnail/thumbnail.error';
 import { Thumbnail } from '../basic-template-outputs/thumbnail/thumbnail.value-object';
-import { Ticket, TicketType } from 'src/modules/ticketing';
+import { Ticket } from 'src/modules/ticketing';
 import { CommerceCardCarousel } from '../basic-template-outputs/commerce-card-carousel/commerce-card-carousel.value-object';
 
 interface TicketCommerceCardCarouselProps {
@@ -83,7 +83,7 @@ export class TicketCommerceCardCarousel extends CommerceCardCarousel {
   }
 
   private static createTicketThumbnail(
-    type: TicketType,
+    type: string,
   ): Result<Thumbnail, ThumbnailError> {
     // TODO: config 모듈에서 validation
     const host = process.env.HOST;
@@ -93,7 +93,7 @@ export class TicketCommerceCardCarousel extends CommerceCardCarousel {
 
     // TODO: 파일 경로들도 config 모듈에서 설정
     const path = host + '/files/images';
-    const imageUrl: string = path + type.value + '_ticket.png';
+    const imageUrl: string = path + type + '_ticket.png';
 
     return Thumbnail.create({
       imageUrl,

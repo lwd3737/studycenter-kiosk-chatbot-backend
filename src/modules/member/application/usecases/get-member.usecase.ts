@@ -3,8 +3,8 @@ import { AppErrors, IUseCase, Result, err, ok } from 'src/core';
 import {
   IMemberRepo,
   MemberRepoProvider,
-} from '../../domain/member/member.repo.interface';
-import { Member } from '../../domain/member/member.aggregate-root';
+} from '../../domain/member/IMember.repo';
+import { Member } from '../../domain/member/member.ar';
 import { GetMemberError, GetMemberErrors } from './get-member.error';
 
 type UseCaseInput =

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Member } from 'src/modules/member/domain/member/member.aggregate-root';
-import { IMemberRepo } from 'src/modules/member/domain/member/member.repo.interface';
+import { Member } from 'src/modules/member/domain/member/member.ar';
+import { IMemberRepo } from 'src/modules/member/domain/member/IMember.repo';
 import {
   IMemberMapper,
   MemberMapperProvider,

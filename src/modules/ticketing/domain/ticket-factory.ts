@@ -1,52 +1,64 @@
 import {
-  CreateHoursRechargeTicketProps,
+  CreateFromExistingHoursRechargeTicketProps,
+  CreateNewHoursRechargeTicketProps,
+  HOURS_RECHARGE_TICKET_TYPE,
   HoursRechargeTicket,
-} from './hours-recharge-ticket/hours-recharge-ticket.aggregate-root';
+  HoursRechargeTicketType,
+} from './hours-recharge-ticket/hours-recharge-ticket.ar';
 import {
-  HOURS_RECHARGE_TYPE,
-  HoursRechargeType,
-} from './hours-recharge-ticket/type.value-object';
-import {
-  CreatePeriodTicketProps,
+  CreateFromExistingPeriodTicketProps,
+  CreateNewPeriodTicketProps,
+  PERIOD_TICKET_TYPE,
   PeriodTicket,
-} from './period-ticket/period-ticket.aggregate-root';
-import { PERIOD_TYPE, PeriodType } from './period-ticket/type.value-object';
+  PeriodTicketType,
+} from './period-ticket/period-ticket.ar';
 import {
-  CreateSameDayTicketProps,
+  CreateFromExsitingSameDayTicketProps,
+  CreateNewSameDayTicketProps,
+  SAME_DAY_TICKET_TYPE,
   SameDayTicket,
-} from './same-day-ticket/same-day-ticket.aggregate-root';
-import {
-  SAME_DAY_TYPE,
-  SameDayType,
-} from './same-day-ticket/type.value-object';
+  SameDayTicketType,
+} from './same-day-ticket/same-day-ticket.ar';
 
-export type TicketTypeKind = PeriodType | HoursRechargeType | SameDayType;
-type CreateTicketPropsKind =
-  | CreatePeriodTicketProps
-  | CreateHoursRechargeTicketProps
-  | CreateSameDayTicketProps;
+export type TicketType =
+  | PeriodTicketType
+  | HoursRechargeTicketType
+  | SameDayTicketType;
 
 export class TicketFactory {
-  public static new(type: string, props: CreateTicketPropsKind) {
+  public static new(
+    type: string,
+    props:
+      | CreateNewPeriodTicketProps
+      | CreateNewHoursRechargeTicketProps
+      | CreateNewSameDayTicketProps,
+  ) {
     switch (type) {
-      case PERIOD_TYPE:
+      case PERIOD_TICKET_TYPE:
         return PeriodTicket.new(props);
-      case HOURS_RECHARGE_TYPE:
+      case HOURS_RECHARGE_TICKET_TYPE:
         return HoursRechargeTicket.new(props);
-      case SAME_DAY_TYPE:
+      case SAME_DAY_TICKET_TYPE:
         return SameDayTicket.new(props);
       default:
         throw new Error(`invalid Ticket type:${type}`);
     }
   }
 
-  public static from(type: string, props: CreateTicketPropsKind, id: string) {
+  public static from(
+    type: string,
+    props:
+      | CreateFromExistingPeriodTicketProps
+      | CreateFromExistingHoursRechargeTicketProps
+      | CreateFromExsitingSameDayTicketProps,
+    id: string,
+  ) {
     switch (type) {
-      case PERIOD_TYPE:
-        return PeriodTicket.from(props as CreatePeriodTicketProps, id);
-      case HOURS_RECHARGE_TYPE:
+      case PERIOD_TICKET_TYPE:
+        return PeriodTicket.from(props, id);
+      case HOURS_RECHARGE_TICKET_TYPE:
         return HoursRechargeTicket.from(props, id);
-      case SAME_DAY_TYPE:
+      case SAME_DAY_TICKET_TYPE:
         return SameDayTicket.from(props, id);
       default:
         throw new Error(`invalid Ticket type:${type}`);

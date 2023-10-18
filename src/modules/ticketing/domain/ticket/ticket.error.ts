@@ -27,11 +27,9 @@ export namespace TicketErrors {
     }
   }
 
-  export class InvalidTimeUnit extends DomainError {
-    constructor(timeUnit: string) {
-      super(
-        `The time unit "${timeUnit}" is invalid. The time unit must be either "days" or "hours".`,
-      );
+  export class InvalidUsageDurationUnit extends DomainError {
+    constructor(unit: string) {
+      super(`[TicketUsageDuration]: usage duration unit "${unit}" is invalid`);
     }
   }
 }

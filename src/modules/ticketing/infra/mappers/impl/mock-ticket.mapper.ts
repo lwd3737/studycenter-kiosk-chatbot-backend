@@ -3,7 +3,7 @@ import { ITicketMapper } from '../ITicket.mapper';
 import { TicketDTO, TicketTypeDTO } from '../../../application/dtos/ticket.dto';
 import { MockTicket } from '../../persistence';
 import {
-  TicketTypeKind,
+  TicketType,
   Ticket,
   TicketFactory,
 } from 'src/modules/ticketing/domain';
@@ -14,28 +14,18 @@ export class MockTicketMapper implements ITicketMapper {
     return {
       id: domain.id.value,
       title: domain.title,
-      type: domain.type.value as TicketTypeKind,
-      isFixedSeat: domain.isFixedSeat,
-      time: {
-        unit: domain.time.unit,
-        value: domain.time.value,
+      type: domain.type as TicketType,
+      fixedSeat: domain.fixedSeat,
+      usageDuration: {
+        unit: domain.usageDuration.unit,
+        value: domain.usageDuration.value,
       },
       price: domain.price.value,
-      expiration: {
-        type: domain.expirationType.value,
-      },
     };
   }
 
   toDomain(raw: MockTicket): Ticket {
-    const ticketOrError = TicketFactory.from(
-      raw.type,
-      {
-        ...raw,
-        price: { value: raw.price },
-      },
-      raw.id,
-    );
+    const ticketOrError = TicketFactory.from(raw.type, { ...raw }, raw.id);
     if (ticketOrError.isErr()) {
       throw ticketOrError.error;
     }
@@ -46,14 +36,13 @@ export class MockTicketMapper implements ITicketMapper {
   toDTO(domain: Ticket): TicketDTO {
     return {
       id: domain.id.value,
-      type: domain.type.value as TicketTypeDTO,
-      isFixedSeat: domain.isFixedSeat,
+      type: domain.type as TicketTypeDTO,
+      isFixedSeat: domain.fixedSeat,
       time: {
-        unit: domain.time.unit,
-        value: domain.time.value,
+        unit: domain.usageDuration.unit,
+        value: domain.usageDuration.value,
       },
       price: domain.price.value,
-      expirationType: domain.expirationType.value,
     };
   }
 }

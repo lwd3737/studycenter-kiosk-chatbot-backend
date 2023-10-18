@@ -9,9 +9,7 @@ import { SelectTicketAndGetAllRoomsUseCase } from './application/usecases/select
 import { GetTicketGroupUseCase } from './application/usecases/get-ticket-group/get-ticket-group.usecase';
 import { GetAvailableSeatsUseCase } from './application/usecases/get-available-seats/get-available-seats.usecase';
 import { IssueVirtualAccountUseCase } from './application/usecases/issue-virtual-account/issue-virtual-account.usecase';
-import { ParseTicketTypeParamPipe } from './application/pipes/parse-ticket-category-param.pipe';
-import { ParseSyncOtpParamPipe } from './application/pipes/parse-sync-otp-param.pipe';
-import { MembershipModule } from '../member';
+import { MemberModule } from '../member';
 import { AuthModule } from '../auth';
 import { PaymentModule } from '../payment/payment.module';
 import { KakaoChatbotAuthController } from './controllers/kakao-chatbot-auth.controller';
@@ -20,6 +18,7 @@ import { AuthExceptionFilter } from './application/exception-filters/auth-except
 import { EventApiService } from './application/services/event-api.service';
 import { EventApiRepo } from './infra/repos/event-api.repo';
 import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from './application/usecases/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
+import { MyPageModule } from '../my-page/my-page.module';
 
 const Repos = [PluginRepo, EventApiRepo];
 const Services = [EventApiService];
@@ -38,8 +37,9 @@ const UseCases = [
     TicketModule,
     SeatManagementModule,
     AuthModule,
-    MembershipModule,
+    MemberModule,
     forwardRef(() => PaymentModule),
+    forwardRef(() => MyPageModule),
   ],
   controllers: [KakaoChatbotTicketingController, KakaoChatbotAuthController],
   providers: [

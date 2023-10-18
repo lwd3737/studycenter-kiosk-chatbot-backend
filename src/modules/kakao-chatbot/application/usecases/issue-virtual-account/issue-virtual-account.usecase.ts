@@ -24,10 +24,10 @@ export class IssueVirtualAccountUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
   constructor(
-    private memberService: MemberService,
     private ticketingContextService: TicketingContextService,
     private ticketService: TicketService,
     private paymentService: PaymentService,
+    private memberService: MemberService,
   ) {}
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {

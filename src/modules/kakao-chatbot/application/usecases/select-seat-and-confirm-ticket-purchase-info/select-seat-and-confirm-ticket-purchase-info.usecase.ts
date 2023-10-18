@@ -44,7 +44,7 @@ export class SelectSeatAndConfirmTicketPurchaseInfoUseCase
       });
 
       const textCardOrError = TextCard.create({
-        text: `구매상품: ${foundTicket.fullTitle}\n이용시간: ${foundTicket.time.display}\n이용금액: ${foundTicket.price.value}원`,
+        text: `구매상품: ${foundTicket.fullTitle}\n이용시간: ${foundTicket.usageDuration.display}\n이용금액: ${foundTicket.price.value}원`,
         buttons: [
           {
             label: '구매하기',

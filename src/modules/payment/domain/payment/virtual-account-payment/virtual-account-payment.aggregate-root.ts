@@ -2,7 +2,7 @@ import { DomainError, Result, err, ok } from 'src/core';
 
 import {
   CreatePaymentProps,
-  BasePayment,
+  Payment,
   PaymentProps,
 } from '../base/payment.aggregate-root';
 import { DueDate } from './due-date.value-object';
@@ -30,7 +30,7 @@ export type CreateVirtualAccountPaymentProps = Pick<
   updatedAt?: Date;
 };
 
-export class VirtualAccountPayment extends BasePayment<
+export class VirtualAccountPayment extends Payment<
   VirtualAccountMethod,
   VirtualAccountPaymentProps
 > {

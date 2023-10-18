@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MemberRepoProvider } from './domain/member/member.repo.interface';
+import { MemberRepoProvider } from './domain/member/IMember.repo';
 import { MockMemberMapper } from './infra/mappers/impl/mocks/mock-member.mapper';
 import { MemberMapperProvider } from './infra/mappers/member.mapper.interface';
 import { MockMemberRepo } from './infra/repos/mocks/mock-member.repo';
@@ -23,4 +23,4 @@ import { MemberService } from './application/services/member.service';
   ],
   exports: [MemberRepoProvider, GetMemberUseCase, MemberService],
 })
-export class MembershipModule {}
+export class MemberModule {}

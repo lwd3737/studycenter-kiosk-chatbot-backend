@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  HOURS_RECHARGE_TYPE,
+  HOURS_RECHARGE_TICKET_TYPE,
   ITicketRepo,
-  PERIOD_TYPE,
-  SAME_DAY_TYPE,
+  PERIOD_TICKET_TYPE,
+  SAME_DAY_TICKET_TYPE,
   Ticket,
   TicketId,
   TicketRepoProvider,
@@ -22,13 +22,13 @@ export class TicketService {
     const tickets = await this.ticketRepo.findAll();
 
     const periodCollection = tickets.filter(
-      (ticket) => ticket.type.value === PERIOD_TYPE,
+      (ticket) => ticket.type === PERIOD_TICKET_TYPE,
     );
     const hoursRechargeCollection = tickets.filter(
-      (ticket) => ticket.type.value === HOURS_RECHARGE_TYPE,
+      (ticket) => ticket.type === HOURS_RECHARGE_TICKET_TYPE,
     );
     const sameDayCollection = tickets.filter(
-      (ticket) => ticket.type.value === SAME_DAY_TYPE,
+      (ticket) => ticket.type === SAME_DAY_TICKET_TYPE,
     );
 
     return [periodCollection, hoursRechargeCollection, sameDayCollection];

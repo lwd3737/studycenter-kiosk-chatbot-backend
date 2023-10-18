@@ -47,6 +47,7 @@ export class PGRepo implements IPGRepo {
     order: {
       name: string;
       product: {
+        id: string;
         type: ProductType;
         name: string;
         price: number;
@@ -83,7 +84,8 @@ export class PGRepo implements IPGRepo {
       throw new RepoError('virtualAccount not contains in pgSchema');
 
     return VirtualAccountPGMapper.toDomain({
-      memberId,
+      memberId: memberId.value,
+      ticketId: newOrder.product.id,
       order: newOrder,
       pg: { ...pgSchema, bank: this.config.bank },
     });

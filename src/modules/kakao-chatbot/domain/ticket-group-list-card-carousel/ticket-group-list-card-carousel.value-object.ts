@@ -27,16 +27,16 @@ export class TicketGroupListCardCarousel extends ListCardCarousel {
   }
 
   private static createListCard(tickets: Ticket[]) {
-    const { type } = tickets[0];
+    const { typeDisplay: displayType } = tickets[0];
 
     const listCardPropsOrError = combine(
       ListCardHeader.create({
-        title: type.display,
+        title: displayType,
       }),
       Button.create({
-        label: `${type.display} 선택`,
+        label: `${displayType} 선택`,
         action: ButtonActionType.MESSAGE,
-        messageText: `${type.display} 선택`,
+        messageText: `${displayType} 선택`,
       }),
       ...tickets.map((ticket) =>
         ListCardItem.create({

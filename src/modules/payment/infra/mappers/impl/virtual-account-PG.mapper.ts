@@ -1,4 +1,3 @@
-import { MemberId } from 'src/modules/member/domain/member/member-id';
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
 import { PGSchema } from '../../repos/schema/PG.schema';
 import { Order } from 'src/modules/payment/domain/payment/base/order/order.entity';
@@ -6,7 +5,8 @@ import { RepoError } from 'src/core';
 
 export class VirtualAccountPGMapper {
   static toDomain(raw: {
-    memberId: MemberId;
+    memberId: string;
+    ticketId: string;
     order: Order;
     pg: PGSchema & { bank: string };
   }): VirtualAccountPayment {
@@ -18,6 +18,7 @@ export class VirtualAccountPGMapper {
         id: raw.order.id,
         name: raw.pg.orderName,
         product: {
+          id: raw.ticketId,
           type: raw.order.product.type,
           name: raw.order.product.name,
           price: raw.order.product.price,
