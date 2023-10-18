@@ -223,7 +223,7 @@ export class DepositCallbackUseCase
     ticket: Ticket,
     seatInfo: { room: Room; seat: Seat },
   ): string {
-    return `입금이 완료되었습니다.\n지금부터 ${ticket.title}을 사용하여 ${seatInfo.room.number.value}열람실 ${seatInfo.seat.number.value}번 좌석을 이용할 수 있습니다.`;
+    return `입금이 완료되었습니다.\n입실하기로 처리되어 [${ticket.title}] 사용을 시작합니다.\n지금부터 [${seatInfo.room.number.value}]열람실 [${seatInfo.seat.number.value}]번 좌석을 이용하실 수 있습니다.`;
   }
 
   private async publishEventApi(
