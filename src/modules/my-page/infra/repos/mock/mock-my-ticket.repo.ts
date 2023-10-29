@@ -9,6 +9,7 @@ export type MockMyTicketSchema = {
   paymentId: string;
   memberId: string;
   ticketId: string;
+  title: string;
   inUse: boolean;
   usageDuration: {
     type: FixedExpiryUsageDurationType | RechargableUsageDurationType;
@@ -51,5 +52,12 @@ export class MockMyTicketRepo implements IMyTicketRepo {
     const raw = this.storage.find((myTicket) => myTicket.memberId === memberId);
     if (!raw) return null;
     return MockMyTicketMapper.toDomain(raw);
+  }
+
+  public async findByMemberId(memberId: string) {
+    const raw = this.storage.filter(
+      (myTicket) => myTicket.memberId === memberId,
+    );
+    return raw.map((r) => MockMyTicketMapper.toDomain(r));
   }
 }

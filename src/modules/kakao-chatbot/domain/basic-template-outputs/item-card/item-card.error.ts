@@ -30,28 +30,6 @@ export namespace ItemCardErrors {
     }
   }
 
-  export class InvalidButtonLayoutWhenCarouselError extends DomainError {
-    constructor() {
-      super(`ItemCard ButtonLayout cannot be vertical when it is a carousel`);
-    }
-  }
-
-  export class ButtonsMaxNumberExceededWhenLayoutVerticalError extends DomainError {
-    constructor() {
-      super(
-        `Max Number of ItemCard Buttons is exceeded when layout is vertical`,
-      );
-    }
-  }
-
-  export class ButtonsMaxNumberExceededWhenLayoutHorizontalError extends DomainError {
-    constructor() {
-      super(
-        `Max Number of ItemCard Buttons is exceeded when layout is horizontal`,
-      );
-    }
-  }
-
   export class ItemListSummaryTitleMaxLengthExceededError extends DomainError {
     constructor() {
       super(`Max length of ItemCard ItemListSummary title is exceeded`);

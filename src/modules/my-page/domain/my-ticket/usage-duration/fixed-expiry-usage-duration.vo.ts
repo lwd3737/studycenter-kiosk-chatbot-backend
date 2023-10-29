@@ -71,7 +71,7 @@ export class FixedExpiryUsageDuration extends MyTicketUsageDuration<FixedExpiryU
   }
 
   get remainingTime(): number {
-    if (this.endAt === null) return 0;
+    if (this.endAt === null) return this.totalDurationToMs();
     return Math.min(0, this.endAt.getTime() - Date.now());
   }
 

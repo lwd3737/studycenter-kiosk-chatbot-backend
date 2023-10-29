@@ -34,7 +34,12 @@ export class MyTicketService {
   public async findOneByAppUserId(appUserId: string): Promise<MyTicket | null> {
     const foundMember = await this.memberService.findByAppUserId(appUserId);
     if (!foundMember) return null;
-
     return await this.myTicketRepo.findOneByMemberId(foundMember.id.value);
+  }
+
+  public async findByAppUserId(appUserId: string): Promise<MyTicket[]> {
+    const foundMember = await this.memberService.findByAppUserId(appUserId);
+    if (!foundMember) return [];
+    return await this.myTicketRepo.findByMemberId(foundMember.id.value);
   }
 }

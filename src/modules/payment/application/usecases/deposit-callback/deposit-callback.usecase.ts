@@ -78,6 +78,7 @@ export class DepositCallbackUseCase
         memberId: member.memberId.value,
         ticketId: ticket.ticketId.value,
         type: ticket.type as TicketType,
+        title: `[${ticket.typeDisplay}]${ticket.title}`,
         totalUsageDuration: {
           unit: ticket.usageDuration.unit,
           value: ticket.usageDuration.value,
@@ -88,11 +89,12 @@ export class DepositCallbackUseCase
 
       await this.myTicketService.create(myTicket);
 
-      const checkInOrError = await this.checkInOutService.checkIn(
-        myTicket,
-        member,
-      );
-      if (checkInOrError.isErr()) return err(checkInOrError.error);
+      // TODO: 주석 제거
+      // const checkInOrError = await this.checkInOutService.checkIn(
+      //   myTicket,
+      //   member,
+      // );
+      // if (checkInOrError.isErr()) return err(checkInOrError.error);
 
       await this.myTicketService.update(myTicket);
 

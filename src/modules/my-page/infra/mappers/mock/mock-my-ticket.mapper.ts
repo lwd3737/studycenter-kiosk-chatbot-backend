@@ -19,6 +19,7 @@ export class MockMyTicketMapper {
       paymentId: domain.paymentId.value,
       memberId: domain.memberId.value,
       ticketId: domain.ticketId.value,
+      title: domain.title,
       inUse: domain.inUse,
       usageDuration: {
         type: usageDuration.type as
@@ -48,6 +49,7 @@ export class MockMyTicketMapper {
       paymentId: raw.paymentId,
       memberId: raw.memberId,
       ticketId: raw.ticketId,
+      title: raw.title,
       inUse: raw.inUse,
       usageDuration: {
         type: usageDuration.type,

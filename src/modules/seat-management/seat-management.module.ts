@@ -7,7 +7,7 @@ import { RoomMapperProvider } from './infra/mappers/room.mapper.interace';
 import { SeatMapperProvider } from './infra/mappers/seat.mapper.interface';
 import { MockRoomRepo } from './infra/repos/mocks/mock-room.repo';
 import { MockSeatRepo } from './infra/repos/mocks/mock-seat.repo';
-import { RoomsSeatsSeederService } from './infra/seads/rooms-seats-seeder.service';
+import { RoomsSeatsSeederService } from './services/rooms-seats-seeder.service';
 import { SeatService } from './services/seat.service';
 
 @Module({

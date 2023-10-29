@@ -4,7 +4,7 @@ import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
 import { Room } from '../../domain/room/room.aggregate-root';
 
 import { Seat } from '../../domain/seat/seat.aggregate-root';
-import { RoomsSeatsSeederService } from '../../infra/seads/rooms-seats-seeder.service';
+import { RoomsSeatsSeederService } from '../../services/rooms-seats-seeder.service';
 
 import { InitRoomsAndSeatsError } from './init-rooms-and-seats.error';
 

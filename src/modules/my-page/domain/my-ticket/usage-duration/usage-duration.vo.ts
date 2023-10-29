@@ -82,19 +82,6 @@ export abstract class MyTicketUsageDuration<
     }
   }
 
-  public test__onStartUsage(after: OnStartTicketUsage): void {
-    if (this.isExpired) return;
-
-    this.beforeExpire.timer = setTimeout(
-      () => after.onBeforeExpire.handler(),
-      5000,
-    );
-    this.expireTimer = setTimeout(() => {
-      after.onExpire();
-      this.stopUsage();
-    }, 10000);
-  }
-
   abstract startUsage(
     after: OnStartTicketUsage,
   ): Result<MyTicketUsageDuration, DomainError>;

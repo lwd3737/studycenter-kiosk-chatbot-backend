@@ -5,7 +5,6 @@ import {
   MyTicketUsageDurationProps,
   OnStartTicketUsage,
 } from './usage-duration.vo';
-import { MyTicket } from '../my-ticket.ar';
 
 type RechargableUsageDurationProps = MyTicketUsageDurationProps & {
   remainingTime: number | null;
@@ -66,7 +65,7 @@ export class RechargableUsageDuration extends MyTicketUsageDuration<RechargableU
   }
 
   get remainingTime(): number {
-    return this.props.remainingTime ?? 0;
+    return this.props.remainingTime ?? this.totalDurationToMs();
   }
 
   public startUsage(

@@ -1,17 +1,17 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { AppErrors, combine, DomainError, err, ok, Result } from 'src/core';
-import { Room } from '../../domain/room/room.aggregate-root';
+import { Room } from '../domain/room/room.aggregate-root';
 import {
   IRoomRepo,
   RoomRepoProvider,
-} from '../../domain/room/room.repo.interface';
-import { Seat } from '../../domain/seat/seat.aggregate-root';
+} from '../domain/room/room.repo.interface';
+import { Seat } from '../domain/seat/seat.aggregate-root';
 import {
   ISeatRepo,
   SeatRepoProvider,
-} from '../../domain/seat/seat.repo.interface';
-import roomsData from './rooms.data.json';
-import seatsData from './seats.data.json';
+} from '../domain/seat/seat.repo.interface';
+import roomsData from '../infra/seads/rooms.data.json';
+import seatsData from '../infra/seads/seats.data.json';
 
 type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
 

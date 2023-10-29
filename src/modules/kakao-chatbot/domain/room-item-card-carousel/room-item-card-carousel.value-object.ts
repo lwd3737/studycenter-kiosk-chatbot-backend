@@ -50,7 +50,6 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
       const [seatsInfoItemList, seatSummary, SeatsViewButton] = roomProps.value;
 
       return ItemCard.create({
-        isCarousel: true,
         imageTitle: ImageTitle.create({
           title: room.title,
         }),

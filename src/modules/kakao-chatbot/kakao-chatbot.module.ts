@@ -15,11 +15,12 @@ import { AuthExceptionFilter } from './application/exception-filters/auth-except
 import { EventApiService } from './application/services/event-api.service';
 import { EventApiRepo } from './infra/repos/event-api.repo';
 import { MyPageModule } from '../my-page/my-page.module';
-import { KakaoChatbotCheckinOutController } from './controllers/kakao-chatbot-checkin-out.controller';
+import { KakaoChatbotCheckInOutController } from './controllers/kakao-chatbot-checkin-out.controller';
 import { GetTicketGroupsUseCase } from './application/usecases/ticketing/get-ticket-groups/get-ticket-groups.usecase';
 import { GetTicketGroupUseCase } from './application/usecases/ticketing/get-ticket-group/get-ticket-group.usecase';
 import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from './application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { IssueVirtualAccountUseCase } from './application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
+import { GetAvailableMyTicketsUseCase } from './application/usecases/check-in-out/get-available-my-tickets/get-available-my-tickets.usecase';
 
 const Repos = [PluginRepo, EventApiRepo];
 const Services = [EventApiService];
@@ -31,6 +32,7 @@ const UseCases = [
   GetAvailableSeatsUseCase,
   SelectSeatAndConfirmTicketPurchaseInfoUseCase,
   IssueVirtualAccountUseCase,
+  GetAvailableMyTicketsUseCase,
 ];
 
 @Module({
@@ -45,7 +47,7 @@ const UseCases = [
   controllers: [
     KakaoChatbotTicketingController,
     KakaoChatbotAuthController,
-    KakaoChatbotCheckinOutController,
+    KakaoChatbotCheckInOutController,
   ],
   providers: [
     {

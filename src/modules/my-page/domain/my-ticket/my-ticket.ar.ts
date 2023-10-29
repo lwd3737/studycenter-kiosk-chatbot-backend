@@ -14,6 +14,7 @@ type MyTicketProps = {
   paymentId: PaymentId;
   memberId: MemberId;
   ticketId: TicketId;
+  title: string;
   inUse: boolean;
   usageDuration: MyTicketUsageDuration;
 };
@@ -22,6 +23,7 @@ type CreateNewMyTicketProps = {
   memberId: string;
   ticketId: string;
   type: TicketType;
+  title: string;
   totalUsageDuration: {
     unit: string;
     value: number;
@@ -31,6 +33,7 @@ type CreateFromExistingMyTicketProps = {
   paymentId: string;
   memberId: string;
   ticketId: string;
+  title: string;
   inUse: boolean;
   usageDuration: CreateFromExistingUsageDurationProps;
 };
@@ -100,6 +103,10 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
 
   get ticketId(): TicketId {
     return this.props.ticketId;
+  }
+
+  get title(): string {
+    return this.props.title;
   }
 
   get inUse(): boolean {
