@@ -34,6 +34,7 @@ const ticketRepoProvider = {
   exports: [
     TicketService,
     TicketingContextService,
+    TicketSeederService,
 
     InitTicketsUseCase,
     GetTicketUseCase,

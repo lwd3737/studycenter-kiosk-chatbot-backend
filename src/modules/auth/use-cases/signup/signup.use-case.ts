@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AppErrors, err, IUseCase, ok, Result } from 'src/core';
-import { IMemberRepo, MemberRepoProvider } from 'src/modules/member';
+import { IMemberRepo } from 'src/modules/member';
 import { Member } from 'src/modules/member/domain/member/member.ar';
 import { SignupError, SignupErrors } from './signup.erorr';
 
@@ -18,7 +18,7 @@ type UseCaseResult = Result<null, SignupError>;
 
 @Injectable()
 export class SignupUseCase implements IUseCase<UseCaseInput, UseCaseResult> {
-  constructor(@Inject(MemberRepoProvider) private memberRepo: IMemberRepo) {}
+  constructor(private memberRepo: IMemberRepo) {}
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     const { profile } = input;

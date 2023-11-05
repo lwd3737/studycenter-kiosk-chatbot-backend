@@ -3,25 +3,27 @@ import { PaymentController } from './payment.controller';
 import { PGRepo, PGRepoProvider } from './infra/repos/PG.repo';
 import { MemberModule } from '../member';
 import { TicketModule } from '../ticketing';
-import { PaymentRepoProvider } from './domain/payment/IPayment.repo';
-import { MockPaymentRepo } from './infra/repos/mocks/mock-payment.repo';
+import { IPaymentRepo } from './domain/payment/IPayment.repo';
+import { MockPaymentRepo } from './infra/repos/mock-payment.repo';
 import { PaymentService } from './application/services/payment.service';
 import { DepositCallbackUseCase } from './application/usecases/deposit-callback/deposit-callback.usecase';
 import { KakaoChatbotModule } from '../kakao-chatbot';
 import { SeatManagementModule } from '../seat-management';
 import { MyPageModule } from '../my-page/my-page.module';
+import { MockPaymentCompletionService } from './application/services/mock-payment-completion.service';
+import { PaymentRepo } from './infra/repos/payment.repo';
+import { createProviderBasedOnDevMode } from 'src/shared/utils/provider-factory';
 
 const repos = [
   {
     provide: PGRepoProvider,
     useClass: PGRepo,
   },
-  {
-    provide: PaymentRepoProvider,
-    useClass: MockPaymentRepo,
-  },
+  createProviderBasedOnDevMode(IPaymentRepo, (devMode) =>
+    devMode ? new MockPaymentRepo() : new PaymentRepo(),
+  ),
 ];
-const services = [PaymentService];
+const services = [PaymentService, MockPaymentCompletionService];
 const usecases = [DepositCallbackUseCase];
 
 @Module({
@@ -34,6 +36,6 @@ const usecases = [DepositCallbackUseCase];
   ],
   controllers: [PaymentController],
   providers: [...repos, ...services, ...usecases],
-  exports: [...usecases, ...services],
+  exports: [...services],
 })
 export class PaymentModule {}

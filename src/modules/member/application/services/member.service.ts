@@ -1,13 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  IMemberRepo,
-  MemberRepoProvider,
-} from '../../domain/member/IMember.repo';
+import { Injectable } from '@nestjs/common';
+import { IMemberRepo } from '../../domain/member/IMember.repo';
 import { Member } from '../../domain/member/member.ar';
 
 @Injectable()
 export class MemberService {
-  constructor(@Inject(MemberRepoProvider) private memberRepo: IMemberRepo) {}
+  constructor(private memberRepo: IMemberRepo) {}
 
   public async findById(id: string): Promise<Member | null> {
     const found = await this.memberRepo.getById(id);

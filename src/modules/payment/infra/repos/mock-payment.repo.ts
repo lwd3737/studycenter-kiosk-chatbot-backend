@@ -1,9 +1,10 @@
 import { IPaymentRepo } from 'src/modules/payment/domain/payment/IPayment.repo';
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
-import { MockPaymentMapper } from '../../mappers/mocks/mock-payment.mapper';
+import { MockPaymentMapper } from '../mappers/mocks/mock-payment.mapper';
 import { Injectable } from '@nestjs/common';
 import { OrderId } from 'src/modules/payment/domain/payment/base/order/order-id';
 import { Payment } from 'src/modules/payment/domain/payment/payment.factory';
+import { RepoError } from 'src/core';
 
 export type MockPaymentSchema = {
   id: string;
@@ -41,16 +42,23 @@ export type MockPaymentSchema = {
   updatedAt: Date;
 };
 
+const ERROR_TYPE = 'MockPaymentRepo';
+
 @Injectable()
-export class MockPaymentRepo implements IPaymentRepo {
+export class MockPaymentRepo extends IPaymentRepo {
   private storage: MockPaymentSchema[] = [];
 
-  async save(payment: VirtualAccountPayment): Promise<void> {
+  public async save(payment: VirtualAccountPayment): Promise<Payment> {
     const raw = MockPaymentMapper.toPersistence(payment);
     this.storage.push(raw);
+
+    const found = await this.findByOrderId(payment.order.id);
+    if (!found) throw new RepoError(`[${ERROR_TYPE}]Payment not created`);
+
+    return found;
   }
 
-  async findByOrderId(orderId: OrderId): Promise<Payment | null> {
+  public async findByOrderId(orderId: OrderId): Promise<Payment | null> {
     const found = this.storage.find(
       (payment) => payment.order.id === orderId.value,
     );

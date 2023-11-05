@@ -1,22 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KakaoChatbotModule } from './modules/kakao-chatbot';
 import { AuthModule } from './modules/auth';
+import { SeederModule } from './modules/seeder/seeder.module';
+import { CustomConfigModule } from './modules/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: ['.env.development'],
-      isGlobal: true,
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    CustomConfigModule,
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'public'),
+    // }),
 
+    SeederModule,
     AuthModule,
     KakaoChatbotModule,
   ],

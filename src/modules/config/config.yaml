@@ -1,0 +1,28 @@
+http:
+  host: 'localhost'
+  port: 8000
+
+pg:
+  name: 'toss'
+  virtual_account_url: 'https://api.tosspayments.com/v1/virtual-accounts'
+  payment:
+    client_key: 'test_ck_Z0RnYX2w5321WJmaypR8NeyqApQE'
+    secret_key: 'test_sk_jZ61JOxRQVExPqdXLyw3W0X9bAqw'
+  bank:
+    name: '국민'
+    code: 06
+
+kakao:
+  rest_api_key: '90fb7f2206fff9c8b1c3e5e64110cad3'
+  bot_id: '63c03d20f40ad621995b5c4c'
+  event_api_url: 'https://bot-api.kakao.com/v2/bots/{botId}!/talk'
+  block_ids:
+    ticketing:
+      signup: '64326c4afa80927fb40f0be4'
+      select_ticket_and_get_all_rooms: '641366df59f614555e78bb5e'
+      get_available_seats: '64561108d973bf15e9aa6420'
+      confirm_ticket: '64d8d2be399c092c922a0eb1'
+      pay_for_ticket: '63e50b41be9272507b8e52f7'
+    check_in_out:
+      get_available_my_ticket: '6539a4d2be6c65335ac53c3e'
+      check_in: '652453c4153ff10288c39791'

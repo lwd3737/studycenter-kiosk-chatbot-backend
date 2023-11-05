@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { Member } from 'src/modules/member/domain/member/member.ar';
-import { MockMember } from '../../../repos/mocks/mock-member.repo';
-import { IMemberMapper } from '../../member.mapper.interface';
+import { MockMember } from '../repos/mock-member.repo';
 
-@Injectable()
-export class MockMemberMapper implements IMemberMapper {
-  toPersistence(member: Member): MockMember {
+export class MockMemberMapper {
+  static toPersistence(member: Member): MockMember {
     return {
       id: member.id.value,
       appUserId: member.appUserId,
@@ -16,7 +13,7 @@ export class MockMemberMapper implements IMemberMapper {
     };
   }
 
-  toDomain(raw: MockMember): Member {
+  static toDomain(raw: MockMember): Member {
     const memberResult = Member.create(
       {
         appUserId: raw.appUserId,

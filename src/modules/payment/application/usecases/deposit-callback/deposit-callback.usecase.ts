@@ -1,10 +1,7 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { IUseCase, Result, UnknownError, err, ok } from 'src/core';
 import { DepositCallbackEventDTO } from '../../dtos/event.dto';
-import {
-  IPaymentRepo,
-  PaymentRepoProvider,
-} from 'src/modules/payment/domain/payment/IPayment.repo';
+import { IPaymentRepo } from 'src/modules/payment/domain/payment/IPayment.repo';
 import { EventApiService } from 'src/modules/kakao-chatbot';
 import { OrderId } from 'src/modules/payment/domain/payment/base/order/order-id';
 import {
@@ -53,7 +50,6 @@ export class DepositCallbackUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
   constructor(
-    @Inject(PaymentRepoProvider)
     private paymentRepo: IPaymentRepo,
     @Inject(forwardRef(() => EventApiService))
     private eventApiService: EventApiService,

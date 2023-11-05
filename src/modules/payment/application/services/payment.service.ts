@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  IPaymentRepo,
-  PaymentRepoProvider,
-} from '../../domain/payment/IPayment.repo';
+import { IPaymentRepo } from '../../domain/payment/IPayment.repo';
 import { PGRepo, PGRepoProvider } from '../../infra/repos/PG.repo';
 import { Member } from 'src/modules/member';
 import { Ticket } from 'src/modules/ticketing';
@@ -12,7 +9,7 @@ import { VirtualAccountPayment } from '../../domain/payment/virtual-account-paym
 @Injectable()
 export class PaymentService {
   constructor(
-    @Inject(PaymentRepoProvider) private paymentRepo: IPaymentRepo,
+    private paymentRepo: IPaymentRepo,
     @Inject(PGRepoProvider) private pgRepo: PGRepo,
   ) {}
 
@@ -26,7 +23,7 @@ export class PaymentService {
         customerName: input.member.nickName,
       },
       {
-        name: input.ticket.title,
+        name: input.ticket.fullTitle,
         product: {
           id: input.ticket.ticketId.value,
           type: ProductType.TICKET,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { IPGRepo } from 'src/modules/payment/domain/IPG.repo';
-import { PGSchema } from './schema/PG.schema';
+import { PGSchema } from '../PG.schema';
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
 import { RepoError } from 'src/core';
 import { MemberId } from 'src/modules/member/domain/member/member-id';

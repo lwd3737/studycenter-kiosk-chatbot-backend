@@ -1,30 +1,27 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  IMyTicketRepo,
-  MyTicketRepoProvider,
-} from '../../domain/my-ticket/IMy-ticket.repo';
+import { Injectable } from '@nestjs/common';
+import { IMyTicketRepo } from '../../domain/my-ticket/IMy-ticket.repo';
 import { MyTicket } from '../../domain/my-ticket/my-ticket.ar';
 import { MemberService } from 'src/modules/member';
 
 @Injectable()
 export class MyTicketService {
   constructor(
-    @Inject(MyTicketRepoProvider) private myTicketRepo: IMyTicketRepo,
+    private myTicketRepo: IMyTicketRepo,
     private memberService: MemberService,
   ) {}
 
-  public async create(myTicket: MyTicket): Promise<void> {
-    await this.myTicketRepo.create(myTicket);
+  public async create(myTicket: MyTicket): Promise<MyTicket> {
+    return await this.myTicketRepo.create(myTicket);
   }
 
-  public async update(myTicket: MyTicket): Promise<void> {
-    await this.myTicketRepo.update(myTicket);
+  public async update(myTicket: MyTicket): Promise<MyTicket> {
+    return await this.myTicketRepo.update(myTicket);
   }
 
-  public async save(myTicket: MyTicket): Promise<void> {
+  public async save(myTicket: MyTicket): Promise<MyTicket> {
     const found = await this.findOneById(myTicket.paymentId.value);
-    if (found) await this.update(myTicket);
-    else await this.create(myTicket);
+    if (found) return await this.update(myTicket);
+    return await this.create(myTicket);
   }
 
   public async findOneById(myTicketId: string): Promise<MyTicket | null> {

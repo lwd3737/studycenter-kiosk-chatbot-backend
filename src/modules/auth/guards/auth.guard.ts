@@ -1,20 +1,17 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { IMemberRepo, Member, MemberRepoProvider } from 'src/modules/member';
+import { Member, MemberService } from 'src/modules/member';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { AuthExceptions } from '../auth-exceptions';
+import { CustomConfigService } from 'src/modules/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    @Inject(MemberRepoProvider) private memberRepo: IMemberRepo,
+    private configService: CustomConfigService,
+    private memberService: MemberService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -42,7 +39,8 @@ export class AuthGuard implements CanActivate {
 
   private verifyAuthHeader(req: Request): void {
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
-    const authorizationKey = process.env.AUTHORIZATION_TOKEN;
+    const authorizationKey =
+      this.configService.get<string>('athorizationToken');
 
     if (type !== 'Bearer') {
       throw new AuthExceptions.InvalidAuthorizationTypeError();
@@ -58,9 +56,17 @@ export class AuthGuard implements CanActivate {
       throw new AuthExceptions.AppUserIdNotExistError();
     }
 
-    const member = await this.memberRepo.getByAppUserId(
-      process.env.APP_USER_ID_FOR_TEST!,
-    );
+    let member: Member | null = null;
+
+    const isDevMode = this.configService.get<string>('mode');
+    if (isDevMode) {
+      const testAppUserId = this.configService.get<string>(
+        'kakao.test.appUserId',
+        { infer: true },
+      )!;
+      member = await this.memberService.findByAppUserId(testAppUserId);
+    } else member = await this.memberService.findByAppUserId(appUserId);
+
     if (member === null) {
       throw new AuthExceptions.MemberNotFoundError();
     }

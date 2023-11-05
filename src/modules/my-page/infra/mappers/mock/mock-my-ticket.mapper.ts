@@ -1,5 +1,5 @@
 import { MyTicket } from 'src/modules/my-page/domain/my-ticket/my-ticket.ar';
-import { MockMyTicketSchema } from '../../repos/mock/mock-my-ticket.repo';
+import { MockMyTicketSchema } from '../../repos/mock-my-ticket.repo';
 import {
   RECHARGABLE_USAGE_DURATION_TYPE,
   RechargableUsageDuration,

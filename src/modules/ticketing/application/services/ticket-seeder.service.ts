@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import ticketsData from '../../infra/seeds/tickets.data.json';
 
 import { DomainError, Result, combine, err, ok } from 'src/core';
@@ -6,10 +6,9 @@ import { TicketFactory } from '../../domain/ticket-factory';
 import { ITicketRepo, Ticket, TicketRepoProvider } from '../../domain';
 
 @Injectable()
-export class TicketSeederService implements OnApplicationBootstrap {
+export class TicketSeederService {
   constructor(@Inject(TicketRepoProvider) private ticketRepo: ITicketRepo) {}
-
-  async onApplicationBootstrap() {
+  public async execute(): Promise<void> {
     if (await this.ticketRepo.isEmpty()) {
       const seedOrError = await this.seed();
       if (seedOrError.isErr()) {

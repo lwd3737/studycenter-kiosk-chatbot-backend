@@ -33,7 +33,7 @@ export interface PaymentProps<Method> {
 export type CreatePaymentProps<Method> = {
   method: Method;
   memberId: string;
-  order: CreateOrderProps & { id: OrderId };
+  order: CreateOrderProps & { id?: OrderId };
   totalAmount: CreateAmountProps;
   status: CreatePaymentStatusProps;
   secret: string | null;
@@ -54,7 +54,7 @@ export abstract class Payment<
     return ok({
       ...props,
       memberId: new MemberId(props.memberId),
-      order: Order.create(props.order, props.order.id.value),
+      order: Order.create(props.order, props.order.id?.value),
       totalAmount: totalAmountOrError.value,
       status: PaymentStatus.create({ value: props.status }),
     });

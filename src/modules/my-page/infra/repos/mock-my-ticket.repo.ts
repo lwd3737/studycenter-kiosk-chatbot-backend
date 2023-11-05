@@ -3,7 +3,7 @@ import { IMyTicketRepo } from 'src/modules/my-page/domain/my-ticket/IMy-ticket.r
 import { MyTicket } from 'src/modules/my-page/domain/my-ticket/my-ticket.ar';
 import { FixedExpiryUsageDurationType } from 'src/modules/my-page/domain/my-ticket/usage-duration/fixed-expiry-usage-duration.vo';
 import { RechargableUsageDurationType } from 'src/modules/my-page/domain/my-ticket/usage-duration/rechargable-usage-duration.vo';
-import { MockMyTicketMapper } from '../../mappers/mock/mock-my-ticket.mapper';
+import { MockMyTicketMapper } from '../mappers/mock/mock-my-ticket.mapper';
 
 export type MockMyTicketSchema = {
   paymentId: string;
@@ -23,21 +23,33 @@ export type MockMyTicketSchema = {
   };
 };
 
+const ERROR_TYPE = 'MockMyTicketRepo';
+
 @Injectable()
-export class MockMyTicketRepo implements IMyTicketRepo {
+export class MockMyTicketRepo extends IMyTicketRepo {
   private storage: MockMyTicketSchema[] = [];
 
-  public async create(myTicket: MyTicket): Promise<void> {
+  public async create(myTicket: MyTicket): Promise<MyTicket> {
     const raw = MockMyTicketMapper.toPersistence(myTicket);
     this.storage.push(raw);
+
+    const created = await this.findOneById(myTicket.paymentId.value);
+    if (!created) throw new Error(`[${ERROR_TYPE}]MyTicket not created`);
+
+    return created;
   }
 
-  public async update(myTicket: MyTicket): Promise<void> {
+  public async update(myTicket: MyTicket): Promise<MyTicket> {
     const raw = MockMyTicketMapper.toPersistence(myTicket);
     const index = this.storage.findIndex(
       (myTicket) => myTicket.paymentId === raw.paymentId,
     );
     this.storage[index] = raw;
+
+    const updated = await this.findOneById(myTicket.paymentId.value);
+    if (!updated) throw new Error(`[${ERROR_TYPE}]MyTicket not updated`);
+
+    return updated;
   }
 
   public async findOneById(myTicketId: string): Promise<MyTicket | null> {

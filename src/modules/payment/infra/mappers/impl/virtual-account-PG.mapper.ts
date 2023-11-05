@@ -1,5 +1,5 @@
 import { VirtualAccountPayment } from 'src/modules/payment/domain/payment/virtual-account-payment/virtual-account-payment.aggregate-root';
-import { PGSchema } from '../../repos/schema/PG.schema';
+import { PGSchema } from '../../PG.schema';
 import { Order } from 'src/modules/payment/domain/payment/base/order/order.entity';
 import { RepoError } from 'src/core';
 

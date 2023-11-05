@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AppErrors, combine, DomainError, err, ok, Result } from 'src/core';
 import { Room } from '../domain/room/room.aggregate-root';
 import {
@@ -16,19 +16,20 @@ import seatsData from '../infra/seads/seats.data.json';
 type SeederResult = Result<{ rooms: Room[]; seats: Seat[] }, DomainError>;
 
 @Injectable()
-export class RoomsSeatsSeederService implements OnApplicationBootstrap {
+export class RoomsSeatsSeederService {
   constructor(
     @Inject(RoomRepoProvider) private roomRepo: IRoomRepo,
     @Inject(SeatRepoProvider) private seatRepo: ISeatRepo,
   ) {}
 
-  async onApplicationBootstrap() {
+  public async execute(): Promise<void> {
     if ((await this.roomRepo.exist()) === false) {
       const seedOrError = await this.seed();
-
       if (seedOrError.isErr()) {
         throw seedOrError.error;
       }
+
+      console.info('room seeding successfully');
     }
   }
 

@@ -1,3 +1,5 @@
+import { ValueObject } from 'src/core';
+
 type ProductProps = {
   id: string;
   type: ProductType;
@@ -9,14 +11,12 @@ export enum ProductType {
 }
 export type CreateProductProps = ProductProps;
 
-export class Product {
+export class Product extends ValueObject<ProductProps> {
   public static create(props: CreateProductProps): Product {
     return new Product({
       ...props,
     });
   }
-
-  private constructor(private props: ProductProps) {}
 
   get id(): string {
     return this.props.id;

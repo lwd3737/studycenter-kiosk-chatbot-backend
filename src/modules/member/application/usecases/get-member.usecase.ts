@@ -1,9 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AppErrors, IUseCase, Result, err, ok } from 'src/core';
-import {
-  IMemberRepo,
-  MemberRepoProvider,
-} from '../../domain/member/IMember.repo';
+import { IMemberRepo } from '../../domain/member/IMember.repo';
 import { Member } from '../../domain/member/member.ar';
 import { GetMemberError, GetMemberErrors } from './get-member.error';
 
@@ -18,9 +15,7 @@ type UseCaseResult = Result<Member, GetMemberError>;
 
 @Injectable()
 export class GetMemberUseCase implements IUseCase<UseCaseInput, UseCaseResult> {
-  constructor(
-    @Inject(MemberRepoProvider) private readonly memberRepo: IMemberRepo,
-  ) {}
+  constructor(private readonly memberRepo: IMemberRepo) {}
 
   async execute(input: UseCaseInput): Promise<UseCaseResult> {
     try {
