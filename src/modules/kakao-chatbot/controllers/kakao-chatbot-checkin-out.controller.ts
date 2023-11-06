@@ -16,7 +16,7 @@ export class KakaoChatbotCheckInOutController {
 
   @Post('available-my-tickets')
   async getAvailableMyTickets(
-    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
+    @Body(ParseAppUserIdParamPipe) appUserId: string,
   ) {
     const carouselOrError = await this.getAvailableMyTicketsUseCase.execute({
       appUserId,

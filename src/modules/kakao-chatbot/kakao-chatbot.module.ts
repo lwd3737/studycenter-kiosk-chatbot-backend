@@ -21,6 +21,7 @@ import { GetTicketGroupUseCase } from './application/usecases/ticketing/get-tick
 import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from './application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { IssueVirtualAccountUseCase } from './application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
 import { GetAvailableMyTicketsUseCase } from './application/usecases/check-in-out/get-available-my-tickets/get-available-my-tickets.usecase';
+import { ParseAppUserIdParamPipe } from './application/pipes/parse-app-user-id-param.pipe';
 
 const Repos = [PluginRepo, EventApiRepo];
 const Services = [EventApiService];
@@ -54,6 +55,7 @@ const UseCases = [
       provide: APP_FILTER,
       useClass: AuthExceptionFilter,
     },
+    ParseAppUserIdParamPipe,
     ...Repos,
     ...Services,
     ...UseCases,

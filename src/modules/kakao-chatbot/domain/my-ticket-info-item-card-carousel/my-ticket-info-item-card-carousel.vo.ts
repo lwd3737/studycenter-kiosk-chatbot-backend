@@ -8,7 +8,8 @@ import {
 } from '../basic-template-outputs/button/button.value-object';
 
 type MyTicketInfoItemCardCarouselProps = {
-  myTicketsInfo: {
+  myTickets: {
+    id: string;
     title: string;
     totalUsageDuration: TotalUsageDuration;
     inUse: boolean;
@@ -30,15 +31,15 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
     props: MyTicketInfoItemCardCarouselProps,
   ): Result<MyTicketInfoItemCardCarousel, DomainError> {
     const itemCardsOrError = combine(
-      ...props.myTicketsInfo.map((info) => {
-        const itemListOrError = this.createItemList(info);
+      ...props.myTickets.map((myTicket) => {
+        const itemListOrError = this.createItemList(myTicket);
         if (itemListOrError.isErr()) return err(itemListOrError.error);
 
-        const buttonOrError = this.createButton();
+        const buttonOrError = this.createButton(myTicket.id);
         if (buttonOrError.isErr()) return err(buttonOrError.error);
 
         return ItemCard.create({
-          head: { title: info.title },
+          head: { title: myTicket.title },
           itemList: itemListOrError.value,
           buttons: [buttonOrError.value],
         });
@@ -54,7 +55,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
   }
 
   private static createItemList(
-    info: MyTicketInfoItemCardCarouselProps['myTicketsInfo'][number],
+    info: MyTicketInfoItemCardCarouselProps['myTickets'][number],
   ): Result<ItemList[], DomainError> {
     const unit = info.totalUsageDuration.unit === 'DAYS' ? '일' : '시간';
     const totalDuration = `${info.totalUsageDuration.value}${unit}`;
@@ -77,7 +78,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
     return ok(itemListOrError.value);
   }
 
-  private static createButton(): Result<Button, DomainError> {
+  private static createButton(id: string): Result<Button, DomainError> {
     const blockId = process.env.SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID;
     if (!blockId) throw Error('CHECK_IN_BLOCK_ID is not defined');
 
@@ -85,6 +86,9 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
       label: '이용권 사용하기',
       action: ButtonActionType.BLOCK,
       blockId,
+      extra: {
+        ticketId: id,
+      },
     });
   }
 

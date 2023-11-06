@@ -42,7 +42,8 @@ export class GetAvailableMyTicketsUseCase
       if (myTicketInUse) return err(new AlreadyInUseMyTicketError());
 
       const carouselOrError = MyTicketInfoItemCardCarousel.new({
-        myTicketsInfo: availableMyTickets.map((myTicket) => ({
+        myTickets: availableMyTickets.map((myTicket) => ({
+          id: myTicket.id.value,
           title: myTicket.title,
           totalUsageDuration: myTicket.usageDuration.totalDuration,
           inUse: myTicket.inUse,

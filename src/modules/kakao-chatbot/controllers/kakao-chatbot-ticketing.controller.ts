@@ -13,7 +13,6 @@ import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';
 import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
-import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
@@ -129,10 +128,11 @@ export class KakaoChatbotTicketingController {
 
   @Post('select-ticket-and-get-all-rooms')
   async selectTicketAndGetAllRooms(
-    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
+    @Body(ParseAppUserIdParamPipe) appUserId: string,
     @Body(new ParseClientExtraPipe<{ ticketId: string }>(['ticketId']))
     clientExtraOrError: ParseClientExtraResult<{ ticketId: string }>,
   ): Promise<KakaoChatbotResponseDTO> {
+    // TODO: ParseClientExtraPipe 단순하게 리팩터링하기
     if (clientExtraOrError.isErr()) return clientExtraOrError.error;
 
     const roomItemCardCarouselOrError =
@@ -193,7 +193,7 @@ export class KakaoChatbotTicketingController {
 
   @Post('select-seat-and-confirm-purchase-info')
   async confirmPurchaseInfo(
-    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
+    @Body(ParseAppUserIdParamPipe) appUserId: string,
     @Body(new ParseClientExtraPipe<{ seatId: string }>(['seatId']))
     clientExtraOrError: ParseClientExtraResult<{ seatId: string }>,
   ) {
@@ -227,9 +227,7 @@ export class KakaoChatbotTicketingController {
   }
 
   @Post('virtual-account')
-  async issueVirtualAccount(
-    @Body(new ParseAppUserIdParamPipe()) appUserId: string,
-  ) {
+  async issueVirtualAccount(@Body(ParseAppUserIdParamPipe) appUserId: string) {
     const simpleTextOrError = await this.issueVirtualAccountUseCase.execute({
       appUserId,
     });
