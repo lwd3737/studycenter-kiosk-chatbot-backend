@@ -103,7 +103,6 @@ export class MockPaymentCompletionService {
       virtualAccountOrError.value,
     );
 
-    // myTicket 생성
     const newMyTicket = MyTicket.new({
       paymentId: createdVirtualAccount.paymentId.value,
       memberId: member.memberId.value,

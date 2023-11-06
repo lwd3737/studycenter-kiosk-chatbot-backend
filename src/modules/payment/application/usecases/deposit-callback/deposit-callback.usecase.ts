@@ -85,12 +85,11 @@ export class DepositCallbackUseCase
 
       await this.myTicketService.create(myTicket);
 
-      // TODO: 주석 제거
-      // const checkInOrError = await this.checkInOutService.checkIn(
-      //   myTicket,
-      //   member,
-      // );
-      // if (checkInOrError.isErr()) return err(checkInOrError.error);
+      const checkInOrError = await this.checkInOutService.checkIn(
+        myTicket,
+        member,
+      );
+      if (checkInOrError.isErr()) return err(checkInOrError.error);
 
       await this.myTicketService.update(myTicket);
 

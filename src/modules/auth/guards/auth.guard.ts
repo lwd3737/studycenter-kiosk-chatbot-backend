@@ -8,13 +8,19 @@ import { CustomConfigService } from 'src/modules/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private devMode: boolean;
+
   constructor(
     private reflector: Reflector,
     private configService: CustomConfigService,
     private memberService: MemberService,
-  ) {}
+  ) {
+    this.devMode = this.configService.get<string>('mode') === 'dev';
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (this.devMode) return true;
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -56,17 +62,7 @@ export class AuthGuard implements CanActivate {
       throw new AuthExceptions.AppUserIdNotExistError();
     }
 
-    let member: Member | null = null;
-
-    const isDevMode = this.configService.get<string>('mode');
-    if (isDevMode) {
-      const testAppUserId = this.configService.get<string>(
-        'kakao.test.appUserId',
-        { infer: true },
-      )!;
-      member = await this.memberService.findByAppUserId(testAppUserId);
-    } else member = await this.memberService.findByAppUserId(appUserId);
-
+    const member = await this.memberService.findByAppUserId(appUserId);
     if (member === null) {
       throw new AuthExceptions.MemberNotFoundError();
     }

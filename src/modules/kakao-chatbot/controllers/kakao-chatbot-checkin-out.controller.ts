@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { GetAvailableMyTicketsUseCase } from '../application/usecases/check-in-out/get-available-my-tickets/get-available-my-tickets.usecase';
 import { ParseAppUserIdParamPipe } from '../application/pipes/parse-app-user-id-param.pipe';
 import { DomainError, UnknownError } from 'src/core';
@@ -9,8 +8,6 @@ import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
 
-// TODO: public 제거
-@Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}`)
 export class KakaoChatbotCheckInOutController {
   constructor(
