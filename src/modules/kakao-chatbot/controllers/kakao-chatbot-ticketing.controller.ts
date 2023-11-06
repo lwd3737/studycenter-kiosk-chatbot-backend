@@ -31,7 +31,6 @@ import { GetTicketGroupUseCase } from '../application/usecases/ticketing/get-tic
 import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { IssueVirtualAccountUseCase } from '../application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
 
-@Public()
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
 export class KakaoChatbotTicketingController {
   constructor(

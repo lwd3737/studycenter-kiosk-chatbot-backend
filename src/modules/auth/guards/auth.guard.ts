@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     private configService: CustomConfigService,
     private memberService: MemberService,
   ) {
-    this.devMode = this.configService.get<string>('mode') === 'dev';
+    this.devMode = this.configService.get('devMode', { infer: true })!;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
