@@ -4,11 +4,7 @@ import {
   InternalServerErrorException,
   Post,
 } from '@nestjs/common';
-import {
-  InitTicketsUseCase,
-  TicketNotFoundError,
-  TicketType,
-} from 'src/modules/ticketing';
+import { InitTicketsUseCase, TicketType } from 'src/modules/ticketing';
 import { KakaoChatbotResponseDTO } from '../application/dtos/IResponse.dto';
 import { KaKaoChatbotResponseMapper } from '../infra/mappers/kakao-chatbot-response.mapper';
 import { ErrorDTOCreator } from '../application/dtos/error.dto';
@@ -29,6 +25,10 @@ import { GetTicketGroupsUseCase } from '../application/usecases/ticketing/get-ti
 import { GetTicketGroupUseCase } from '../application/usecases/ticketing/get-ticket-group/get-ticket-group.usecase';
 import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
 import { IssueVirtualAccountUseCase } from '../application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
+import {
+  TicketNotFoundError,
+  TicketNotSelectedError,
+} from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.error';
 
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
 export class KakaoChatbotTicketingController {
@@ -192,7 +192,7 @@ export class KakaoChatbotTicketingController {
   }
 
   @Post('select-seat-and-confirm-purchase-info')
-  async confirmPurchaseInfo(
+  async selectSeatAndConfirmPurchaseInfo(
     @Body(ParseAppUserIdParamPipe) appUserId: string,
     @Body(new ParseClientExtraPipe<{ seatId: string }>(['seatId']))
     clientExtraOrError: ParseClientExtraResult<{ seatId: string }>,
@@ -209,6 +209,8 @@ export class KakaoChatbotTicketingController {
       const error = textCardOrError.error;
       console.debug(error);
 
+      if (error instanceof TicketNotSelectedError)
+        return ErrorDTOCreator.toSimpleTextOutput('이용권을 선택해주세요!');
       if (error instanceof TicketNotFoundError)
         return ErrorDTOCreator.toSimpleTextOutput('이용권을 찾을 수 없어요!');
       return ErrorDTOCreator.toSimpleTextOutput(

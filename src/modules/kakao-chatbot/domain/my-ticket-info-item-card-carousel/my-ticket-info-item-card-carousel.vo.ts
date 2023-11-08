@@ -7,9 +7,9 @@ import {
   ButtonActionType,
 } from '../basic-template-outputs/button/button.value-object';
 
-type MyTicketInfoItemCardCarouselProps = {
+type MyTicketItemCardCarouselProps = {
   myTickets: {
-    id: string;
+    ticketId: string;
     title: string;
     totalUsageDuration: TotalUsageDuration;
     inUse: boolean;
@@ -28,14 +28,14 @@ const MINUTE = 60 * 1000;
 
 export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
   public static new(
-    props: MyTicketInfoItemCardCarouselProps,
+    props: MyTicketItemCardCarouselProps,
   ): Result<MyTicketInfoItemCardCarousel, DomainError> {
     const itemCardsOrError = combine(
       ...props.myTickets.map((myTicket) => {
         const itemListOrError = this.createItemList(myTicket);
         if (itemListOrError.isErr()) return err(itemListOrError.error);
 
-        const buttonOrError = this.createButton(myTicket.id);
+        const buttonOrError = this.createButton(myTicket.ticketId);
         if (buttonOrError.isErr()) return err(buttonOrError.error);
 
         return ItemCard.create({
@@ -55,7 +55,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
   }
 
   private static createItemList(
-    info: MyTicketInfoItemCardCarouselProps['myTickets'][number],
+    info: MyTicketItemCardCarouselProps['myTickets'][number],
   ): Result<ItemList[], DomainError> {
     const unit = info.totalUsageDuration.unit === 'DAYS' ? '일' : '시간';
     const totalDuration = `${info.totalUsageDuration.value}${unit}`;
@@ -78,7 +78,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
     return ok(itemListOrError.value);
   }
 
-  private static createButton(id: string): Result<Button, DomainError> {
+  private static createButton(ticketId: string): Result<Button, DomainError> {
     const blockId = process.env.SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID;
     if (!blockId) throw Error('CHECK_IN_BLOCK_ID is not defined');
 
@@ -87,7 +87,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
       action: ButtonActionType.BLOCK,
       blockId,
       extra: {
-        ticketId: id,
+        ticketId,
       },
     });
   }

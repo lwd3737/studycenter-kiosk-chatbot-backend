@@ -43,7 +43,7 @@ export class GetAvailableMyTicketsUseCase
 
       const carouselOrError = MyTicketInfoItemCardCarousel.new({
         myTickets: availableMyTickets.map((myTicket) => ({
-          id: myTicket.id.value,
+          ticketId: myTicket.ticketId.value,
           title: myTicket.title,
           totalUsageDuration: myTicket.usageDuration.totalDuration,
           inUse: myTicket.inUse,
