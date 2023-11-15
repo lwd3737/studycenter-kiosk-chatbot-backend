@@ -5,7 +5,7 @@ import {
   IRoomRepo,
   RoomRepoProvider,
 } from '../domain/room/room.repo.interface';
-import { Seat } from '../domain/seat/seat.aggregate-root';
+import { Seat } from '../domain/seat/seat.ar';
 import {
   ISeatRepo,
   SeatRepoProvider,
@@ -91,7 +91,7 @@ export class RoomsSeatsSeederService {
 
       const newSeatsOrError = combine(
         ...filtered.map((seatData) =>
-          Seat.createNew({ ...seatData, roomId: room.id.value }),
+          Seat.new({ ...seatData, roomId: room.id.value }),
         ),
       );
       if (newSeatsOrError.isErr()) return err(newSeatsOrError.error);

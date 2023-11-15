@@ -3,6 +3,7 @@ import {
   CreateTotalDurationProps,
   MyTicketUsageDuration,
   MyTicketUsageDurationProps,
+  ONE_HOUR,
   OnStartTicketUsage,
 } from './usage-duration.vo';
 
@@ -25,6 +26,7 @@ export type RechargableUsageDurationType =
   typeof RECHARGABLE_USAGE_DURATION_TYPE;
 export const RECHARGABLE_USAGE_DURATION_TYPE = 'RECHARGABLE';
 
+const ONE_MINUTE = 60 * 1000;
 export class RechargableUsageDuration extends MyTicketUsageDuration<RechargableUsageDurationProps> {
   public static new(
     props: CreateNewRecharableUsageDurationProps,
@@ -68,6 +70,12 @@ export class RechargableUsageDuration extends MyTicketUsageDuration<RechargableU
     return this.props.remainingTime ?? this.totalDurationToMs();
   }
 
+  public displayExpiry(): string {
+    const hours = Math.floor(this.remainingTime / ONE_HOUR);
+    const minutes = Math.floor((this.remainingTime % ONE_HOUR) / ONE_MINUTE);
+    return `${hours}시간 ${minutes}분 뒤에 이용권이 만료됩니다.`;
+  }
+
   public startUsage(
     after: OnStartTicketUsage,
   ): Result<RechargableUsageDuration, DomainError> {
@@ -76,7 +84,7 @@ export class RechargableUsageDuration extends MyTicketUsageDuration<RechargableU
     const updatedOrError = RechargableUsageDuration.from({
       ...this.props,
       startAt: new Date(),
-      remainingTime: this.props.totalDuration.value,
+      remainingTime: this.totalDurationToMs(),
     });
     if (updatedOrError.isErr()) return err(updatedOrError.error);
     const updated = updatedOrError.value;

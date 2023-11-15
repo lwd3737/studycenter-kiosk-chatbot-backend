@@ -8,7 +8,12 @@ import {
 } from './usage-duration/usage-duration.vo';
 import { PaymentId } from 'src/modules/payment';
 import { MemberId } from 'src/modules/member/domain/member/member-id';
-import { UsageDurationFactory } from './usage-duration/usage-duration.factory';
+import {
+  CreateFromExistingUsageDurationProps,
+  CreateNewUsageDurationProps,
+  UsageDurationFactory,
+} from './usage-duration/usage-duration.factory';
+import { SeatId } from 'src/modules/seat-management/domain/seat/seat-id';
 
 type MyTicketProps = {
   paymentId: PaymentId;
@@ -17,17 +22,14 @@ type MyTicketProps = {
   title: string;
   inUse: boolean;
   usageDuration: MyTicketUsageDuration;
+  seatIdInUse: SeatId | null;
 };
-type CreateNewMyTicketProps = {
+type CreateNewMyTicketProps = Pick<MyTicketProps, 'title'> & {
   paymentId: string;
   memberId: string;
-  ticketId: string;
   type: TicketType;
-  title: string;
-  totalUsageDuration: {
-    unit: string;
-    value: number;
-  };
+  ticketId: string;
+  totalUsageDuration: CreateNewUsageDurationProps['totalUsageDuration'];
 };
 type CreateFromExistingMyTicketProps = {
   paymentId: string;
@@ -36,17 +38,9 @@ type CreateFromExistingMyTicketProps = {
   title: string;
   inUse: boolean;
   usageDuration: CreateFromExistingUsageDurationProps;
+  seatIdInUse: string | null;
 };
-type CreateFromExistingUsageDurationProps = {
-  type: string;
-  totalDuration: {
-    unit: string;
-    value: number;
-  };
-  startAt: Date | null;
-  endAt?: Date | null;
-  remainingTime?: number;
-};
+
 export type UsageDurationType =
   | FixedExpiryUsageDurationType
   | RechargableUsageDurationType;
@@ -67,25 +61,31 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
         ticketId: new TicketId(props.ticketId),
         inUse: false,
         usageDuration: usageDurationOrError.value,
+        seatIdInUse: null,
       }),
     );
   }
 
   public static from(
     props: CreateFromExistingMyTicketProps,
+    id: string,
   ): Result<MyTicket, DomainError> {
     const usageDurationOrError = UsageDurationFactory.from(props.usageDuration);
     if (usageDurationOrError.isErr())
       return err(new DomainError(usageDurationOrError.error.message));
 
     return ok(
-      new MyTicket({
-        ...props,
-        paymentId: new PaymentId(props.paymentId),
-        memberId: new MemberId(props.memberId),
-        ticketId: new TicketId(props.ticketId),
-        usageDuration: usageDurationOrError.value,
-      }),
+      new MyTicket(
+        {
+          ...props,
+          paymentId: new PaymentId(props.paymentId),
+          memberId: new MemberId(props.memberId),
+          ticketId: new TicketId(props.ticketId),
+          usageDuration: usageDurationOrError.value,
+          seatIdInUse: null,
+        },
+        id,
+      ),
     );
   }
 
@@ -115,6 +115,14 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
 
   get usageDuration(): MyTicketUsageDuration {
     return this.props.usageDuration;
+  }
+
+  get seatIdInUse(): SeatId | null {
+    return this.props.seatIdInUse;
+  }
+
+  public displayExpiry(): string {
+    return this.props.usageDuration.displayExpiry();
   }
 
   public startUsage(after: OnStartTicketUsage): Result<null, DomainError> {

@@ -8,20 +8,24 @@ import {
 import { ItemCard } from '../basic-template-outputs/item-card/item-card.value-object';
 import { ItemList } from '../basic-template-outputs/item-card/item-list.value-object';
 import { ImageTitle } from '../basic-template-outputs/item-card/image-title.value-object';
-import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
+import { Seat } from 'src/modules/seat-management/domain/seat/seat.ar';
 import { ItemListSummary } from '../basic-template-outputs/item-card/item-list-summary.value-object';
 import { ItemCardCarousel } from '../basic-template-outputs/item-card-carousel/item-card-carousel.value-object';
 
 type CreateProps = {
-  roomInfos: RoomInfo[];
+  blockId: string;
+  rooms: RoomInfo[];
 };
 type RoomInfo = { room: Room; seats: Seat[] };
 
 export class RoomItemCardCarousel extends ItemCardCarousel {
-  public static from(
+  public static new(
     props: CreateProps,
   ): Result<RoomItemCardCarousel, DomainError> {
-    const roomItemCardsOrError = this.createRoomItemCards(props.roomInfos);
+    const roomItemCardsOrError = this.createRoomItemCards(
+      props.blockId,
+      props.rooms,
+    );
     if (roomItemCardsOrError.isErr()) {
       return err(roomItemCardsOrError.error);
     }
@@ -34,15 +38,16 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
   }
 
   private static createRoomItemCards(
-    allRoomInfo: RoomInfo[],
+    blockId: string,
+    rooms: RoomInfo[],
   ): Result<ItemCard[], DomainError> {
-    const roomItemCardOrErrors = allRoomInfo.map((seatCollectionByRoom) => {
+    const roomItemCardOrErrors = rooms.map((seatCollectionByRoom) => {
       const { room, seats } = seatCollectionByRoom;
 
       const roomProps = combine(
         this.createSeatsInfoItemList(room.seatsInfo),
         this.createSeatSummary(room.seatsInfo),
-        this.createSelectionButton(room),
+        this.createButton(blockId, room),
       );
       if (roomProps.isErr()) {
         return err(roomProps.error);
@@ -108,13 +113,14 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
     return ok(summaryOrError.value);
   }
 
-  private static createSelectionButton(
+  private static createButton(
+    blockId: string,
     room: Room,
   ): Result<Button, DomainError> {
     return Button.create({
       label: `${room.title} 선택하기`,
       action: ButtonActionType.BLOCK,
-      blockId: process.env.GET_AVAILABLE_SEATS_BLOCK_ID,
+      blockId,
       messageText: `${room.title} 선택`,
       extra: {
         roomId: room.id.value,
@@ -123,7 +129,7 @@ export class RoomItemCardCarousel extends ItemCardCarousel {
   }
 
   private static formatAvailableSeatNumbers(seats: Seat[]): string {
-    const availableSeats = seats.filter((seat) => seat.isAvailable);
+    const availableSeats = seats.filter((seat) => seat.available);
     const availableSeatNumbers = availableSeats.map(
       (seat) => seat.number.value,
     );

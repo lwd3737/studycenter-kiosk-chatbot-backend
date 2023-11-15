@@ -6,11 +6,15 @@ import { KakaoChatbotResponseDTO } from '../dtos/IResponse.dto';
 
 export type ParseClientExtraResult<T> = Result<T, KakaoChatbotResponseDTO>;
 
-export class ParseClientExtraPipe<
-  Required extends Record<string, any> = Record<string, any>,
-> implements PipeTransform<KakaoChatbotRequestDTO, any>
+// Deprecated
+export class ParseClientExtraPipe<Required extends Record<string, any> = never>
+  implements
+    PipeTransform<
+      KakaoChatbotRequestDTO,
+      Result<Required, KakaoChatbotResponseDTO>
+    >
 {
-  constructor(private required?: (keyof Required)[]) {}
+  constructor(private required: (keyof Required)[]) {}
 
   transform(
     value: KakaoChatbotRequestDTO,

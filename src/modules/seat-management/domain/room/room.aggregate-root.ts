@@ -5,7 +5,7 @@ import { RoomNumber } from './room-number.value-object';
 import { RoomType } from './room-type.value-object';
 import { SeatsInfo } from './seats-info.value-object';
 import { SeatIds } from './seat-ids.value-object';
-import { Seat } from '../seat/seat.aggregate-root';
+import { Seat } from '../seat/seat.ar';
 import { SeatId } from '../seat/seat-id';
 
 export interface RoomProps {
@@ -65,7 +65,7 @@ export class Room extends AggregateRoot<RoomProps> {
 
     const newAvailableNumber = seats.reduce(
       (availableNumber, seat) =>
-        seat.isAvailable ? availableNumber + 1 : availableNumber,
+        seat.available ? availableNumber + 1 : availableNumber,
       0,
     );
     const seatsInfoResult = SeatsInfo.create({

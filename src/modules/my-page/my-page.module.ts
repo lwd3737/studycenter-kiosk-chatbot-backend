@@ -6,9 +6,14 @@ import { MyTicketService } from './application/services/my-ticket.service';
 import { KakaoChatbotModule } from '../kakao-chatbot/kakao-chatbot.module';
 import { MemberModule } from '../member';
 import { createProviderBasedOnDevMode } from 'src/shared/utils/provider-factory';
+import { SeatManagementModule } from '../seat-management';
 
 @Module({
-  imports: [forwardRef(() => KakaoChatbotModule), MemberModule],
+  imports: [
+    forwardRef(() => KakaoChatbotModule),
+    MemberModule,
+    SeatManagementModule,
+  ],
   providers: [
     createProviderBasedOnDevMode(IMyTicketRepo, (devMode) =>
       devMode

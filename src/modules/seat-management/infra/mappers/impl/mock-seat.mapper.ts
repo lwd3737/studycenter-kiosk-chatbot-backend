@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
+import { Seat } from 'src/modules/seat-management/domain/seat/seat.ar';
 import { MockSeat } from '../../repos/mocks/mock-seat.repo';
 import { ISeatMapper } from '../seat.mapper.interface';
 
@@ -11,12 +11,13 @@ export class MockSeatMapper implements ISeatMapper {
       roomId: seat.roomId.value,
       roomNumber: seat.roomNumber.value,
       number: seat.number.value,
-      isAvailable: seat.isAvailable,
+      available: seat.available,
+      memberIdInUse: seat.memberIdInUse,
     };
   }
 
   toDomain(raw: MockSeat): Seat {
-    const seatOrError = Seat.createFromExisiting({ ...raw }, raw.id);
+    const seatOrError = Seat.from({ ...raw }, raw.id);
     if (seatOrError.isErr()) throw seatOrError.error;
     return seatOrError.value;
   }

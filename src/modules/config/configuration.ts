@@ -30,9 +30,13 @@ export default function configuration() {
     SIGNUP_BLOCK_ID,
     SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID,
     GET_AVAILABLE_SEATS_BLOCK_ID,
-    CONFIRM_TICKET_BLOCK_ID,
     PAYMENT_FOR_TICKET_BLOCK_ID,
+    TICKETING__GET_ALL_ROOMS_BLOCK_ID,
+    TICKETING__GET_AVAILABLE_SEATS_BLOCK_ID,
+    TICKETING__CONFIRM_TICKET_PURCHASE_INFO_BLOCK_ID,
     GET_AVAILABLE_MY_TICKETS_BLOCK_ID,
+    CHECK_IN__GET_ALL_ROOMS_BLOCK_ID,
+    CHECK_IN__GET_AVAILABLE_SEATS_IN_ROOM_BLOCK_ID,
     CHECK_IN_BLOCK_ID,
   } = process.env;
 
@@ -55,9 +59,13 @@ export default function configuration() {
     SIGNUP_BLOCK_ID,
     SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID,
     GET_AVAILABLE_SEATS_BLOCK_ID,
-    CONFIRM_TICKET_BLOCK_ID,
     PAYMENT_FOR_TICKET_BLOCK_ID,
+    TICKETING__GET_ALL_ROOMS_BLOCK_ID,
+    TICKETING__GET_AVAILABLE_SEATS_BLOCK_ID,
+    TICKETING__CONFIRM_TICKET_PURCHASE_INFO_BLOCK_ID,
     GET_AVAILABLE_MY_TICKETS_BLOCK_ID,
+    CHECK_IN__GET_ALL_ROOMS_BLOCK_ID,
+    CHECK_IN__GET_AVAILABLE_SEATS_IN_ROOM_BLOCK_ID,
     CHECK_IN_BLOCK_ID,
   ].forEach(
     (env, i) => env === undefined && new Error(`index(${i}) env is undefined`),
@@ -86,10 +94,21 @@ export default function configuration() {
         signup: SIGNUP_BLOCK_ID,
         selectTicketAndGetAllRooms: SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID,
         getAvailableSeats: GET_AVAILABLE_SEATS_BLOCK_ID,
-        confirmTicket: CONFIRM_TICKET_BLOCK_ID,
         paymentForTicket: PAYMENT_FOR_TICKET_BLOCK_ID,
-        getAvailableMyTickets: GET_AVAILABLE_MY_TICKETS_BLOCK_ID,
-        checkIn: CHECK_IN_BLOCK_ID,
+        // new version
+        ticketing: {
+          getAvailableSeatsInRoom: GET_AVAILABLE_SEATS_BLOCK_ID,
+          getAllRooms: TICKETING__GET_ALL_ROOMS_BLOCK_ID,
+          confirmTicketPurchaseInfo:
+            TICKETING__CONFIRM_TICKET_PURCHASE_INFO_BLOCK_ID,
+        },
+        checkInOut: {
+          getAvailableMyTickets: GET_AVAILABLE_MY_TICKETS_BLOCK_ID,
+          getAllRooms: CHECK_IN__GET_ALL_ROOMS_BLOCK_ID,
+          getAvailableSeatsInRoom:
+            CHECK_IN__GET_AVAILABLE_SEATS_IN_ROOM_BLOCK_ID,
+          checkIn: CHECK_IN_BLOCK_ID,
+        },
       },
       test: {
         appUserId: TEST_APP_USER_ID,

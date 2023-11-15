@@ -36,7 +36,7 @@ import {
 } from 'src/modules/ticketing';
 import { SeatId } from 'src/modules/seat-management/domain/seat/seat-id';
 import { MyTicket } from 'src/modules/my-page/domain/my-ticket/my-ticket.ar';
-import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
+import { Seat } from 'src/modules/seat-management/domain/seat/seat.ar';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
 import { CheckInOutService, MyTicketService } from 'src/modules/my-page';
 
@@ -87,11 +87,10 @@ export class DepositCallbackUseCase
 
       const checkInOrError = await this.checkInOutService.checkIn(
         myTicket,
-        member,
+        member.appUserId,
+        seatInfo.seat.seatId.value,
       );
       if (checkInOrError.isErr()) return err(checkInOrError.error);
-
-      await this.myTicketService.update(myTicket);
 
       const resOrError = await this.sendMessage({ member, ticket, seatInfo });
       if (resOrError.isErr()) return err(resOrError.error);

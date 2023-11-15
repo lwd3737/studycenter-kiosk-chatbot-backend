@@ -6,6 +6,7 @@ import { RechargableUsageDurationType } from 'src/modules/my-page/domain/my-tick
 import { MockMyTicketMapper } from '../mappers/mock/mock-my-ticket.mapper';
 
 export type MockMyTicketSchema = {
+  id: string;
   paymentId: string;
   memberId: string;
   ticketId: string;
@@ -21,6 +22,7 @@ export type MockMyTicketSchema = {
     endAt?: Date | null;
     remainingTime?: number;
   };
+  seatIdInUse: string | null;
 };
 
 const ERROR_TYPE = 'MockMyTicketRepo';
@@ -33,7 +35,7 @@ export class MockMyTicketRepo extends IMyTicketRepo {
     const raw = MockMyTicketMapper.toPersistence(myTicket);
     this.storage.push(raw);
 
-    const created = await this.findOneById(myTicket.paymentId.value);
+    const created = await this.findOneById(myTicket.id.value);
     if (!created) throw new Error(`[${ERROR_TYPE}]MyTicket not created`);
 
     return created;
@@ -41,27 +43,16 @@ export class MockMyTicketRepo extends IMyTicketRepo {
 
   public async update(myTicket: MyTicket): Promise<MyTicket> {
     const raw = MockMyTicketMapper.toPersistence(myTicket);
-    const index = this.storage.findIndex(
-      (myTicket) => myTicket.paymentId === raw.paymentId,
-    );
+    const index = this.storage.findIndex((myTicket) => myTicket.id === raw.id);
     this.storage[index] = raw;
 
-    const updated = await this.findOneById(myTicket.paymentId.value);
+    const updated = await this.findOneById(myTicket.id.value);
     if (!updated) throw new Error(`[${ERROR_TYPE}]MyTicket not updated`);
-
     return updated;
   }
 
   public async findOneById(myTicketId: string): Promise<MyTicket | null> {
-    const raw = this.storage.find(
-      (myTicket) => myTicket.paymentId === myTicketId,
-    );
-    if (!raw) return null;
-    return MockMyTicketMapper.toDomain(raw);
-  }
-
-  public async findOneByMemberId(memberId: string): Promise<MyTicket | null> {
-    const raw = this.storage.find((myTicket) => myTicket.memberId === memberId);
+    const raw = this.storage.find((raw) => raw.id === myTicketId);
     if (!raw) return null;
     return MockMyTicketMapper.toDomain(raw);
   }

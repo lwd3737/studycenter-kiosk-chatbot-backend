@@ -12,8 +12,8 @@ import { KAKAO_CHATBOT_PREFIX } from './controller-prefix';
 import { ListCardCarouselMapper } from '../infra/mappers/list-card-carousel.mapper';
 import { CommerceCardCarouselMapper } from '../infra/mappers/commerce-card-carousel.mapper';
 import { ItemCardCarouselMapper } from '../infra/mappers/item-card-carousel.mapper';
-import { SelectTicketAndGetAllRoomsUseCase } from '../application/usecases/ticketing/select-ticket-and-get-all-rooms/select-ticket-and-get-all-rooms.usecase';
-import { GetAvailableSeatsUseCase } from '../application/usecases/ticketing/get-available-seats/get-available-seats.usecase';
+import { GetAllRoomsUseCase } from '../application/usecases/ticketing/get-all-rooms/get-all-rooms.usecase';
+import { GetAvailableSeatsInRoomUseCase } from '../application/usecases/ticketing/get-available-seats-in-room/get-available-seats-in-room.usecase';
 import { ParseTicketTypeParamPipe } from '../application/pipes/parse-ticket-category-param.pipe';
 import { ParseAppUserIdParamPipe } from '../application/pipes/parse-app-user-id-param.pipe';
 import { TextCardMapper } from '../infra/mappers/text-card.mapper';
@@ -23,12 +23,13 @@ import {
 } from '../application/pipes/parse-client-extra.pipe';
 import { GetTicketGroupsUseCase } from '../application/usecases/ticketing/get-ticket-groups/get-ticket-groups.usecase';
 import { GetTicketGroupUseCase } from '../application/usecases/ticketing/get-ticket-group/get-ticket-group.usecase';
-import { SelectSeatAndConfirmTicketPurchaseInfoUseCase } from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.usecase';
+import { ConfirmTicketPurchaseInfoUseCase } from '../application/usecases/ticketing/confirm-ticket-purchase-info/confirm-ticket-purchase-info.usecase';
 import { IssueVirtualAccountUseCase } from '../application/usecases/ticketing/issue-virtual-account/issue-virtual-account.usecase';
 import {
   TicketNotFoundError,
   TicketNotSelectedError,
-} from '../application/usecases/ticketing/select-seat-and-confirm-ticket-purchase-info/select-seat-and-confirm-ticket-purchase-info.error';
+} from '../application/usecases/ticketing/confirm-ticket-purchase-info/confirm-ticket-purchase-info.error';
+import { New__ParseClientExtraPipe } from '../application/pipes/new-parse-client-extra.pipe';
 
 @Controller(`${KAKAO_CHATBOT_PREFIX}/ticketing`)
 export class KakaoChatbotTicketingController {
@@ -36,9 +37,9 @@ export class KakaoChatbotTicketingController {
     private initTicketUseCase: InitTicketsUseCase,
     private getTicketGroupsUseCase: GetTicketGroupsUseCase,
     private getTicketGroupUseCase: GetTicketGroupUseCase,
-    private selectTicketAndGetAllRoomsUseCase: SelectTicketAndGetAllRoomsUseCase,
-    private getAvailableSeats: GetAvailableSeatsUseCase,
-    private confirmTicketPurchaseInfoUseCase: SelectSeatAndConfirmTicketPurchaseInfoUseCase,
+    private getAllRoomsUseCase: GetAllRoomsUseCase,
+    private getAvailableSeats: GetAvailableSeatsInRoomUseCase,
+    private confirmTicketPurchaseInfoUseCase: ConfirmTicketPurchaseInfoUseCase,
     private issueVirtualAccountUseCase: IssueVirtualAccountUseCase,
   ) {}
 
@@ -126,35 +127,30 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('select-ticket-and-get-all-rooms')
-  async selectTicketAndGetAllRooms(
+  @Post('all-rooms')
+  async getAllRooms(
     @Body(ParseAppUserIdParamPipe) appUserId: string,
-    @Body(new ParseClientExtraPipe<{ ticketId: string }>(['ticketId']))
-    clientExtraOrError: ParseClientExtraResult<{ ticketId: string }>,
+    @Body(new New__ParseClientExtraPipe(['ticketId']))
+    clientExtra: { ticketId: string },
   ): Promise<KakaoChatbotResponseDTO> {
-    // TODO: ParseClientExtraPipe 단순하게 리팩터링하기
-    if (clientExtraOrError.isErr()) return clientExtraOrError.error;
+    const carouselOrError = await this.getAllRoomsUseCase.execute({
+      appUserId,
+      ticketId: clientExtra.ticketId,
+    });
 
-    const roomItemCardCarouselOrError =
-      await this.selectTicketAndGetAllRoomsUseCase.execute({
-        appUserId,
-        ticketId: clientExtraOrError.value.ticketId,
-      });
-    if (roomItemCardCarouselOrError.isErr()) {
-      const error = roomItemCardCarouselOrError.error;
+    if (carouselOrError.isErr()) {
+      const error = carouselOrError.error;
       console.debug(new InternalServerErrorException(error));
 
       return ErrorDTOCreator.toSimpleTextOutput(
-        '룸에 대한 정보를 출력하는 중에 오류가 발생했어요!',
+        '전체 방 조회 중에 오류가 발생했어요!',
       );
     }
 
     return KaKaoChatbotResponseMapper.toDTO({
       outputs: [
         {
-          carousel: ItemCardCarouselMapper.toDTO(
-            roomItemCardCarouselOrError.value,
-          ),
+          carousel: ItemCardCarouselMapper.toDTO(carouselOrError.value),
         },
       ],
     });
@@ -191,7 +187,7 @@ export class KakaoChatbotTicketingController {
     });
   }
 
-  @Post('select-seat-and-confirm-purchase-info')
+  @Post('confirm-purchase-info')
   async selectSeatAndConfirmPurchaseInfo(
     @Body(ParseAppUserIdParamPipe) appUserId: string,
     @Body(new ParseClientExtraPipe<{ seatId: string }>(['seatId']))

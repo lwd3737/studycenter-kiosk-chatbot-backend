@@ -1,5 +1,5 @@
 import { IMapper } from 'src/core';
-import { Seat } from '../../domain/seat/seat.aggregate-root';
+import { Seat } from '../../domain/seat/seat.ar';
 
 export const SeatMapperProvider = Symbol('SeatMapperProvider');
 

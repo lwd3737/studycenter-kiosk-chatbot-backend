@@ -1,6 +1,6 @@
 import { DomainError, Result, combine, err, ok } from 'src/core';
 import { Room } from 'src/modules/seat-management/domain/room/room.aggregate-root';
-import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
+import { Seat } from 'src/modules/seat-management/domain/seat/seat.ar';
 import { AvailableSeatsListCardsCarouselErrors } from './available-seats-list-cards-carousel.error';
 import { ListCard } from '../basic-template-outputs/list-card/list-card.value-object';
 import { ListCardHeader } from '../basic-template-outputs/list-card/header.value-object';
@@ -11,6 +11,7 @@ import {
 import { ListCardCarousel } from '../basic-template-outputs/list-card-carousel/list-card-carousel.value-object';
 
 type CreateProps = {
+  blockId: string;
   room: Room;
   seats: Seat[];
 };
@@ -36,6 +37,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
           const curSeats = props.seats.slice(startIndex, endIndex);
 
           return this.from({
+            blockId: props.blockId,
             room: props.room,
             seats: curSeats,
           });
@@ -69,7 +71,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
   }
 
   private static isUnavailableSeatExists(props: CreateProps) {
-    return props.seats.filter((seat) => seat.isAvailable === false).length > 0;
+    return props.seats.filter((seat) => seat.available === false).length > 0;
   }
 
   private static isSeatsMaxCountExceeded(props: CreateProps) {
@@ -83,7 +85,9 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
     const listCardsOrError = combine(
       ...Array(listCardCount)
         .fill(null)
-        .map((_, index) => this.createListCard(props.room, props.seats, index)),
+        .map((_, index) =>
+          this.createListCard(props.blockId, props.room, props.seats, index),
+        ),
     );
     if (listCardsOrError.isErr()) return err(listCardsOrError.error);
 
@@ -91,6 +95,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
   }
 
   private static createListCard(
+    blockId: string,
     room: Room,
     seats: Seat[],
     index: CarouselIndex,
@@ -107,7 +112,7 @@ export class AvailableSeatsListCardCarousel extends ListCardCarousel {
           title: `${seat.number.value}번 좌석`,
           description: '이용가능',
           action: ListCardItemActionEnum.BLOCK,
-          blockId: process.env.CONFIRM_TICKET_BLOCK_ID,
+          blockId,
           messageText: `${seat.number.value}번 좌석 선택`,
           extra: {
             seatId: seat.id.value,

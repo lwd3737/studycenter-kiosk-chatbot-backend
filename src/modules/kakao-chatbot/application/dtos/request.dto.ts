@@ -6,6 +6,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsStringOrNumber } from 'src/shared/utils/validators';
+import { ContextControlDTO } from './IResponse.dto';
+import { ContextsDTO } from './IRequest.dto';
 
 export type ParamsDTO = Record<string, string>;
 
@@ -108,4 +110,7 @@ export class KakaoChatbotRequestDTO {
 
   @ValidateNested()
   bot: BotDTO;
+
+  @ValidateNested()
+  contexts: ContextsDTO;
 }

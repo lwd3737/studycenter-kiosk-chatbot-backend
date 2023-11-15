@@ -7,6 +7,7 @@ import {
   GetAvailableMyTicketsError,
 } from './get-available.my-tickets.error';
 import { FixedExpiryUsageDuration } from 'src/modules/my-page/domain/my-ticket/usage-duration/fixed-expiry-usage-duration.vo';
+import { CustomConfigService } from 'src/modules/config';
 
 type GetAvailableMyTicketsUseCaseInput = {
   appUserId: string;
@@ -24,11 +25,19 @@ export class GetAvailableMyTicketsUseCase
       GetAvailableMyTicketsUseCaseResult
     >
 {
-  constructor(private myTicketService: MyTicketService) {}
+  constructor(
+    private configService: CustomConfigService,
+    private myTicketService: MyTicketService,
+  ) {}
 
   async execute(
     input: GetAvailableMyTicketsUseCaseInput,
   ): Promise<Result<MyTicketInfoItemCardCarousel, GetAvailableMyTicketsError>> {
+    const blockId = this.configService.get(
+      'kakao.blockIds.checkInOut.getAllRooms',
+      { infer: true },
+    )!;
+
     try {
       const myTickets = await this.myTicketService.findByAppUserId(
         input.appUserId,
@@ -42,8 +51,9 @@ export class GetAvailableMyTicketsUseCase
       if (myTicketInUse) return err(new AlreadyInUseMyTicketError());
 
       const carouselOrError = MyTicketInfoItemCardCarousel.new({
+        blockId,
         myTickets: availableMyTickets.map((myTicket) => ({
-          ticketId: myTicket.ticketId.value,
+          id: myTicket.id.value,
           title: myTicket.title,
           totalUsageDuration: myTicket.usageDuration.totalDuration,
           inUse: myTicket.inUse,

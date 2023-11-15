@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Seat } from 'src/modules/seat-management/domain/seat/seat.aggregate-root';
+import { Seat } from 'src/modules/seat-management/domain/seat/seat.ar';
 import { ISeatRepo } from 'src/modules/seat-management/domain/seat/seat.repo.interface';
 import {
   ISeatMapper,
@@ -8,13 +8,15 @@ import {
 import { SeatIds } from 'src/modules/seat-management/domain/room/seat-ids.value-object';
 import { RoomId } from 'src/modules/seat-management/domain/room/room-id';
 import { SeatId } from 'src/modules/seat-management/domain/seat/seat-id';
+import { RepoError } from 'src/core';
 
 export type MockSeat = {
   id: string;
   roomId: string;
   roomNumber: number;
   number: number;
-  isAvailable: boolean;
+  available: boolean;
+  memberIdInUse: string | null;
 };
 
 @Injectable()
@@ -63,5 +65,18 @@ export class MockSeatRepo implements ISeatRepo {
   public async findByRoomId(roomId: RoomId): Promise<Seat[]> {
     const filtered = this.storage.filter((raw) => roomId.equals(raw.roomId));
     return filtered.map((raw) => this.seatMapper.toDomain(raw));
+  }
+
+  public async update(seat: Seat): Promise<Seat> {
+    const rawToUpdate = this.seatMapper.toPersistence(seat);
+
+    const index = this.storage.findIndex((raw) => raw.id === rawToUpdate.id);
+    if (index < 0) {
+      throw new RepoError(`Seat not found with id(${rawToUpdate.id})`);
+    }
+
+    this.storage[index] = rawToUpdate;
+
+    return seat;
   }
 }

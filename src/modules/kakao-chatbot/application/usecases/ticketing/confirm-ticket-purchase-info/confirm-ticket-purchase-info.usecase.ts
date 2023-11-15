@@ -5,7 +5,7 @@ import {
   SelectSeatAndConfirmTicketPurchaseInfoError,
   TicketNotFoundError,
   TicketNotSelectedError,
-} from './select-seat-and-confirm-ticket-purchase-info.error';
+} from './confirm-ticket-purchase-info.error';
 import { TextCard } from 'src/modules/kakao-chatbot/domain/basic-template-outputs/text-card/text-card.vo';
 import { ButtonActionType } from 'src/modules/kakao-chatbot/domain/basic-template-outputs/button/button.value-object';
 import { TicketingContextService } from 'src/modules/ticketing/application/services/ticketing-context.service';
@@ -20,7 +20,7 @@ type UseCaseResult = Result<
 >;
 
 @Injectable()
-export class SelectSeatAndConfirmTicketPurchaseInfoUseCase
+export class ConfirmTicketPurchaseInfoUseCase
   implements IUseCase<UseCaseInput, UseCaseResult>
 {
   constructor(

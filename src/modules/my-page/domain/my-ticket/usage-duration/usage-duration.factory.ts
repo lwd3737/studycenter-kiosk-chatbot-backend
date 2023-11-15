@@ -17,16 +17,27 @@ import {
 export type UsageDurationType =
   | RechargableUsageDuration
   | FixedExpiryUsageDuration;
+export type CreateNewUsageDurationProps = {
+  totalUsageDuration: {
+    unit: string;
+    value: number;
+  };
+};
+export type CreateFromExistingUsageDurationProps = {
+  type: string;
+  totalDuration: {
+    unit: string;
+    value: number;
+  };
+  startAt: Date | null;
+  endAt?: Date | null;
+  remainingTime?: number;
+};
 
 export class UsageDurationFactory {
   public static new(
     ticketType: TicketType,
-    props: {
-      totalUsageDuration: {
-        unit: string;
-        value: number;
-      };
-    },
+    props: CreateNewUsageDurationProps,
   ): Result<UsageDurationType, DomainError> {
     switch (ticketType) {
       case HOURS_RECHARGE_TICKET_TYPE: {
@@ -53,16 +64,9 @@ export class UsageDurationFactory {
     }
   }
 
-  public static from(props: {
-    type: string;
-    totalDuration: {
-      unit: string;
-      value: number;
-    };
-    startAt: Date | null;
-    endAt?: Date | null;
-    remainingTime?: number;
-  }): Result<UsageDurationType, DomainError> {
+  public static from(
+    props: CreateFromExistingUsageDurationProps,
+  ): Result<UsageDurationType, DomainError> {
     switch (props.type) {
       case FIXED_EXPIRY_USAGE_DURATION_TYPE:
         if (props.endAt === undefined)

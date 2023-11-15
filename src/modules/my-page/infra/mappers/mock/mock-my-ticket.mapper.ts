@@ -16,6 +16,7 @@ export class MockMyTicketMapper {
     const { usageDuration } = domain;
 
     return {
+      id: domain.id.value,
       paymentId: domain.paymentId.value,
       memberId: domain.memberId.value,
       ticketId: domain.ticketId.value,
@@ -39,35 +40,40 @@ export class MockMyTicketMapper {
             ? (usageDuration as RechargableUsageDuration).remainingTime
             : undefined,
       },
+      seatIdInUse: domain.seatIdInUse?.value ?? null,
     };
   }
 
   static toDomain(raw: MockMyTicketSchema): MyTicket {
     const { usageDuration } = raw;
 
-    const myTicketOrError = MyTicket.from({
-      paymentId: raw.paymentId,
-      memberId: raw.memberId,
-      ticketId: raw.ticketId,
-      title: raw.title,
-      inUse: raw.inUse,
-      usageDuration: {
-        type: usageDuration.type,
-        totalDuration: {
-          unit: usageDuration.totalDuration.unit,
-          value: usageDuration.totalDuration.value,
+    const myTicketOrError = MyTicket.from(
+      {
+        paymentId: raw.paymentId,
+        memberId: raw.memberId,
+        ticketId: raw.ticketId,
+        title: raw.title,
+        inUse: raw.inUse,
+        usageDuration: {
+          type: usageDuration.type,
+          totalDuration: {
+            unit: usageDuration.totalDuration.unit,
+            value: usageDuration.totalDuration.value,
+          },
+          startAt: usageDuration.startAt,
+          endAt:
+            usageDuration.type === FIXED_EXPIRY_USAGE_DURATION_TYPE
+              ? usageDuration.endAt
+              : undefined,
+          remainingTime:
+            usageDuration.type === RECHARGABLE_USAGE_DURATION_TYPE
+              ? usageDuration.remainingTime
+              : undefined,
         },
-        startAt: usageDuration.startAt,
-        endAt:
-          usageDuration.type === FIXED_EXPIRY_USAGE_DURATION_TYPE
-            ? usageDuration.endAt
-            : undefined,
-        remainingTime:
-          usageDuration.type === RECHARGABLE_USAGE_DURATION_TYPE
-            ? usageDuration.remainingTime
-            : undefined,
+        seatIdInUse: raw.seatIdInUse,
       },
-    });
+      raw.id,
+    );
     if (myTicketOrError.isErr()) throw myTicketOrError.error;
 
     return myTicketOrError.value;

@@ -75,6 +75,13 @@ export class FixedExpiryUsageDuration extends MyTicketUsageDuration<FixedExpiryU
     return Math.min(0, this.endAt.getTime() - Date.now());
   }
 
+  public displayExpiry(): string {
+    if (this.endAt === null) return '';
+    return `${this.endAt.getFullYear()}/${
+      this.endAt.getMonth() + 1
+    }/${this.endAt.getDate()} ${this.endAt.getHours()}시 ${this.endAt.getMinutes()}분에 이용권이 만료됩니다.`;
+  }
+
   public startUsage(
     after: OnStartTicketUsage,
   ): Result<FixedExpiryUsageDuration, DomainError> {

@@ -26,12 +26,11 @@ export type OnStartTicketUsage = {
 };
 export type UsageDurationHandler = () => void;
 
+export const ONE_HOUR = 60 * 60 * 1000;
+export const ONE_DAY = 24 * ONE_HOUR;
 export abstract class MyTicketUsageDuration<
   P extends MyTicketUsageDurationProps = MyTicketUsageDurationProps,
 > extends ValueObject<P> {
-  private static HOUR = 60 * 60 * 1000;
-  private static DAY = 24 * MyTicketUsageDuration.HOUR;
-
   private expireTimer: null | NodeJS.Timeout;
   private beforeExpire: {
     time: number | null;
@@ -73,12 +72,14 @@ export abstract class MyTicketUsageDuration<
     return this.startAt !== null;
   }
 
+  abstract displayExpiry(): string;
+
   protected totalDurationToMs(): number {
     switch (this.props.totalDuration.unit) {
       case TotalUsageDurationUnit.DAYS:
-        return this.props.totalDuration.value * MyTicketUsageDuration.DAY;
+        return this.props.totalDuration.value * ONE_DAY;
       case TotalUsageDurationUnit.HOURS:
-        return this.props.totalDuration.value * MyTicketUsageDuration.HOUR;
+        return this.props.totalDuration.value * ONE_HOUR;
     }
   }
 

@@ -4,7 +4,6 @@ import {
   PaymentFactory,
 } from 'src/modules/payment/domain/payment/payment.factory';
 import { MockPaymentSchema } from '../../repos/mock-payment.repo';
-import { MemberId } from 'src/modules/member/domain/member/member-id';
 import { ProductType } from 'src/modules/payment/domain/payment/base/order/product.value-object';
 import { OrderId } from 'src/modules/payment/domain/payment/base/order/order-id';
 

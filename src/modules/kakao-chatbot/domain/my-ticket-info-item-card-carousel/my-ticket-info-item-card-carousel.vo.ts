@@ -8,8 +8,9 @@ import {
 } from '../basic-template-outputs/button/button.value-object';
 
 type MyTicketItemCardCarouselProps = {
+  blockId: string;
   myTickets: {
-    ticketId: string;
+    id: string;
     title: string;
     totalUsageDuration: TotalUsageDuration;
     inUse: boolean;
@@ -35,7 +36,7 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
         const itemListOrError = this.createItemList(myTicket);
         if (itemListOrError.isErr()) return err(itemListOrError.error);
 
-        const buttonOrError = this.createButton(myTicket.ticketId);
+        const buttonOrError = this.createButton(props.blockId, myTicket.id);
         if (buttonOrError.isErr()) return err(buttonOrError.error);
 
         return ItemCard.create({
@@ -78,16 +79,16 @@ export class MyTicketInfoItemCardCarousel extends ItemCardCarousel {
     return ok(itemListOrError.value);
   }
 
-  private static createButton(ticketId: string): Result<Button, DomainError> {
-    const blockId = process.env.SELECT_TICKET_AND_GET_ALL_ROOMS_BLOCK_ID;
-    if (!blockId) throw Error('CHECK_IN_BLOCK_ID is not defined');
-
+  private static createButton(
+    blockId: string,
+    myTicketId: string,
+  ): Result<Button, DomainError> {
     return Button.create({
       label: '이용권 사용하기',
       action: ButtonActionType.BLOCK,
       blockId,
       extra: {
-        ticketId,
+        myTicketId,
       },
     });
   }
