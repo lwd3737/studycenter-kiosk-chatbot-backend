@@ -63,4 +63,10 @@ export class MockMyTicketRepo extends IMyTicketRepo {
     );
     return raw.map((r) => MockMyTicketMapper.toDomain(r));
   }
+
+  public async findOneInUse(): Promise<MyTicket | null> {
+    const raw = this.storage.find((myTicket) => myTicket.inUse === true);
+    if (!raw) return null;
+    return MockMyTicketMapper.toDomain(raw);
+  }
 }

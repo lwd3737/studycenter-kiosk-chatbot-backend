@@ -5,6 +5,7 @@ import {
   MyTicketUsageDurationProps,
   ONE_HOUR,
   OnStartTicketUsage,
+  StopUsageResult,
 } from './usage-duration.vo';
 
 type RechargableUsageDurationProps = MyTicketUsageDurationProps & {
@@ -94,14 +95,21 @@ export class RechargableUsageDuration extends MyTicketUsageDuration<RechargableU
     return ok(updated);
   }
 
-  public stopUsage(): Result<MyTicketUsageDuration | null, DomainError> {
-    super.stopUsage();
+  public stopUsage(): StopUsageResult {
+    const stopOrError = super.stopUsage();
+    if (stopOrError.isErr()) return err(stopOrError.error);
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const usedTime = Date.now() - this.startAt!.getTime();
-    return RechargableUsageDuration.from({
+    const updatedOrError = RechargableUsageDuration.from({
       ...this.props,
       remainingTime: Math.min(0, this.remainingTime - usedTime),
+    });
+    if (updatedOrError.isErr()) return err(updatedOrError.error);
+
+    return ok({
+      updated: updatedOrError.value,
+      usageDuration: stopOrError.value.usageDuration,
     });
   }
 }

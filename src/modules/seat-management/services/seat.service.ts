@@ -88,4 +88,22 @@ export class SeatService {
 
     return ok(true);
   }
+
+  public async unassignSeatFromMember(
+    seatId: string,
+  ): Promise<Result<{ memberId: string }, DomainError | RepoError>> {
+    const found = await this.seatRepo.findOneById(new SeatId(seatId));
+    if (!found) return err(new AppError(`Seat with id${seatId} not found`));
+
+    const unassignedOrError = found.unassignSeatFromMember();
+    if (unassignedOrError.isErr()) return err(unassignedOrError.error);
+
+    try {
+      await this.seatRepo.update(found);
+    } catch (err) {
+      return err(new RepoError(err.message));
+    }
+
+    return ok({ memberId: unassignedOrError.value.memberId });
+  }
 }

@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { IMyTicketRepo } from './domain/my-ticket/IMy-ticket.repo';
 import { MockMyTicketRepo } from './infra/repos/mock-my-ticket.repo';
-import { CheckInOutService } from './application/services/check-in-out.service';
+import { CheckInOutService } from './application/services/check-in-out/service';
 import { MyTicketService } from './application/services/my-ticket.service';
 import { KakaoChatbotModule } from '../kakao-chatbot/kakao-chatbot.module';
 import { MemberModule } from '../member';

@@ -33,4 +33,9 @@ export class MyTicketService {
     if (!foundMember) return [];
     return await this.myTicketRepo.findByMemberId(foundMember.id.value);
   }
+
+  public async findOneInUse(): Promise<MyTicket | null> {
+    const found = await this.myTicketRepo.findOneInUse();
+    return found ?? null;
+  }
 }

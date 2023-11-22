@@ -82,7 +82,7 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
           memberId: new MemberId(props.memberId),
           ticketId: new TicketId(props.ticketId),
           usageDuration: usageDurationOrError.value,
-          seatIdInUse: null,
+          seatIdInUse: props.seatIdInUse ? new SeatId(props.seatIdInUse) : null,
         },
         id,
       ),
@@ -125,7 +125,10 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
     return this.props.usageDuration.displayExpiry();
   }
 
-  public startUsage(after: OnStartTicketUsage): Result<null, DomainError> {
+  public startUsage(
+    seatId: string,
+    after: OnStartTicketUsage,
+  ): Result<null, DomainError> {
     this.props.inUse = true;
 
     const updatedOrError = this.props.usageDuration.startUsage(after);
@@ -133,18 +136,19 @@ export class MyTicket extends AggregateRoot<MyTicketProps> {
     const updated = updatedOrError.value;
 
     this.props.usageDuration = updated;
+    this.props.seatIdInUse = new SeatId(seatId);
 
     return ok(null);
   }
 
-  public stopUsage(): Result<MyTicketUsageDuration | null, DomainError> {
+  public stopUsage(): Result<{ usageDuration: number }, DomainError> {
     this.props.inUse = false;
-    const updatedOrError = this.props.usageDuration.stopUsage();
-    if (updatedOrError.isErr()) return err(updatedOrError.error);
+    const stoppedOrError = this.props.usageDuration.stopUsage();
+    if (stoppedOrError.isErr()) return err(stoppedOrError.error);
 
-    const updated = updatedOrError.value;
-    if (updated) this.props.usageDuration = updated;
+    const stopped = stoppedOrError.value;
+    this.props.usageDuration = stopped.updated;
 
-    return ok(updated);
+    return ok({ usageDuration: stopped.usageDuration });
   }
 }

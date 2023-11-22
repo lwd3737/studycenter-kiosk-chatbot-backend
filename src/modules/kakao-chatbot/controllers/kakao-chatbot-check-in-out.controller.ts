@@ -15,6 +15,8 @@ import { ParseContextParamsPipe } from '../application/pipes/parse-context-param
 import { ContextControlDTO } from '../application/dtos/IResponse.dto';
 import { CheckInUseCase } from '../application/usecases/check-in-out/check-in/usecase';
 import { SimpleTextMapper } from '../infra/mappers/simple-text.mapper';
+import { CheckOutUseCase } from '../application/usecases/check-in-out/check-out/usecase';
+import { NoCheckInError } from 'src/modules/my-page/application/services/check-in-out/error';
 
 const CHECK_IN_PREFIX = 'check-in';
 
@@ -25,6 +27,7 @@ export class KakaoChatbotCheckInOutController {
     private getAllRoomsUseCase: GetAllRoomsUseCase,
     private getAvailableSeatsInRoomUseCase: GetAvailableSeatsInRoomUseCase,
     private checkInUseCase: CheckInUseCase,
+    private checkOutUseCase: CheckOutUseCase,
   ) {}
 
   @Post('available-my-tickets')
@@ -169,5 +172,35 @@ export class KakaoChatbotCheckInOutController {
         },
       ],
     };
+  }
+
+  @Post('check-out')
+  async checkOut() {
+    const simpleTextOrError = await this.checkOutUseCase.execute();
+    if (simpleTextOrError.isErr()) {
+      const error = simpleTextOrError.error;
+      if (error instanceof NoCheckInError) {
+        return ErrorDTOCreator.toSimpleTextOutput(
+          '입실 중이 아닙니다. 먼저 입실해주세요.',
+        );
+      }
+
+      console.debug(error);
+
+      return ErrorDTOCreator.toSimpleTextOutput(
+        '퇴실 중에 오류가 발생했어요. 다시 시도해주세요.',
+      );
+    }
+    const simpleText = simpleTextOrError.value;
+
+    return KaKaoChatbotResponseMapper.toDTO({
+      outputs: [
+        {
+          simpleText: {
+            text: simpleText.value,
+          },
+        },
+      ],
+    });
   }
 }

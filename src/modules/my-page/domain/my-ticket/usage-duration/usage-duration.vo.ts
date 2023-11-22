@@ -25,6 +25,13 @@ export type OnStartTicketUsage = {
   onExpire: UsageDurationHandler;
 };
 export type UsageDurationHandler = () => void;
+export type StopUsageResult = Result<
+  {
+    updated: MyTicketUsageDuration;
+    usageDuration: number;
+  },
+  DomainError
+>;
 
 export const ONE_HOUR = 60 * 60 * 1000;
 export const ONE_DAY = 24 * ONE_HOUR;
@@ -101,8 +108,13 @@ export abstract class MyTicketUsageDuration<
     }, this.remainingTime);
   }
 
-  public stopUsage(): Result<MyTicketUsageDuration | null, DomainError> {
+  public stopUsage(): StopUsageResult {
     if (this.expireTimer) clearTimeout(this.expireTimer);
-    return ok(null);
+    if (!this.startAt)
+      return err(new DomainError('[MyTicketUsageDuration]: startAt is null'));
+    return ok({
+      updated: this,
+      usageDuration: Date.now() - this.startAt.getTime(),
+    });
   }
 }

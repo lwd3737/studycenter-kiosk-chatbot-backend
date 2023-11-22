@@ -103,9 +103,26 @@ export class Seat extends AggregateRoot<SeatProps> {
     if (!this.props.available)
       return err(new DomainError(`${ERROR_TYPE}Seat is not available`));
 
-    this.props.available = false;
     this.props.memberIdInUse = memberId;
+    this.props.available = false;
 
     return ok(true);
+  }
+
+  public unassignSeatFromMember(): Result<{ memberId: string }, DomainError> {
+    if (this.available)
+      return err(new DomainError(`${ERROR_TYPE}Seat is already available`));
+    if (!this.memberIdInUse)
+      return err(
+        new DomainError(`${ERROR_TYPE}Seat is not assigned to member`),
+      );
+
+    const memberId = this.memberIdInUse;
+    this.props.memberIdInUse = null;
+    this.props.available = true;
+
+    return ok({
+      memberId,
+    });
   }
 }
